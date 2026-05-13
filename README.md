@@ -16,27 +16,32 @@ cp .env.example .env
 npm run dev
 ```
 
-Фронтенд откроется на `http://localhost:5173`.
+`npm run dev` запускает Express API и Vite dev server одновременно.
 
-Для отдельного API-сервера:
+- Фронтенд: `http://localhost:5173`
+- API healthcheck: `http://localhost:3001/api/health`
+
+Если нужно запустить части отдельно:
 
 ```bash
+npm run dev:client
 npm run dev:api
 ```
 
-API будет доступен на `http://localhost:3001/api/health`; Vite проксирует `/api` на этот порт.
+Vite проксирует `/api` на `http://localhost:3001`.
 
 ## Переменные окружения
 
 ```bash
-MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/tochka-sborki
+MONGO_URI=mongodb+srv://aok:27043@cluster0.xxxxx.mongodb.net/tochka-sborki
 CLIENT_URL=http://localhost:5173
-EMAIL_HOST=smtp.example.com
+EMAIL_HOST=smtp.yandex.ru
 EMAIL_PORT=587
-EMAIL_USER=mailer@example.com
-EMAIL_PASS=change-me
-EMAIL_FROM="Точка Сборки <mailer@example.com>"
-EMAIL_TO=team@tochka-sborki.ru
+EMAIL_USER=tochka.sborki21@vk.com
+EMAIL_PASS=ТВОЙ_ПАРОЛЬ_ПРИЛОЖЕНИЯ_ЯНДЕКС
+EMAIL_FROM="Точка Сборки <tochka.sborki21@vk.com>"
+EMAIL_TO=tochka.sborki21@vk.com
+ADMIN_PASSWORD=admin123
 ```
 
 Если SMTP-переменные не заданы, API сохранит заявки в MongoDB, но пропустит email-уведомления.
@@ -47,7 +52,38 @@ EMAIL_TO=team@tochka-sborki.ru
 - `POST /api/subscribe`: `email`.
 - `POST /api/submit-project`: `companyName`, `contactName`, `email`, `stack`, `description`, `budget`, `deadline`.
 
+Успешный ответ:
+
+```json
+{ "success": true, "message": "Сообщение отправлено. Мы свяжемся с вами." }
+```
+
+Ошибка валидации:
+
+```json
+{ "success": false, "error": "Проверьте поля формы", "errors": { "email": ["Введите корректный email"] } }
+```
+
 Все endpoints валидируют входные данные через Zod и сохраняют записи в MongoDB.
+
+Повторяемая проверка API:
+
+```bash
+chmod +x test-api.sh
+./test-api.sh
+BASE_URL=https://tochka-sborki-five.vercel.app ./test-api.sh
+```
+
+## Каналы сообщества
+
+- Email: `tochka.sborki21@vk.com`
+- ВКонтакте: `https://vk.com/tochkasborki21`
+- MAX Messenger: канал `⚡ Точка Сборки | Сигнал`; пригласительная ссылка будет размещена позже.
+- Telegram: `https://t.me/tochka_sborki`
+
+## Контент
+
+Основные тексты сайта вынесены в `src/data/content.js`. Чтобы изменить заголовки, описания, метрики, контакты или списки, правьте этот файл без изменения React-компонентов.
 
 ## Маршруты сайта
 
@@ -76,4 +112,4 @@ gh repo create tochka-sborki --private --source=. --remote=origin --push
 vercel --prod
 ```
 
-Перед `vercel --prod` убедитесь, что в проекте Vercel заданы `MONGO_URI` и email-переменные.
+Перед `vercel --prod` убедитесь, что в проекте Vercel заданы переменные из `docs/VERCEL_ENV.md`.

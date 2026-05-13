@@ -29,12 +29,15 @@ const api = async (url, payload) => {
     body: JSON.stringify(payload)
   });
   const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.message || 'Не удалось отправить форму');
+  if (!response.ok || data.success === false) {
+    throw new Error(data.error || data.message || 'Не удалось отправить форму');
+  }
   return data;
 };
 
 function InlineForm({ type }) {
   const [status, setStatus] = useState('');
+  const [serverError, setServerError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
 
   const configs = {
@@ -73,9 +76,14 @@ function InlineForm({ type }) {
 
   const onSubmit = async (values) => {
     setStatus('');
-    await api(config.endpoint, values);
-    setStatus('Готово. Заявка отправлена, мы свяжемся с вами.');
-    reset();
+    setServerError('');
+    try {
+      const result = await api(config.endpoint, values);
+      setStatus(result.message || 'Готово. Заявка отправлена, мы свяжемся с вами.');
+      reset();
+    } catch (error) {
+      setServerError(error.message || 'Не удалось отправить форму. Попробуйте ещё раз.');
+    }
   };
 
   return (
@@ -96,6 +104,7 @@ function InlineForm({ type }) {
         <button className="primary-button" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Отправляем...' : 'Отправить'}
         </button>
+        {serverError && <p className="form-error form-message">{serverError}</p>}
         {status && <p className="form-success">{status}</p>}
       </form>
     </Card>

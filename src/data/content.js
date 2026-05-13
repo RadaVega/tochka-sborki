@@ -4,7 +4,7 @@ export const brand = {
   english: 'Assembly Point',
   slogan: 'Build Crew. Ship Feats.',
   school: 'Школа 21 · Школа цифровых технологий · 2026',
-  email: 'team@tochka-sborki.ru'
+  email: 'tochka.sborki21@vk.com'
 };
 
 export const navItems = [
@@ -113,7 +113,7 @@ export const pages = {
     steps: [
       { phase: 'День 1', title: 'Заявка', icon: '📝', items: ['Структурированный Project Brief', 'AI-парсинг требований к стеку', 'Автоскоринг бюджета и сроков', 'Подписание NDA онлайн'], tags: ['Яндекс Forms', 'YandexGPT'] },
       { phase: 'Неделя 1', title: 'Подбор', icon: '🔗', items: ['AI-матчинг студентов под стек', 'Команда 3–5 чел. за 7 дней', 'Назначение ментора-техлида', 'Kick-off звонок с заказчиком'], tags: ['YandexGPT API', 'Kaiten'] },
-      { phase: 'Нед. 2–4', title: 'Спринты', icon: '⚡', items: ['Agile-спринты по 1–2 недели', 'Daily stand-up в VK Teams / MAX', 'Код на GitFlic, задачи в Kaiten', 'AI code-review GigaChat Pro'], tags: ['GitFlic', 'Kaiten'] },
+      { phase: 'Нед. 2–4', title: 'Спринты', icon: '⚡', items: ['Agile-спринты по 1–2 недели', 'Daily stand-up в MAX Messenger', 'Код на GitFlic, задачи в Kaiten', 'AI code-review GigaChat Pro'], tags: ['GitFlic', 'Kaiten'] },
       { phase: 'Конец спринта', title: 'Приёмка', icon: '✅', items: ['Peer-review кода командой', 'Демо заказчику в Яндекс Телемост', 'Feedback в Яндекс Трекер', 'Подписание акта через Диадок'], tags: ['Яндекс Телемост', 'Диадок'] },
       { phase: 'Финал', title: 'Результат', icon: '🚀', items: ['Сдача рабочего продукта', 'Выплата 40–90k ₽ самозанятым', 'Кейс в портфолио участников', 'Лучшим — оффер от партнёра'], tags: ['Мой налог', 'Оффер → Компания'] }
     ],
@@ -136,7 +136,7 @@ export const pages = {
     corporates: [
       { title: '🟢 Сбер', text: 'SberUnity акселератор, СберТех, пилоты + GigaChat API для наших AI-агентов.', tags: ['SberUnity', 'GigaChat'] },
       { title: '⚛ Росатом', text: 'Цифровой Атом, ИЦК «Производство», 350+ дочерних компаний — заказчики.', tags: ['Цифровой Атом', 'ИЦК'] },
-      { title: '🔴 VK Тех', text: 'VK Education, VK Teams — наша инфраструктура связи. Технологический партнёр.', tags: ['VK Education', 'VK Teams'] },
+      { title: '🔴 VK Тех', text: 'VK Education — образовательная и технологическая инфраструктура для партнёрских треков.', tags: ['VK Education', 'EdTech'] },
       { title: '🟡 Яндекс', text: 'Яндекс Практикум, Cloud, YandexGPT API — технологическая основа всей платформы.', tags: ['YandexGPT', 'Я.Cloud'] }
     ],
     strategy: 'Сколково-резидентство → льготы + видимость → корп.заказы Сбер/Росатом → пилоты → масштаб через ФРИИ/GenerationS → венчур',
@@ -155,7 +155,7 @@ export const pages = {
       { title: 'Matching Agent — DataSphere ML', text: 'Скоринг студентов по вектору навыков, формирует 3 варианта составов команды с объяснением', icon: '🔗' },
       { title: 'Progress Monitor — Kaiten API', text: 'Отслеживает спринты, алертит при блокерах, генерирует weekly AI-отчёт для заказчика', icon: '📊' },
       { title: 'Quality Agent — GigaChat Pro (Сбер)', text: 'Автоматический code review PR, генерация unit-тестов, создание документации', icon: '🔍' },
-      { title: 'Comms Bot — VK Teams / MAX', text: 'Уведомления о дедлайнах, статус-апдейты, напоминания — без участия ментора 24/7', icon: '📣' }
+      { title: 'Comms Bot — MAX Messenger', text: 'Уведомления о дедлайнах, статус-апдейты, напоминания — без участия ментора 24/7', icon: '📣' }
     ],
     metrics: [
       { value: '14 → 2', label: 'дня подбора команды', accent: 'green' },
@@ -174,7 +174,7 @@ export const pages = {
       { icon: '⌨️', title: 'Разработка и IDE', replace: 'замена GitHub + JetBrains', tools: ['GitVerse 🇷🇺', 'Giga IDE 🇷🇺', 'Giga Code 🇷🇺', 'Docker · K8s'], accent: 'purple' },
       { icon: '📋', title: 'Управление проектами', replace: 'замена Jira + Confluence', tools: ['Kaiten 🇷🇺', 'Яндекс Трекер 🇷🇺', 'Яндекс 360 🇷🇺', 'ЛидерTask 🇷🇺'], accent: 'cyan' },
       { icon: '☁️', title: 'Облачная инфраструктура', replace: 'замена AWS + Azure', tools: ['Яндекс Cloud 🇷🇺', 'VK Cloud 🇷🇺', 'Cloud.ru 🇷🇺', 'SberCloud 🇷🇺'], accent: 'green' },
-      { icon: '💬', title: 'Коммуникации и видео', replace: 'замена Slack + Zoom', tools: ['VK Teams 🇷🇺', 'MAX Messenger 🇷🇺', 'TrueConf 🇷🇺', 'Телемост 🇷🇺'], accent: 'pink' },
+      { icon: '💬', title: 'Коммуникации и видео', replace: 'замена Slack + Zoom', tools: ['MAX Messenger 🇷🇺', 'TrueConf 🇷🇺', 'Телемост 🇷🇺'], accent: 'pink' },
       { icon: '🤖', title: 'AI и ML-платформы', replace: 'замена OpenAI + AWS SageMaker', tools: ['GigaChat Pro 🇷🇺', 'YandexGPT 4 🇷🇺', 'DataSphere 🇷🇺', 'LangChain OSS'], accent: 'green' },
       { icon: '⚖️', title: 'Юридика и платежи', replace: 'полностью российские', tools: ['Контур.Диадок 🇷🇺', 'Мой налог 🇷🇺', 'КриптоПро ЭЦП'], accent: 'gold' }
     ],
@@ -190,8 +190,8 @@ export const pages = {
       {
         title: '📱 Каналы для студентов (B2C)',
         channels: [
-          { icon: '💬', name: 'MAX Messenger', handle: '⚡ Точка Сборки | Сигнал', text: 'Главный канал. Анонсы проектов, вакансии команд, дайджест подвигов. Мгновенные уведомления.' },
-          { icon: '🔵', name: 'ВКонтакте', handle: 'vk.com/tochkasborki — «Код и Подвиги»', text: 'Публичная страница. Кейсы выпускников, мемы об IT, вирусный контент. Аудитория 18–25.' },
+          { icon: '💬', name: 'MAX Messenger', handle: '⚡ Точка Сборки | Сигнал', text: 'Пригласительная ссылка будет размещена здесь. Главный канал: анонсы проектов, вакансии команд, дайджест подвигов.' },
+          { icon: '🔵', name: 'ВКонтакте', handle: 'https://vk.com/tochkasborki21 — «Код и Подвиги»', text: 'Публичная страница. Кейсы выпускников, мемы об IT, вирусный контент. Аудитория 18–25.' },
           { icon: '🎬', name: 'RuTube', handle: 'Точка Сборки | Код и Подвиги', text: 'Видео-кейсы команд, записи демо-дней, туториалы по Agile и российским инструментам.' },
           { icon: '✍️', name: 'Яндекс Дзен / ПромоСтраницы', handle: '«Сборка в Деталях» — лонгриды', text: 'Long-read разборы проектов, истории успеха, техтуториалы. SEO-продвижение.' }
         ]
@@ -202,7 +202,7 @@ export const pages = {
           { icon: '💼', name: 'TenChat', handle: '«Точка Сборки | Команды под задачи»', text: 'Российский LinkedIn. Нетворкинг с CTO и техдиректорами, B2B лиды, корп.партнёрства.' },
           { icon: '💻', name: 'Habr', handle: 'Assembly Point — Tech Blog', text: 'Технические статьи, обзоры инструментов, кейсы. Выход на IT-аудиторию компаний.' },
           { icon: '📧', name: 'Яндекс 360 / Unisender', handle: '«Дайджест Сборки» — еженедельно', text: 'Email-рассылка: свободные команды, новые кейсы, метрики, условия сотрудничества.' },
-          { icon: '🏛', name: 'VK Teams (корпоративный)', handle: '«ТС: Командный Центр»', text: 'Внутренняя платформа: чаты команд, спринты, ежедневные стендапы, связь с менторами.' }
+          { icon: '🏛', name: 'Командный центр', handle: '«ТС: Командный Центр»', text: 'Внутренняя платформа: чаты команд, спринты, ежедневные стендапы, связь с менторами.' }
         ]
       }
     ],
@@ -218,11 +218,11 @@ export const pages = {
       { title: '📋 Регистрация и профиль студента', text: 'Заполнение формы: стек, опыт, GitHub/GitFlic профиль, предпочтения. Загрузка портфолио. Яндекс Forms, Битрикс24 CRM' },
       { title: '🧪 Техническая проверка навыков', text: 'Тестовое задание на GitFlic (PR + code review). Оценка: чистота кода, документация, скорость. Скор 0–100. GitFlic, JetBrains' },
       { title: '🤖 AI-скоринг и матчинг (YandexGPT 4)', text: 'Анализ: стек vs проект, soft skills, командная совместимость. Генерирует 3 варианта составов с обоснованием. YandexGPT API, DataSphere' },
-      { title: '👥 Формирование команды и уведомление', text: 'Менеджер утверждает состав. Студентам — уведомление с деталями проекта, составом, расписанием. VK Teams бот, MAX Messenger' },
+      { title: '👥 Формирование команды и уведомление', text: 'Менеджер утверждает состав. Студентам — уведомление с деталями проекта, составом, расписанием. MAX Messenger' },
       { title: '🛠 Онбординг — инструменты и роли', text: 'Команда получает: Kaiten-доску, GitFlic репозиторий, Яндекс 360 воркспейс. Ментор проводит 30-мин онбординг. Kaiten, Яндекс 360' },
       { title: '🚀 Kick-off с заказчиком — старт спринта', text: '60-мин встреча: уточнение требований, Q&A, Definition of Done. Создание первого спринта. Яндекс Телемост, Kaiten' }
     ],
-    stack: ['GitFlic', 'JetBrains IDE', 'Kaiten', 'Яндекс 360', 'VK Teams', 'MAX Messenger', 'Docker']
+    stack: ['GitFlic', 'JetBrains IDE', 'Kaiten', 'Яндекс 360', 'MAX Messenger', 'Docker']
   },
   companyPath: {
     theme: 'cyan',
@@ -294,7 +294,7 @@ export const pages = {
     agents: [
       { icon: '📊', title: 'Progress Monitor — автосбор статусов', text: 'Kaiten API + YandexGPT: собирает статус каждого задания, формирует weekly-отчёт без участия ментора' },
       { icon: '🔍', title: 'Quality Agent — первичный code review', text: 'GigaChat Pro: автоматически проверяет pull requests, предлагает исправления, маркирует критичные баги' },
-      { icon: '📣', title: 'Comms Bot — напоминания о дедлайнах', text: 'VK Teams / MAX бот: уведомляет команду о спринт-дедлайнах, встречах, задержках без человека' },
+      { icon: '📣', title: 'Comms Bot — напоминания о дедлайнах', text: 'MAX Messenger бот: уведомляет команду о спринт-дедлайнах, встречах, задержках без человека' },
       { icon: '📥', title: 'Intake Agent — готовый бриф', text: 'YandexGPT структурирует ТЗ от заказчика, ментор получает уже разобранные требования' }
     ],
     quote: 'Полностью заменить ментора AI не может — эмпатия, креативные решения и стратегия остаются за человеком. Рутина → 0.'
@@ -346,10 +346,9 @@ export const pages = {
       { title: '🏢 Компаниям', items: ['Готовые команды', 'Фикс-прайс, за результат', 'Команда за 1 неделю'] }
     ],
     contacts: [
-      { icon: '✉️', label: 'Email', value: 'team@tochka-sborki.ru' },
-      { icon: '💬', label: 'MAX Messenger — канал', value: '⚡ Точка Сборки | Сигнал' },
-      { icon: '🔵', label: 'VK Teams', value: 'vk.me/join/tochka_sborki' },
-      { icon: '🌐', label: 'ВКонтакте', value: 'vk.com/tochkasborki' }
+      { icon: '✉️', label: 'Email', value: 'tochka.sborki21@vk.com' },
+      { icon: '💬', label: 'MAX Messenger — канал', value: '⚡ Точка Сборки | Сигнал · Пригласительная ссылка будет размещена здесь' },
+      { icon: '🌐', label: 'ВКонтакте', value: 'https://vk.com/tochkasborki21' }
     ],
     stats: [
       { value: '120', label: 'студентов' },

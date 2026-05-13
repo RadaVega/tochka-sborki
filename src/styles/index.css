@@ -369,6 +369,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 .form-card input:focus, .form-card textarea:focus { border-color: var(--cl); box-shadow: 0 0 0 3px rgba(8,145,178,.16); }
 .form-error { color: var(--kl); }
+.form-message { margin: 0; font-weight: 700; }
 .form-success { color: var(--gm) !important; margin-top: 2px !important; }
 .primary-button {
   border: 1px solid rgba(124,58,237,.5);
@@ -388,6 +389,64 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   justify-content: space-between;
   gap: 14px;
   color: var(--wh);
+}
+
+.site-footer {
+  background: #06080f;
+  border-top: 1px solid rgba(124,58,237,.18);
+  padding: 24px 0;
+}
+.footer-shell {
+  width: min(1180px, calc(100% - 32px));
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.community-block { text-align: right; }
+.community-block strong {
+  display: block;
+  color: var(--wr);
+  margin-bottom: 8px;
+}
+.community-block p {
+  margin: 8px 0 0;
+  color: var(--li);
+  font-size: .88rem;
+}
+.community-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.community-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 11px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(124,58,237,.28);
+  color: var(--wh);
+  font-weight: 800;
+  font-size: .82rem;
+}
+.community-links a:hover {
+  border-color: rgba(8,145,178,.5);
+  color: var(--cm);
+}
+.community-links span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(135deg,var(--p),var(--c));
+  color: white;
+  font-family: 'DejaVu Sans Mono', 'Liberation Mono', monospace;
+  font-size: .64rem;
 }
 
 @media (max-width: 1100px) {
@@ -423,6 +482,9 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   .grid.two, .grid.three, .grid.four, .step-grid, .industry-grid, .metric-grid, .metric-grid.two, .diagram-row.four, .diagram-row.five { grid-template-columns: 1fr; }
   .hero-copy h1 { font-size: 3rem; }
   .insight { display: block; }
+  .footer-shell { align-items: flex-start; flex-direction: column; }
+  .community-block { text-align: left; }
+  .community-links { justify-content: flex-start; }
   .progress-row { grid-template-columns: 1fr; }
   .tech-heading em { margin-left: 0; width: 100%; }
 }

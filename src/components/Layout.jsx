@@ -3,6 +3,11 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Logo } from './Logo';
 import { navItems } from '../data/content';
 
+const communityLinks = [
+  { label: 'ВКонтакте', href: 'https://vk.com/tochkasborki21', icon: 'VK' },
+  { label: 'Telegram', href: 'https://t.me/tochka_sborki', icon: 'TG' }
+];
+
 export function Layout() {
   const [open, setOpen] = useState(false);
   const location = useLocation();
@@ -38,6 +43,23 @@ export function Layout() {
       <main key={location.pathname}>
         <Outlet />
       </main>
+      <footer className="site-footer">
+        <div className="footer-shell">
+          <Logo compact />
+          <div className="community-block" aria-label="Каналы сообщества">
+            <strong>Присоединяйтесь к нам</strong>
+            <div className="community-links">
+              {communityLinks.map((link) => (
+                <a key={link.href} href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
+                  <span>{link.icon}</span>
+                  {link.label}
+                </a>
+              ))}
+            </div>
+            <p>MAX Messenger: канал ⚡ Точка Сборки | Сигнал. Пригласительная ссылка будет размещена здесь.</p>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }

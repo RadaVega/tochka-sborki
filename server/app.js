@@ -9,12 +9,13 @@ import { Contact } from './models/Contact.js';
 import { Subscriber } from './models/Subscriber.js';
 import { ProjectSubmission } from './models/ProjectSubmission.js';
 
-const email = z.string().email('Некорректный email').trim().toLowerCase();
+const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
+const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
 
 const contactSchema = z.object({
-  name: z.string().trim().min(2).max(120),
+  name: requiredString('Имя').min(2, 'Имя должно быть не короче 2 символов').max(120, 'Имя слишком длинное'),
   email,
-  message: z.string().trim().min(10).max(4000)
+  message: requiredString('Сообщение').min(10, 'Сообщение должно быть не короче 10 символов').max(4000, 'Сообщение слишком длинное')
 });
 
 const subscribeSchema = z.object({
@@ -22,13 +23,15 @@ const subscribeSchema = z.object({
 });
 
 const projectSchema = z.object({
-  companyName: z.string().trim().min(2).max(160),
-  contactName: z.string().trim().min(2).max(160),
+  companyName: requiredString('Название компании').min(2, 'Название компании должно быть не короче 2 символов').max(160, 'Название компании слишком длинное'),
+  contactName: requiredString('Контактное лицо').min(2, 'Контактное лицо должно быть не короче 2 символов').max(160, 'Контактное лицо слишком длинное'),
   email,
-  stack: z.string().trim().min(2).max(300),
-  description: z.string().trim().min(20).max(8000),
-  budget: z.string().trim().min(1).max(120),
-  deadline: z.coerce.date()
+  stack: requiredString('Стек').min(2, 'Опишите стек подробнее').max(300, 'Описание стека слишком длинное'),
+  description: requiredString('Описание проекта').min(20, 'Описание проекта должно быть не короче 20 символов').max(8000, 'Описание проекта слишком длинное'),
+  budget: requiredString('Бюджет').max(120, 'Бюджет слишком длинный'),
+  deadline: requiredString('Дедлайн')
+    .refine((value) => !Number.isNaN(Date.parse(value)), 'Введите корректный дедлайн')
+    .transform((value) => new Date(value))
 });
 
 function validate(schema) {
@@ -36,7 +39,8 @@ function validate(schema) {
     const result = schema.safeParse(req.body);
     if (!result.success) {
       return res.status(400).json({
-        message: 'Проверьте поля формы',
+        success: false,
+        error: 'Проверьте поля формы',
         errors: result.error.flatten().fieldErrors
       });
     }
@@ -57,7 +61,7 @@ export function createApp() {
   app.use(morgan('tiny'));
 
   app.get('/api/health', (req, res) => {
-    res.json({ ok: true, service: 'tochka-sborki-api' });
+    res.json({ success: true, service: 'tochka-sborki-api' });
   });
 
   app.post('/api/contact', validate(contactSchema), async (req, res, next) => {
@@ -69,7 +73,7 @@ export function createApp() {
         replyTo: req.validated.email,
         text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
       });
-      res.status(201).json({ ok: true, id: doc._id });
+      res.status(201).json({ success: true, message: 'Сообщение отправлено. Мы свяжемся с вами.', id: doc._id });
     } catch (error) {
       next(error);
     }
@@ -88,7 +92,7 @@ export function createApp() {
         replyTo: req.validated.email,
         text: `Email: ${req.validated.email}`
       });
-      res.status(201).json({ ok: true, id: doc._id });
+      res.status(201).json({ success: true, message: 'Подписка оформлена.', id: doc._id });
     } catch (error) {
       next(error);
     }
@@ -112,7 +116,7 @@ export function createApp() {
           req.validated.description
         ].join('\n')
       });
-      res.status(201).json({ ok: true, id: doc._id });
+      res.status(201).json({ success: true, message: 'Техническое задание отправлено. Мы свяжемся с вами.', id: doc._id });
     } catch (error) {
       next(error);
     }
@@ -122,9 +126,18 @@ export function createApp() {
     if (res.headersSent) return next(error);
     console.error(error);
     if (error.message === 'MONGO_URI не задан') {
-      return res.status(503).json({ message: 'База данных не настроена' });
+      return res.status(400).json({ success: false, error: 'База данных не настроена' });
     }
-    return res.status(500).json({ message: 'Внутренняя ошибка сервера' });
+    if (error.name === 'MongoServerError' && error.code === 11000) {
+      return res.status(400).json({ success: false, error: 'Такая запись уже существует' });
+    }
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ success: false, error: 'Проверьте поля формы' });
+    }
+    if (error.name === 'MongooseServerSelectionError' || ['ECONNREFUSED', 'ENOTFOUND', 'ETIMEOUT'].includes(error.code)) {
+      return res.status(400).json({ success: false, error: 'Не удалось подключиться к базе данных' });
+    }
+    return res.status(400).json({ success: false, error: 'Внутренняя ошибка сервера' });
   });
 
   return app;
