@@ -3,10 +3,7 @@ meta:
   toolchain:
     name: npm
     version: 20
-build:
-  additionalCommands:
-    - npx prisma generate
 run:
-  scriptName: start-amvera.js
+  command: node start-amvera.js
 env:
   PORT: "3001"

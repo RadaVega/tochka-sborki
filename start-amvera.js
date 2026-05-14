@@ -6,9 +6,7 @@ const port = Number(process.env.PORT || 3001);
 const app = createApp();
 
 ensureDbConnection().then((ok) => {
-  if (!ok) {
-    console.warn('⚠️ Сервер запущен без БД — проверьте DATABASE_URL');
-  }
+  if (!ok) console.warn('⚠️ Сервер запущен без БД — проверьте DATABASE_URL');
 });
 
 app.listen(port, () => {
