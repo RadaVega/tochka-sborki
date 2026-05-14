@@ -5,7 +5,7 @@
 ## Стек
 
 - Frontend: React 18, Vite, React Router v6, Tailwind CSS, Framer Motion, react-hook-form.
-- Backend: Node.js, Express, Mongoose/MongoDB, Nodemailer, Helmet, CORS, Morgan, Zod.
+- Backend: Node.js, Express, Prisma/Supabase PostgreSQL, Nodemailer, Helmet, CORS, Morgan, Zod.
 - Deploy: Vercel, SPA rewrites, `/api/*` как serverless API.
 
 ## Локальный запуск
@@ -33,18 +33,18 @@ Vite проксирует `/api` на `http://localhost:3001`.
 ## Переменные окружения
 
 ```bash
-MONGO_URI=mongodb+srv://aok:27043@cluster0.xxxxx.mongodb.net/tochka-sborki
+DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@db.bkuqbwblyjlbyamvnzkf.supabase.co:5432/postgres
 CLIENT_URL=http://localhost:5173
 EMAIL_HOST=smtp.yandex.ru
 EMAIL_PORT=587
-EMAIL_USER=tochka.sborki21@vk.com
-EMAIL_PASS=ТВОЙ_ПАРОЛЬ_ПРИЛОЖЕНИЯ_ЯНДЕКС
-EMAIL_FROM="Точка Сборки <tochka.sborki21@vk.com>"
-EMAIL_TO=tochka.sborki21@vk.com
+EMAIL_USER=Tochka.Sborki21@yandex.ru
+EMAIL_PASS=YANDEX_APP_PASSWORD
+EMAIL_FROM="Точка Сборки <Tochka.Sborki21@yandex.ru>"
+EMAIL_TO=Tochka.Sborki21@yandex.ru
 ADMIN_PASSWORD=admin123
 ```
 
-Если SMTP-переменные не заданы, API сохранит заявки в MongoDB, но пропустит email-уведомления.
+Если SMTP-переменные не заданы, API сохранит заявки в Supabase PostgreSQL, но пропустит email-уведомления.
 
 ## API
 
@@ -64,7 +64,7 @@ ADMIN_PASSWORD=admin123
 { "success": false, "error": "Проверьте поля формы", "errors": { "email": ["Введите корректный email"] } }
 ```
 
-Все endpoints валидируют входные данные через Zod и сохраняют записи в MongoDB.
+Все endpoints валидируют входные данные через Zod и сохраняют записи в Supabase PostgreSQL через Prisma.
 
 Повторяемая проверка API:
 
@@ -78,7 +78,8 @@ BASE_URL=https://tochka-sborki-five.vercel.app ./test-api.sh
 
 - Email: `tochka.sborki21@vk.com`
 - ВКонтакте: `https://vk.com/tochkasborki21`
-- MAX Messenger: канал `⚡ Точка Сборки | Сигнал`; пригласительная ссылка будет размещена позже.
+- MAX Messenger: канал `⚡ Точка Сборки` — `https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI`
+- MAX Messenger: `💬 Чат для студентов` — `https://web.max.ru/-74708826221932`
 - Telegram: `https://t.me/tochka_sborki`
 
 ## Контент
@@ -91,7 +92,7 @@ BASE_URL=https://tochka-sborki-five.vercel.app ./test-api.sh
 
 ## Деплой на Vercel
 
-1. Создать MongoDB Atlas database и добавить `MONGO_URI`.
+1. Создать/открыть Supabase project и добавить `DATABASE_URL`.
 2. Добавить SMTP-переменные, если нужны уведомления.
 3. Подключить GitHub repository к Vercel.
 4. Убедиться, что Build Command: `npm run build`, Output Directory: `dist`.

@@ -5,7 +5,9 @@ import { navItems } from '../data/content';
 
 const communityLinks = [
   { label: 'ВКонтакте', href: 'https://vk.com/tochkasborki21', icon: 'VK' },
-  { label: 'Telegram', href: 'https://t.me/tochka_sborki', icon: 'TG' }
+  { label: 'MAX-канал', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', icon: 'MX' },
+  { label: 'MAX-чат', href: 'https://web.max.ru/-74708826221932', icon: 'MX' },
+  { label: 'Telegram', href: 'https://t.me/+6re5Frc7sM0yNWIx', icon: 'TG' }
 ];
 
 export function Layout() {
@@ -56,7 +58,7 @@ export function Layout() {
                 </a>
               ))}
             </div>
-            <p>MAX Messenger: канал ⚡ Точка Сборки | Сигнал. Пригласительная ссылка будет размещена здесь.</p>
+            <p>MAX Messenger: канал ⚡ Точка Сборки и 💬 Чат для студентов.</p>
           </div>
         </div>
       </footer>

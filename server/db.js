@@ -1,25 +1,17 @@
-import mongoose from 'mongoose';
+import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import pg from 'pg';
 
-let cached = globalThis.__tochkaMongo;
+const { Pool } = pg;
 
-if (!cached) {
-  cached = globalThis.__tochkaMongo = { conn: null, promise: null };
-}
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
 
-export async function connectDb() {
-  if (!process.env.MONGO_URI) {
-    throw new Error('MONGO_URI не задан');
-  }
+const globalForPrisma = globalThis;
 
-  if (cached.conn) return cached.conn;
+export const prisma = globalForPrisma.__tochkaPrisma || new PrismaClient({ adapter });
 
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(process.env.MONGO_URI, {
-      bufferCommands: false,
-      serverSelectionTimeoutMS: 5000
-    });
-  }
-
-  cached.conn = await cached.promise;
-  return cached.conn;
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.__tochkaPrisma = prisma;
 }

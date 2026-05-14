@@ -190,7 +190,7 @@ export const pages = {
       {
         title: '📱 Каналы для студентов (B2C)',
         channels: [
-          { icon: '💬', name: 'MAX Messenger', handle: '⚡ Точка Сборки | Сигнал', text: 'Пригласительная ссылка будет размещена здесь. Главный канал: анонсы проектов, вакансии команд, дайджест подвигов.' },
+          { icon: '💬', name: 'MAX Messenger', handle: '⚡ Точка Сборки · https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', text: 'Главный канал: анонсы проектов, вакансии команд, дайджест подвигов.' },
           { icon: '🔵', name: 'ВКонтакте', handle: 'https://vk.com/tochkasborki21 — «Код и Подвиги»', text: 'Публичная страница. Кейсы выпускников, мемы об IT, вирусный контент. Аудитория 18–25.' },
           { icon: '🎬', name: 'RuTube', handle: 'Точка Сборки | Код и Подвиги', text: 'Видео-кейсы команд, записи демо-дней, туториалы по Agile и российским инструментам.' },
           { icon: '✍️', name: 'Яндекс Дзен / ПромоСтраницы', handle: '«Сборка в Деталях» — лонгриды', text: 'Long-read разборы проектов, истории успеха, техтуториалы. SEO-продвижение.' }
@@ -347,10 +347,12 @@ export const pages = {
     ],
     contacts: [
       { icon: '✉️', label: 'Email', value: 'tochka.sborki21@vk.com' },
-      { icon: '💬', label: 'MAX Messenger — канал', value: '⚡ Точка Сборки | Сигнал · Пригласительная ссылка будет размещена здесь' },
-      { icon: '🌐', label: 'ВКонтакте', value: 'https://vk.com/tochkasborki21' }
+      { icon: '💬', label: 'MAX Messenger — канал', value: '⚡ Точка Сборки · https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI' },
+      { icon: '💬', label: 'MAX Messenger — чат для студентов', value: '💬 Чат для студентов · https://web.max.ru/-74708826221932' },
+      { icon: '🌐', label: 'ВКонтакте', value: 'https://vk.com/tochkasborki21' },
+      { icon: '✈️', label: 'Telegram', value: 'https://t.me/+6re5Frc7sM0yNWIx' }
     ],
-    stats: [
+    stats: [  
       { value: '120', label: 'студентов' },
       { value: '20', label: 'партнёров' },
       { value: '1 нед.', label: 'сборка команды' },

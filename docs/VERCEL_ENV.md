@@ -6,14 +6,14 @@
 
 | Переменная | Где взять значение |
 | --- | --- |
-| `MONGO_URI` | MongoDB Atlas → Database → Connect → Drivers. Формат: `mongodb+srv://USER:PASSWORD@HOST/tochka-sborki`. |
+| `DATABASE_URL` | Supabase → Project Settings → Database → Connection string → URI. Формат: `postgresql://USER:PASSWORD@HOST:5432/postgres`. |
 | `CLIENT_URL` | URL фронтенда. Для production: `https://tochka-sborki-five.vercel.app`. Для локальной разработки: `http://localhost:5173`. |
 | `EMAIL_HOST` | SMTP-хост. Для Яндекса: `smtp.yandex.ru`. |
 | `EMAIL_PORT` | SMTP-порт. Для Яндекса с STARTTLS: `587`. |
-| `EMAIL_USER` | Почта отправителя: `tochka.sborki21@vk.com`. |
+| `EMAIL_USER` | Почта отправителя: `Tochka.Sborki21@yandex.ru`. |
 | `EMAIL_PASS` | Пароль приложения SMTP. Создаётся в настройках почтового аккаунта/провайдера. |
-| `EMAIL_FROM` | Строка отправителя: `"Точка Сборки <tochka.sborki21@vk.com>"`. |
-| `EMAIL_TO` | Адрес получателя уведомлений: `tochka.sborki21@vk.com`. |
+| `EMAIL_FROM` | Строка отправителя: `"Точка Сборки <Tochka.Sborki21@yandex.ru>"`. |
+| `EMAIL_TO` | Адрес получателя уведомлений: `Tochka.Sborki21@yandex.ru`. |
 | `ADMIN_PASSWORD` | Пароль администратора. Для production замените `admin123` на длинный случайный пароль. |
 
 ## Как добавить

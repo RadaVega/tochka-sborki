@@ -6,3 +6,5 @@ dist
 .vercel
 .DS_Store
 npm-debug.log*
+
+/src/generated/prisma
