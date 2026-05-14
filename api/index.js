@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -6,11 +5,17 @@ import morgan from 'morgan';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
 
-// ── Упрощённый клиент для serverless (без pg Pool) ──
+// ── Упрощённый клиент для serverless (без pg Pool, без dotenv) ──
 let prisma;
 function getPrisma() {
   if (!prisma) {
-    prisma = new PrismaClient();
+    prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: process.env.DATABASE_URL,
+        },
+      },
+    });
   }
   return prisma;
 }
