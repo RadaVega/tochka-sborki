@@ -4,6 +4,6 @@ meta:
     name: npm
     version: 20
 run:
-  command: node start-amvera.js
+  scriptName: start-amvera.js
 env:
   PORT: "3001"
