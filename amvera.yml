@@ -5,9 +5,8 @@ meta:
     version: 20
 build:
   additionalCommands:
-    - npm run build
     - npx prisma generate
 run:
-  scriptName: server/index.js
+  scriptName: start-amvera.js
 env:
   PORT: "3001"
