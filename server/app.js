@@ -3,8 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { z } from 'zod';
-import { prisma } from './db.js';
+import { prisma as localPrisma } from './db.js';
 import { sendMail } from './mailer.js';
+
+const getPrisma = (req) => req.app?.locals?.prisma || localPrisma;
 
 const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
 const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
@@ -76,9 +78,8 @@ export function createApp() {
 
   app.post('/api/contact', validate(contactSchema), async (req, res, next) => {
     try {
-      const doc = await prisma.contact.create({ data: req.validated });
+      const doc = await getPrisma(req).contact.create({ data: req.validated });
 
-      // Пытаемся отправить письмо, но не ломаем ответ при ошибке SMTP
       try {
         await sendMail({
           subject: 'Новая заявка с сайта Точка Сборки',
@@ -86,7 +87,7 @@ export function createApp() {
           text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
         });
       } catch (mailError) {
-        console.error('Ошибка отправки письма (SMTP не настроен):', mailError.message);
+        console.error('Ошибка отправки письма:', mailError.message);
       }
 
       res.status(201).json({ success: true, message: 'Сообщение отправлено. Мы свяжемся с вами.', id: doc.id });
@@ -97,7 +98,7 @@ export function createApp() {
 
   app.post('/api/subscribe', validate(subscribeSchema), async (req, res, next) => {
     try {
-      const doc = await prisma.subscriber.upsert({
+      const doc = await getPrisma(req).subscriber.upsert({
         where: { email: req.validated.email },
         update: {},
         create: req.validated
@@ -110,7 +111,7 @@ export function createApp() {
           text: `Email: ${req.validated.email}`
         });
       } catch (mailError) {
-        console.error('Ошибка отправки письма (SMTP не настроен):', mailError.message);
+        console.error('Ошибка отправки письма:', mailError.message);
       }
 
       res.status(201).json({ success: true, message: 'Подписка оформлена.', id: doc.id });
@@ -121,7 +122,7 @@ export function createApp() {
 
   app.post('/api/submit-project', validate(projectSchema), async (req, res, next) => {
     try {
-      const doc = await prisma.projectSubmission.create({ data: req.validated });
+      const doc = await getPrisma(req).projectSubmission.create({ data: req.validated });
 
       try {
         await sendMail({
@@ -141,7 +142,7 @@ export function createApp() {
           ].join('\n')
         });
       } catch (mailError) {
-        console.error('Ошибка отправки письма (SMTP не настроен):', mailError.message);
+        console.error('Ошибка отправки письма:', mailError.message);
       }
 
       res.status(201).json({ success: true, message: 'Техническое задание отправлено. Мы свяжемся с вами.', id: doc.id });
