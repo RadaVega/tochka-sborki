@@ -4,59 +4,54 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import { z } from 'zod';
 import { PrismaClient } from '@prisma/client';
+import nodemailer from 'nodemailer';
 
-// ── Упрощённый клиент для serverless (без pg Pool, без dotenv) ──
-let prisma;
-function getPrisma() {
-  if (!prisma) {
-    prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL,
-        },
-      },
+// ── Prisma для serverless ──
+const prisma = new PrismaClient({
+  datasources: { db: { url: process.env.DATABASE_URL } }
+});
+
+// ── Транспорт для писем ──
+let transporter;
+function getTransporter() {
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: parseInt(process.env.EMAIL_PORT, 10),
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
     });
   }
-  return prisma;
+  return transporter;
 }
 
-// ── Вспомогательные функции (как в server/app.js) ──
+// ── Валидация ──
 const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
 const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
 
 const contactSchema = z.object({
-  name: requiredString('Имя').min(2, 'Имя должно быть не короче 2 символов').max(120, 'Имя слишком длинное'),
+  name: requiredString('Имя').min(2).max(120),
   email,
-  message: requiredString('Сообщение').min(10, 'Сообщение должно быть не короче 10 символов').max(4000, 'Сообщение слишком длинное')
+  message: requiredString('Сообщение').min(10).max(4000)
 });
-
-const subscribeSchema = z.object({
-  email
-});
-
-const stackField = z.union([
-  z.array(z.string().trim().min(1, 'Название технологии не должно быть пустым')),
-  requiredString('Стек')
-]).transform((value) => {
-  if (Array.isArray(value)) return value;
-  return value
-    .split(/[,;\n]/)
-    .map((item) => item.trim())
-    .filter(Boolean);
-}).refine((value) => value.length > 0, 'Укажите хотя бы одну технологию');
-
+const subscribeSchema = z.object({ email });
 const projectSchema = z.object({
-  companyName: requiredString('Название компании').min(2, 'Название компании должно быть не короче 2 символов').max(160, 'Название компании слишком длинное'),
-  contactName: requiredString('Контактное лицо').min(2, 'Контактное лицо должно быть не короче 2 символов').max(160, 'Контактное лицо слишком длинное'),
+  companyName: requiredString('Название компании').min(2).max(160),
+  contactName: requiredString('Контактное лицо').min(2).max(160),
   email,
-  phone: z.string().trim().max(80, 'Телефон слишком длинный').optional().or(z.literal('')),
-  stack: stackField,
-  description: requiredString('Описание проекта').min(20, 'Описание проекта должно быть не короче 20 символов').max(8000, 'Описание проекта слишком длинное'),
-  budget: requiredString('Бюджет').max(120, 'Бюджет слишком длинный'),
+  phone: z.string().trim().max(80).optional().or(z.literal('')),
+  stack: z.union([z.array(z.string().trim().min(1)), requiredString('Стек')])
+    .transform(v => Array.isArray(v) ? v : v.split(/[,;\n]/).map(s => s.trim()).filter(Boolean))
+    .refine(v => v.length > 0, 'Укажите хотя бы одну технологию'),
+  description: requiredString('Описание проекта').min(20).max(8000),
+  budget: requiredString('Бюджет').max(120),
   deadline: requiredString('Дедлайн')
-    .refine((value) => !Number.isNaN(Date.parse(value)), 'Введите корректный дедлайн')
-    .transform((value) => new Date(value).toISOString().slice(0, 10)),
-  fileUrl: z.string().trim().url('Введите корректную ссылку на файл').optional().or(z.literal(''))
+    .refine(v => !isNaN(Date.parse(v)), 'Введите корректный дедлайн')
+    .transform(v => new Date(v).toISOString().slice(0, 10)),
+  fileUrl: z.string().trim().url().optional().or(z.literal(''))
 });
 
 function validate(schema) {
@@ -70,81 +65,60 @@ function validate(schema) {
       });
     }
     req.validated = result.data;
-    return next();
+    next();
   };
 }
 
-// ── Создаём приложение Express ──
+// ── Приложение ──
 const app = express();
-
 app.use(helmet());
-app.use(cors({
-  origin: process.env.CLIENT_URL ? [process.env.CLIENT_URL] : true,
-  credentials: true
-}));
+app.use(cors({ origin: process.env.CLIENT_URL ? [process.env.CLIENT_URL] : true, credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan('tiny'));
 
-app.get('/api/health', (req, res) => {
-  res.json({ success: true, service: 'tochka-sborki-api' });
-});
+app.get('/api/health', (req, res) => res.json({ success: true, service: 'tochka-sborki-api' }));
 
 app.post('/api/contact', validate(contactSchema), async (req, res, next) => {
   try {
-    const doc = await getPrisma().contact.create({ data: req.validated });
-
-    // Отправка письма (если настроена)
+    const doc = await prisma.contact.create({ data: req.validated });
     try {
-      const { sendMail } = await import('../server/mailer.js');
-      await sendMail({
-        subject: 'Новая заявка с сайта Точка Сборки',
+      await getTransporter().sendMail({
+        from: process.env.EMAIL_FROM,
+        to: process.env.EMAIL_TO,
         replyTo: req.validated.email,
+        subject: 'Новая заявка с сайта Точка Сборки',
         text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
       });
-    } catch (mailError) {
-      console.error('Ошибка отправки письма:', mailError.message);
-    }
-
+    } catch (e) { console.error('Ошибка отправки письма:', e.message); }
     res.status(201).json({ success: true, message: 'Сообщение отправлено. Мы свяжемся с вами.', id: doc.id });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 app.post('/api/subscribe', validate(subscribeSchema), async (req, res, next) => {
   try {
-    const doc = await getPrisma().subscriber.upsert({
-      where: { email: req.validated.email },
-      update: {},
-      create: req.validated
-    });
-
+    const doc = await prisma.subscriber.upsert({ where: { email: req.validated.email }, update: {}, create: req.validated });
     try {
-      const { sendMail } = await import('../server/mailer.js');
-      await sendMail({
-        subject: 'Новая подписка на новости Точка Сборки',
+      await getTransporter().sendMail({
+        from: process.env.EMAIL_FROM,
+        to: process.env.EMAIL_TO,
         replyTo: req.validated.email,
+        subject: 'Новая подписка на новости Точка Сборки',
         text: `Email: ${req.validated.email}`
       });
-    } catch (mailError) {
-      console.error('Ошибка отправки письма:', mailError.message);
-    }
-
+    } catch (e) { console.error('Ошибка отправки письма:', e.message); }
     res.status(201).json({ success: true, message: 'Подписка оформлена.', id: doc.id });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 app.post('/api/submit-project', validate(projectSchema), async (req, res, next) => {
   try {
-    const doc = await getPrisma().projectSubmission.create({ data: req.validated });
-
+    const doc = await prisma.projectSubmission.create({ data: req.validated });
     try {
-      const { sendMail } = await import('../server/mailer.js');
-      await sendMail({
-        subject: 'Новое ТЗ от компании для Точки Сборки',
+      await getTransporter().sendMail({
+        from: process.env.EMAIL_FROM,
+        to: process.env.EMAIL_TO,
         replyTo: req.validated.email,
+        subject: 'Новое ТЗ от компании для Точки Сборки',
         text: [
           `Компания: ${req.validated.companyName}`,
           `Контакт: ${req.validated.contactName}`,
@@ -158,23 +132,16 @@ app.post('/api/submit-project', validate(projectSchema), async (req, res, next) 
           req.validated.description
         ].join('\n')
       });
-    } catch (mailError) {
-      console.error('Ошибка отправки письма:', mailError.message);
-    }
-
+    } catch (e) { console.error('Ошибка отправки письма:', e.message); }
     res.status(201).json({ success: true, message: 'Техническое задание отправлено. Мы свяжемся с вами.', id: doc.id });
-  } catch (error) {
-    next(error);
-  }
+  } catch (error) { next(error); }
 });
 
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);
   console.error(error);
-  if (error.code === 'P2002') {
-    return res.status(400).json({ success: false, error: 'Такая запись уже существует' });
-  }
-  return res.status(400).json({ success: false, error: 'Внутренняя ошибка сервера' });
+  if (error.code === 'P2002') return res.status(400).json({ success: false, error: 'Такая запись уже существует' });
+  res.status(400).json({ success: false, error: 'Внутренняя ошибка сервера' });
 });
 
 export default app;
