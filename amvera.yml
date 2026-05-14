@@ -3,9 +3,11 @@ meta:
   toolchain:
     name: npm
     version: 20
-
 build:
-  additionalCommands: npm run build
-
+  additionalCommands:
+    - npm run build
+    - npx prisma generate
 run:
   scriptName: server/index.js
+env:
+  PORT: "3001"
