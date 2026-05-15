@@ -26,7 +26,7 @@ async function main() {
   await prisma.$connect();
   console.log('✅ Подключение к базе данных установлено');
 
-  const port = Number(process.env.PORT || 3001);
+  const port = Number(process.env.PORT || 80);          // <-- порт 80 (codex)
   const app = createApp();
   app.locals.prisma = prisma;
   app.locals.pgPool = pool;

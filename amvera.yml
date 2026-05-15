@@ -7,3 +7,7 @@ build:
   additionalCommands: npx prisma generate && npm run build
 run:
   scriptName: start-amvera.cjs
+service:
+  port: 80
+  healthcheck:
+    path: /api/health
