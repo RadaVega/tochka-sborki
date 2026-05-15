@@ -22,8 +22,10 @@ import {
   TechItem
 } from '../components/UI';
 
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+
 const api = async (url, payload) => {
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE}${url}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
