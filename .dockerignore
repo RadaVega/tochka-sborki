@@ -1,2 +1,24 @@
-.git
+# Dependencies and package manager caches
 node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store
+
+# Git and local tooling
+.git
+.github
+.vscode
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# Build/cache artifacts generated outside Amvera
+dist
+.vercel
+.vite
+coverage
+.DS_Store
