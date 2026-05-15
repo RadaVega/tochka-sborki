@@ -2,11 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'node:path';
 import { z } from 'zod';
 import { prisma as localPrisma } from './db.js';
 import { sendMail } from './mailer.js';
 
 const getPrisma = (req) => req.app?.locals?.prisma || localPrisma;
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : true;
 
 const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
 const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
@@ -66,7 +70,7 @@ export function createApp() {
 
   app.use(helmet());
   app.use(cors({
-    origin: process.env.CLIENT_URL ? [process.env.CLIENT_URL] : true,
+    origin: allowedOrigins,
     credentials: true
   }));
   app.use(express.json({ limit: '1mb' }));
@@ -150,6 +154,14 @@ export function createApp() {
       next(error);
     }
   });
+
+  if (process.env.NODE_ENV === 'production') {
+    const distPath = path.resolve('dist');
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile('index.html', { root: distPath });
+    });
+  }
 
   app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);
