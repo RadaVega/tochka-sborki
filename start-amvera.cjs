@@ -31,7 +31,7 @@ async function main() {
   app.locals.prisma = prisma;
   app.locals.pgPool = pool;
 
-  const server = app.listen(port, () => {
+  const server = app.listen(port, '0.0.0.0', () => {
     console.log(`API запущен на порту ${port}`);
     // Явно сообщаем Amvera, что приложение готово
     if (process.send) {
