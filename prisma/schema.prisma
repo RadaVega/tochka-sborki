@@ -23,17 +23,3 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 }
-
-model ProjectSubmission {
-  id          Int      @id @default(autoincrement())
-  companyName String
-  contactName String
-  email       String
-  phone       String?
-  stack       String[]
-  description String
-  deadline    String
-  budget      String
-  fileUrl     String?
-  createdAt   DateTime @default(now())
-}
