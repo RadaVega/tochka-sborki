@@ -1,3 +1,4 @@
+// start-amvera.cjs — точка входа для Amvera (CommonJS)
 require('dotenv/config');
 
 async function main() {
@@ -28,7 +29,7 @@ async function main() {
   });
 }
 
-main().catch((error) => {
-  console.error('❌ Не удалось запустить Amvera API:', error);
+main().catch((err) => {
+  console.error('Fatal startup error:', err);
   process.exit(1);
 });
