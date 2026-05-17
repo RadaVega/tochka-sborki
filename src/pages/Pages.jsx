@@ -22,6 +22,7 @@ import {
   TechItem
 } from '../components/UI';
 export { CompanyPathPage } from './CompanyPathPage';
+export { PrivacyPage } from './PrivacyPage';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
