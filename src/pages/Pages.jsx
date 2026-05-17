@@ -21,9 +21,12 @@ import {
   TagRow,
   TechItem
 } from '../components/UI';
+export { CompanyPathPage } from './CompanyPathPage';
+
+const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
 const api = async (url, payload) => {
-  const response = await fetch(url, {
+  const response = await fetch(`${API_BASE}${url}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload)
@@ -249,10 +252,6 @@ export function CommunicationsPage() {
 
 export function StudentPathPage() {
   return <ProcessPage page={pages.studentPath} form={null} />;
-}
-
-export function CompanyPathPage() {
-  return <ProcessPage page={pages.companyPath} form={<InlineForm type="project" />} />;
 }
 
 function ProcessPage({ page, form }) {
