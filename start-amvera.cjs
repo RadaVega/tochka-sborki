@@ -1,3 +1,4 @@
+// start-amvera.cjs — точка входа для Amvera (CommonJS)
 require('dotenv/config');
 
 async function main() {
