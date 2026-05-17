@@ -31,13 +31,16 @@ function getTransporter() {
 // ── Валидация ──
 const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
 const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
+const consent = z.boolean({ required_error: 'Необходимо согласие на обработку ПДн' })
+  .refine((value) => value === true, 'Необходимо согласие на обработку ПДн');
 
 const contactSchema = z.object({
   name: requiredString('Имя').min(2).max(120),
   email,
-  message: requiredString('Сообщение').min(10).max(4000)
+  message: requiredString('Сообщение').min(10).max(4000),
+  consent
 });
-const subscribeSchema = z.object({ email });
+const subscribeSchema = z.object({ email, consent });
 const projectSchema = z.object({
   companyName: requiredString('Название компании').min(2).max(160),
   contactName: requiredString('Контактное лицо').min(2).max(160),
@@ -51,7 +54,8 @@ const projectSchema = z.object({
   deadline: requiredString('Дедлайн')
     .refine(v => !isNaN(Date.parse(v)), 'Введите корректный дедлайн')
     .transform(v => new Date(v).toISOString().slice(0, 10)),
-  fileUrl: z.string().trim().url().optional().or(z.literal(''))
+  fileUrl: z.string().trim().url().optional().or(z.literal('')),
+  consent
 });
 
 function validate(schema) {
@@ -96,7 +100,7 @@ app.post('/api/contact', validate(contactSchema), async (req, res, next) => {
 
 app.post('/api/subscribe', validate(subscribeSchema), async (req, res, next) => {
   try {
-    const doc = await prisma.subscriber.upsert({ where: { email: req.validated.email }, update: {}, create: req.validated });
+    const doc = await prisma.subscriber.upsert({ where: { email: req.validated.email }, update: { consent: req.validated.consent }, create: req.validated });
     try {
       await getTransporter().sendMail({
         from: process.env.EMAIL_FROM,
