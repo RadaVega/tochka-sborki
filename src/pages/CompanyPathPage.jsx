@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Badge, Card, Checklist, PageShell, Reveal, TagRow } from '../components/UI';
 import { Logo } from '../components/Logo';
-import { ConsentCheckbox } from '../components/ConsentCheckbox';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -291,7 +290,6 @@ function ProjectForm() {
           <textarea rows="5" placeholder="Цель, пользователи, интеграции, ограничения, критерии готовности" {...register('description', { required: 'Опишите проект', minLength: { value: 20, message: 'Минимум 20 символов' } })} />
           {errors.description && <small className="form-error">{errors.description.message}</small>}
         </label>
-        <ConsentCheckbox register={register} error={errors.consent} />
         <button className="primary-button" type="submit" disabled={isSubmitting}>{isSubmitting ? '⏳ Отправляем...' : 'Отправить техническое задание'}</button>
         {success && <p className="form-success">{success}</p>}
         {serverError && <p className="form-error form-message">{serverError}</p>}
