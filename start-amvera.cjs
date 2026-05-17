@@ -29,7 +29,7 @@ async function main() {
   });
 }
 
-main().catch((err) => {
-  console.error('Fatal startup error:', err);
+main().catch((error) => {
+  console.error('❌ Не удалось запустить Amvera API:', error);
   process.exit(1);
 });

@@ -21,6 +21,7 @@ import {
   TagRow,
   TechItem
 } from '../components/UI';
+export { CompanyPathPage } from './CompanyPathPage';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -251,10 +252,6 @@ export function CommunicationsPage() {
 
 export function StudentPathPage() {
   return <ProcessPage page={pages.studentPath} form={null} />;
-}
-
-export function CompanyPathPage() {
-  return <ProcessPage page={pages.companyPath} form={<InlineForm type="project" />} />;
 }
 
 function ProcessPage({ page, form }) {
