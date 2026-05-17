@@ -15,12 +15,14 @@ model Contact {
   name      String
   email     String
   message   String
+  consent   Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
 model Subscriber {
   id        Int      @id @default(autoincrement())
   email     String   @unique
+  consent   Boolean  @default(false)
   createdAt DateTime @default(now())
 }
 
@@ -35,5 +37,6 @@ model ProjectSubmission {
   deadline    String
   budget      String
   fileUrl     String?
+  consent     Boolean  @default(false)
   createdAt   DateTime @default(now())
 }

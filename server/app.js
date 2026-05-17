@@ -14,15 +14,19 @@ const allowedOrigins = process.env.CLIENT_URL
 
 const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
 const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
+const consent = z.boolean({ required_error: 'Необходимо согласие на обработку ПДн' })
+  .refine((value) => value === true, 'Необходимо согласие на обработку ПДн');
 
 const contactSchema = z.object({
   name: requiredString('Имя').min(2, 'Имя должно быть не короче 2 символов').max(120, 'Имя слишком длинное'),
   email,
-  message: requiredString('Сообщение').min(10, 'Сообщение должно быть не короче 10 символов').max(4000, 'Сообщение слишком длинное')
+  message: requiredString('Сообщение').min(10, 'Сообщение должно быть не короче 10 символов').max(4000, 'Сообщение слишком длинное'),
+  consent
 });
 
 const subscribeSchema = z.object({
-  email
+  email,
+  consent
 });
 
 const stackField = z.union([
@@ -47,7 +51,8 @@ const projectSchema = z.object({
   deadline: requiredString('Дедлайн')
     .refine((value) => !Number.isNaN(Date.parse(value)), 'Введите корректный дедлайн')
     .transform((value) => new Date(value).toISOString().slice(0, 10)),
-  fileUrl: z.string().trim().url('Введите корректную ссылку на файл').optional().or(z.literal(''))
+  fileUrl: z.string().trim().url('Введите корректную ссылку на файл').optional().or(z.literal('')),
+  consent
 });
 
 function validate(schema) {
@@ -104,7 +109,7 @@ export function createApp() {
     try {
       const doc = await getPrisma(req).subscriber.upsert({
         where: { email: req.validated.email },
-        update: {},
+        update: { consent: req.validated.consent },
         create: req.validated
       });
 
