@@ -12,6 +12,7 @@ import {
   MentorsPage,
   MoneyFlowPage,
   PartnersPage,
+  PrivacyPage,
   ProblemPage,
   SolutionPage,
   StudentPathPage,
@@ -39,7 +40,8 @@ const router = createBrowserRouter([
       { path: 'mentors', element: <MentorsPage /> },
       { path: 'transformation', element: <TransformationPage /> },
       { path: 'goals', element: <GoalsPage /> },
-      { path: 'contacts', element: <ContactsPage /> }
+      { path: 'contacts', element: <ContactsPage /> },
+      { path: 'privacy', element: <PrivacyPage /> }
     ]
   }
 ]);

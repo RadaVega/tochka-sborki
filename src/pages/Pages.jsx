@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { ConsentCheckbox } from '../components/ConsentCheckbox';
 import { pages } from '../data/content';
 import { Logo } from '../components/Logo';
 import { HermesDiagram, MoneyFlowDiagram, OrbitalDiagram } from '../components/Diagrams';
@@ -21,6 +22,8 @@ import {
   TagRow,
   TechItem
 } from '../components/UI';
+export { CompanyPathPage } from './CompanyPathPage';
+export { PrivacyPage } from './PrivacyPage';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -103,6 +106,7 @@ function InlineForm({ type }) {
             {errors[field.name] && <small className="form-error">{errors[field.name].message}</small>}
           </label>
         ))}
+        <ConsentCheckbox register={register} error={errors.consent} />
         <button className="primary-button" type="submit" disabled={isSubmitting}>
           {isSubmitting ? 'Отправляем...' : 'Отправить'}
         </button>
@@ -251,10 +255,6 @@ export function CommunicationsPage() {
 
 export function StudentPathPage() {
   return <ProcessPage page={pages.studentPath} form={null} />;
-}
-
-export function CompanyPathPage() {
-  return <ProcessPage page={pages.companyPath} form={<InlineForm type="project" />} />;
 }
 
 function ProcessPage({ page, form }) {
