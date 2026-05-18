@@ -2,11 +2,9 @@ meta:
   environment: node
   toolchain:
     name: npm
-    version: 20
+    version: "20"
 build:
-  additionalCommands:
-    - npx prisma generate
-    - npm run build
+  additionalCommands: "npx prisma generate && npm run build"
 run:
   scriptName: start-amvera.cjs
 service:
