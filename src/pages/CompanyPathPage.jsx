@@ -330,7 +330,7 @@ export function CompanyPathPage() {
             <Reveal>
               <Logo />
               <Badge accent="purple">Для компаний-заказчиков</Badge>
-              <h1 className="company-hero-title">Решим ваши IT-задачи<br />за <em>1 спринт</em>.<<br /><span>Фикс-прайс.</span></h1>
+              <h1 className="company-hero-title">Решим ваши IT-задачи<br />за <em>1 спринт</em>.<br /><span>Фикс-прайс.</span></h1>
               <p className="company-hero-sub"><strong>Готовая IT-команда</strong> из Школы Цифровых Технологий Сбера — собранная под ваш стек, без онбординга, с AI-сопровождением каждого шага. Вы платите только за результат.</p>
             </Reveal>
             <Reveal><MetricPills /></Reveal>
