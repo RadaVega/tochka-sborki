@@ -1,22 +1,3 @@
-/**
- * ContactsPage — полный редизайн страницы Контакты
- *
- * УСТАНОВКА:
- *   1. Замените export function ContactsPage() в src/pages/Pages.jsx
- *      на: export { ContactsPage } from './ContactsPage';
- *   2. Создайте src/pages/ContactsPage.jsx с этим содержимым
- *   3. Добавьте CSS из комментария внизу в src/styles/index.css
- *
- * ПРОБЛЕМА ОРИГИНАЛА:
- *   contacts-grid имел align-items: center, что заставляло правую колонку
- *   «центрироваться» относительно высоты левой — при разной длине контента
- *   колонки выглядели несбалансированно и сдвинутыми.
- *
- * РЕШЕНИЕ:
- *   Полностью новая структура — hero-banner, stats-strip, затем 3 зоны:
- *   каналы связи | большой визуал | форма обратной связи
- */
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
