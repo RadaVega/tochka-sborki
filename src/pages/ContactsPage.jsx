@@ -109,14 +109,23 @@ const VALUE_BLOCKS = [
 function SubscribeForm() {
   const [ok, setOk] = useState('');
   const [err, setErr] = useState('');
+  const [formState, setFormState] = useState({ consent: false });
+  const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
 
   const onSubmit = async ({ email }) => {
-    setOk(''); setErr('');
+    setOk(''); setErr(''); setConsentError('');
+
+    if (formState.consent !== true) {
+      setConsentError('Необходимо согласие на обработку персональных данных');
+      return;
+    }
+
     try {
-      const res = await api('/api/subscribe', { email });
+      const res = await api('/api/subscribe', { email, consent: formState.consent });
       setOk(res.message || '✅ Вы подписаны на новости Точки Сборки!');
       reset();
+      setFormState({ consent: false });
     } catch (e) {
       setErr(e.message || 'Не удалось подписаться. Попробуйте позже.');
     }
@@ -134,13 +143,23 @@ function SubscribeForm() {
             pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Введите корректный email' },
           })}
         />
-        <button className="primary-button" type="submit" disabled={isSubmitting}>
+        <button className="primary-button" type="submit" disabled={isSubmitting || formState.consent !== true}>
           {isSubmitting ? '⏳' : 'Подписаться'}
         </button>
       </div>
       {errors.email && <small className="form-error">{errors.email.message}</small>}
       {err && <small className="form-error">{err}</small>}
       {ok && <small className="form-success">{ok}</small>}
+
+      <ConsentCheckbox
+        checked={formState.consent}
+        onChange={(event) => {
+          const consent = event.target.checked;
+          setFormState({ consent });
+          if (consent) setConsentError('');
+        }}
+        error={consentError}
+      />
     </form>
   );
 }
