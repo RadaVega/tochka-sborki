@@ -2,23 +2,31 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import path from 'node:path';
 import { z } from 'zod';
 import { prisma as localPrisma } from './db.js';
 import { sendMail } from './mailer.js';
 
 const getPrisma = (req) => req.app?.locals?.prisma || localPrisma;
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : true;
 
 const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
 const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
+const consent = z.boolean({ required_error: 'Необходимо согласие на обработку ПДн' })
+  .refine((value) => value === true, 'Необходимо согласие на обработку ПДн');
 
 const contactSchema = z.object({
   name: requiredString('Имя').min(2, 'Имя должно быть не короче 2 символов').max(120, 'Имя слишком длинное'),
   email,
-  message: requiredString('Сообщение').min(10, 'Сообщение должно быть не короче 10 символов').max(4000, 'Сообщение слишком длинное')
+  message: requiredString('Сообщение').min(10, 'Сообщение должно быть не короче 10 символов').max(4000, 'Сообщение слишком длинное'),
+  consent
 });
 
 const subscribeSchema = z.object({
-  email
+  email,
+  consent
 });
 
 const stackField = z.union([
@@ -43,8 +51,17 @@ const projectSchema = z.object({
   deadline: requiredString('Дедлайн')
     .refine((value) => !Number.isNaN(Date.parse(value)), 'Введите корректный дедлайн')
     .transform((value) => new Date(value).toISOString().slice(0, 10)),
-  fileUrl: z.string().trim().url('Введите корректную ссылку на файл').optional().or(z.literal(''))
+  fileUrl: z.string().trim().url('Введите корректную ссылку на файл').optional().or(z.literal('')),
+  consent
 });
+
+function requireConsent(req, res, next) {
+  const { consent } = req.body;
+  if (consent !== true) {
+    return res.status(400).json({ message: 'Требуется согласие на обработку персональных данных' });
+  }
+  return next();
+}
 
 function validate(schema) {
   return (req, res, next) => {
@@ -66,7 +83,7 @@ export function createApp() {
 
   app.use(helmet());
   app.use(cors({
-    origin: process.env.CLIENT_URL ? [process.env.CLIENT_URL] : true,
+    origin: allowedOrigins,
     credentials: true
   }));
   app.use(express.json({ limit: '1mb' }));
@@ -76,9 +93,9 @@ export function createApp() {
     res.json({ success: true, service: 'tochka-sborki-api' });
   });
 
-  app.post('/api/contact', validate(contactSchema), async (req, res, next) => {
+  app.post('/api/contact', requireConsent, validate(contactSchema), async (req, res, next) => {
     try {
-      const doc = await getPrisma(req).contact.create({ data: req.validated });
+      const doc = await getPrisma(req).contact.create({ data: { ...req.validated, consent: Boolean(req.validated.consent) } });
 
       try {
         await sendMail({
@@ -96,12 +113,12 @@ export function createApp() {
     }
   });
 
-  app.post('/api/subscribe', validate(subscribeSchema), async (req, res, next) => {
+  app.post('/api/subscribe', requireConsent, validate(subscribeSchema), async (req, res, next) => {
     try {
       const doc = await getPrisma(req).subscriber.upsert({
         where: { email: req.validated.email },
-        update: {},
-        create: req.validated
+        update: { consent: Boolean(req.validated.consent) },
+        create: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
 
       try {
@@ -120,9 +137,9 @@ export function createApp() {
     }
   });
 
-  app.post('/api/submit-project', validate(projectSchema), async (req, res, next) => {
+  app.post('/api/submit-project', requireConsent, validate(projectSchema), async (req, res, next) => {
     try {
-      const doc = await getPrisma(req).projectSubmission.create({ data: req.validated });
+      const doc = await getPrisma(req).projectSubmission.create({ data: { ...req.validated, consent: Boolean(req.validated.consent) } });
 
       try {
         await sendMail({
@@ -150,6 +167,14 @@ export function createApp() {
       next(error);
     }
   });
+
+  if (process.env.NODE_ENV === 'production') {
+    const distPath = path.resolve('dist');
+    app.use(express.static(distPath));
+    app.get('*', (req, res) => {
+      res.sendFile('index.html', { root: distPath });
+    });
+  }
 
   app.use((error, req, res, next) => {
     if (res.headersSent) return next(error);

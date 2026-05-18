@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Logo } from './Logo';
 import { navItems } from '../data/content';
 
@@ -9,6 +9,31 @@ const communityLinks = [
   { label: 'MAX-чат', href: 'https://web.max.ru/-74708826221932', icon: 'MX' },
   { label: 'Telegram', href: 'https://t.me/+6re5Frc7sM0yNWIx', icon: 'TG' }
 ];
+
+function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setVisible(localStorage.getItem('cookieConsent') !== 'true');
+  }, []);
+
+  const acceptCookies = () => {
+    localStorage.setItem('cookieConsent', 'true');
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="cookie-banner" role="region" aria-label="Уведомление об использовании cookies">
+      <p>Мы используем cookies для улучшения работы сайта и аналитики. Продолжая использовать сайт, вы соглашаетесь с нашей Политикой конфиденциальности.</p>
+      <div className="cookie-actions">
+        <Link to="/privacy" className="outline-button">Подробнее</Link>
+        <button className="primary-button" type="button" onClick={acceptCookies}>Принять</button>
+      </div>
+    </div>
+  );
+}
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -47,7 +72,10 @@ export function Layout() {
       </main>
       <footer className="site-footer">
         <div className="footer-shell">
-          <Logo compact />
+          <div className="footer-brand-block">
+            <Logo compact />
+            <p>© 2026 Точка Сборки · Школа Цифровых Технологий Сбера · <Link to="/privacy">Политика конфиденциальности</Link></p>
+          </div>
           <div className="community-block" aria-label="Каналы сообщества">
             <strong>Присоединяйтесь к нам</strong>
             <div className="community-links">
@@ -62,6 +90,7 @@ export function Layout() {
           </div>
         </div>
       </footer>
+      <CookieBanner />
     </>
   );
 }

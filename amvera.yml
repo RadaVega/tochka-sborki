@@ -6,7 +6,6 @@ meta:
 build:
   additionalCommands:
     - npx prisma generate
+    - npm run build
 run:
   scriptName: start-amvera.cjs
-env:
-  PORT: "3001"
