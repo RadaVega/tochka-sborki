@@ -27,8 +27,6 @@ export { PrivacyPage } from './PrivacyPage';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
-
 const api = async (url, payload) => {
   const response = await fetch(`${API_BASE}${url}`, {
     method: 'POST',
