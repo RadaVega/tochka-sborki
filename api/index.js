@@ -108,7 +108,11 @@ app.post('/api/contact', requireConsent, validate(contactSchema), async (req, re
 
 app.post('/api/subscribe', requireConsent, validate(subscribeSchema), async (req, res, next) => {
   try {
-    const doc = await prisma.subscriber.upsert({ where: { email: req.validated.email }, update: { consent: Boolean(req.validated.consent) }, create: { ...req.validated, consent: Boolean(req.validated.consent) } });
+    const doc = await prisma.subscriber.upsert({
+      where: { email: req.validated.email },
+      update: { consent: Boolean(req.validated.consent) },
+      create: { ...req.validated, consent: Boolean(req.validated.consent) }
+    });
     try {
       await getTransporter().sendMail({
         from: process.env.EMAIL_FROM,
