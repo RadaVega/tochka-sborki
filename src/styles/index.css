@@ -675,6 +675,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 .form-card .consent-field input,
 .company-form-card .consent-field input,
+.ct-form-card .consent-field input,
 .consent-field input {
   width: 18px;
   height: 18px;

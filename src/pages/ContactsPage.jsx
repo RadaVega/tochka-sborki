@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
+import { ConsentCheckbox } from '../components/ConsentCheckbox';
 import {
   Badge,
   Card,
@@ -148,14 +149,23 @@ function SubscribeForm() {
 function ContactForm() {
   const [ok, setOk] = useState('');
   const [err, setErr] = useState('');
+  const [formState, setFormState] = useState({ consent: false });
+  const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
 
   const onSubmit = async (values) => {
-    setOk(''); setErr('');
+    setOk(''); setErr(''); setConsentError('');
+
+    if (formState.consent !== true) {
+      setConsentError('Необходимо согласие на обработку персональных данных');
+      return;
+    }
+
     try {
-      const res = await api('/api/contact', values);
+      const res = await api('/api/contact', { ...values, consent: formState.consent });
       setOk(res.message || '✅ Сообщение отправлено! Ответим в течение рабочего дня.');
       reset();
+      setFormState({ consent: false });
     } catch (e) {
       setErr(e.message);
     }
@@ -218,7 +228,17 @@ function ContactForm() {
           {errors.message && <small className="form-error">{errors.message.message}</small>}
         </label>
 
-        <button className="primary-button" type="submit" disabled={isSubmitting} style={{ width: '100%' }}>
+        <ConsentCheckbox
+          checked={formState.consent}
+          onChange={(event) => {
+            const consent = event.target.checked;
+            setFormState({ consent });
+            if (consent) setConsentError('');
+          }}
+          error={consentError}
+        />
+
+        <button className="primary-button" type="submit" disabled={isSubmitting || formState.consent !== true} style={{ width: '100%' }}>
           {isSubmitting ? '⏳ Отправляем...' : '📨 Отправить сообщение'}
         </button>
 
