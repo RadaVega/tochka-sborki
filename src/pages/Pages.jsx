@@ -24,6 +24,7 @@ import {
 } from '../components/UI';
 export { CompanyPathPage } from './CompanyPathPage';
 export { PrivacyPage } from './PrivacyPage';
+export { ContactsPage } from './ContactsPage';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -125,7 +126,7 @@ export function HeroPage() {
         <Reveal className="hero-copy">
           <Logo />
           <Badge>{page.tag}</Badge>
-          <h1>{page.title[0]}<br /><span>{page.title[1]}</span><br /><em>{page.title[2]}</em></h1>
+          <h1>{page.title[0]}<<br /><span>{page.title[1]}</span><br /><em>{page.title[2]}</em></h1>
           <div className="hero-line" />
           <div className="metric-grid three">
             {page.metrics.map((metric) => <MetricBox key={metric.value} {...metric} />)}
@@ -343,30 +344,6 @@ export function GoalsPage() {
       <div className="split">
         <Reveal><h2 className="section-label">🗓 Дорожная карта — 3 фазы</h2>{page.phases.map((phase, index) => <Card key={phase.title} accent={phase.accent}><h2>{index + 1}. {phase.title}</h2><strong>{phase.meta}</strong><Checklist items={phase.items} /></Card>)}</Reveal>
         <Reveal><h2 className="section-label">📊 Ключевые метрики успеха</h2><div className="metric-grid two">{page.metrics.map((metric) => <MetricBox key={metric.value} {...metric} />)}</div><Card>{page.progress.map((item) => <ProgressBar key={item.label} item={item} />)}</Card></Reveal>
-      </div>
-    </PageShell>
-  );
-}
-
-export function ContactsPage() {
-  const page = pages.contacts;
-  return (
-    <PageShell page={page} className="contacts-page">
-      <div className="contacts-grid">
-        <Reveal>
-          <Logo />
-          <Badge>{page.tag}</Badge>
-          <h1>{page.title}</h1>
-          <p>{page.subtitle}</p>
-          <div className="grid two">{page.blocks.map((block) => <Card key={block.title}><h2>{block.title}</h2><Checklist items={block.items} /></Card>)}</div>
-          <InlineForm type="subscribe" />
-        </Reveal>
-        <Reveal>
-          <h2 className="section-label">Свяжитесь для запуска пилота</h2>
-          {page.contacts.map((item) => <ContactBlock key={item.label} item={item} />)}
-          <Card><h2>Коротко о нас</h2><div className="metric-grid two">{page.stats.map((stat) => <MetricBox key={stat.label} {...stat} />)}</div></Card>
-          <InlineForm type="contact" />
-        </Reveal>
       </div>
     </PageShell>
   );
