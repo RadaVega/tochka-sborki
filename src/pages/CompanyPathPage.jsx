@@ -403,7 +403,7 @@ export function CompanyPathPage() {
           <p className="subtitle">Цена зависит от объёма, не от часов. Итоговая сумма известна до старта.</p>
         </Reveal>
         <div className="grid three company-pricing-grid">
-          {PLANS.map((plan) => <Reveal key={plan.tier}><Card accent={plan.accent} className={`pricing-card ${plan.featured ? 'pricing-featured' : ''}`}>{plan.featured && <div className="pricing-badge">Популярный</div>}<<div className="pricing-tier">{plan.tier}</div><div className={`pricing-price accent-${plan.accent}`}>{plan.price}</div><div className="pricing-range">{plan.unit}</div><Checklist items={plan.items} /><a href="#submit" className="primary-button pricing-cta">Оставить заявку →</a></Card></Reveal>)}
+          {PLANS.map((plan) => <Reveal key={plan.tier}><Card accent={plan.accent} className={`pricing-card ${plan.featured ? 'pricing-featured' : ''}`}>{plan.featured && <div className="pricing-badge">Популярный</div>}<div className="pricing-tier">{plan.tier}</div><div className={`pricing-price accent-${plan.accent}`}>{plan.price}</div><div className="pricing-range">{plan.unit}</div><Checklist items={plan.items} /><a href="#submit" className="primary-button pricing-cta">Оставить заявку →</a></Card></Reveal>)}
         </div>
         <Reveal><div className="escrow-highlight"><span>🛡️</span><div><strong>Эскроу-схема защищает вас:</strong> 50% аванс замораживается при подписании и разблокируется только после вашего подписания акта сдачи. Оставшиеся 50% — после финального демо.</div></div></Reveal>
       </PageShell>
@@ -427,7 +427,7 @@ export function CompanyPathPage() {
         </Reveal>
         <div className="company-stack-grid">
           {STACK_GROUPS.map((group) => <Reveal key={group.title}><Card accent="purple" className="stack-card"><h3>{group.title}</h3><TagRow tags={group.tools} /></Card></Reveal>)}
-          <Reveal><Card accent="cyan" className="hermes-card"><h3>HERMES ORCHESTRATOR</h3><p>LangChain · Apache Airflow · Яндекс DataSphere</p><TagRow tags={['INTAKE: YandexGPT', 'MATCHING: DataSphere', 'MONITOR: Kaiten API', 'QUALITY: GigaChat Pro']} /><div className="hermes-metrics"><strong>14→2<span>дня подбора</span></strong><strong>-60%<<span>OPEX</span></strong><strong>80%<<span>рутины → AI</span></strong></div></Card></Reveal>
+          <Reveal><Card accent="cyan" className="hermes-card"><h3>HERMES ORCHESTRATOR</h3><p>LangChain · Apache Airflow · Яндекс DataSphere</p><TagRow tags={['INTAKE: YandexGPT', 'MATCHING: DataSphere', 'MONITOR: Kaiten API', 'QUALITY: GigaChat Pro']} /><div className="hermes-metrics"><strong>14→2<span>дня подбора</span></strong><strong>-60%<span>OPEX</span></strong><strong>80%<span>рутины → AI</span></strong></div></Card></Reveal>
         </div>
       </PageShell>
 
