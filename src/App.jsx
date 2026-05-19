@@ -1,33 +1,39 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+/**
+ * src/App.jsx — eager imports (no lazy loading) for diagnosis
+ */
 
-import { Layout } from './components/Layout';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+import { Layout }        from './components/Layout';
+import { PageTracker }   from './components/PageTracker';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { PageTracker } from './components/PageTracker';
+
+// Eager imports — no lazy loading
 import {
-  AiArchitecturePage,
-  GoalsPage,
   HeroPage,
-  HowItWorksPage,
-  PartnersPage,
-  TechStackPage,
-  StudentPathPage,
   CompanyPathPage,
+  StudentPathPage,
+  HowItWorksPage,
+  AiArchitecturePage,
+  TechStackPage,
+  PartnersPage,
+  GoalsPage,
 } from './pages/Pages';
 import { ContactsPage } from './pages/ContactsPage';
 
-function RoutedContent() {
+function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<HeroPage />} />
-      <Route path="/company-path" element={<CompanyPathPage />} />
-      <Route path="/student-path" element={<StudentPathPage />} />
-      <Route path="/how-it-works" element={<HowItWorksPage />} />
-      <Route path="/ai-architecture" element={<AiArchitecturePage />} />
-      <Route path="/russian-stack" element={<TechStackPage />} />
-      <Route path="/partners" element={<PartnersPage />} />
-      <Route path="/goals" element={<GoalsPage />} />
-      <Route path="/contacts" element={<ContactsPage />} />
-      <Route path="*" element={<HeroPage />} />
+      <Route path="/"                element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
+      <Route path="/company-path"    element={<ErrorBoundary><CompanyPathPage /></ErrorBoundary>} />
+      <Route path="/student-path"    element={<ErrorBoundary><StudentPathPage /></ErrorBoundary>} />
+      <Route path="/how-it-works"    element={<ErrorBoundary><HowItWorksPage /></ErrorBoundary>} />
+      <Route path="/ai-architecture" element={<ErrorBoundary><AiArchitecturePage /></ErrorBoundary>} />
+      <Route path="/russian-stack"   element={<ErrorBoundary><TechStackPage /></ErrorBoundary>} />
+      <Route path="/partners"        element={<ErrorBoundary><PartnersPage /></ErrorBoundary>} />
+      <Route path="/goals"           element={<ErrorBoundary><GoalsPage /></ErrorBoundary>} />
+      <Route path="/contacts"        element={<ErrorBoundary><ContactsPage /></ErrorBoundary>} />
+      <Route path="*"               element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
     </Routes>
   );
 }
@@ -37,9 +43,7 @@ export default function App() {
     <Router>
       <PageTracker />
       <Layout>
-        <ErrorBoundary>
-          <RoutedContent />
-        </ErrorBoundary>
+        <AppRoutes />
       </Layout>
     </Router>
   );
