@@ -24,7 +24,7 @@ function anonymiseIp(raw) {
 
 // ── Request timing middleware ───────────────────────────────
 // Attaches start time so routes can log response duration.
-function analyticsMiddleware(req, res, next) {
+export function analyticsMiddleware(req, _res, next) {
   req._startAt = Date.now();
   next();
 }
@@ -43,7 +43,10 @@ function analyticsMiddleware(req, res, next) {
  * @param {string}  [opts.entityType] - 'ProjectSubmission' | 'Contact' | 'Subscriber'
  * @param {object}  [opts.meta]      - any extra data to store as JSON
  */
-async function logEvent(prisma, opts) {
+export async function logEvent(prisma, opts) {
+  // Skip if analytics disabled
+  if (process.env.ANALYTICS_ENABLED === 'false') return;
+
   try {
     const { req, eventType, eventName, success = true, error, entityId, entityType, meta } = opts;
 
@@ -62,7 +65,10 @@ async function logEvent(prisma, opts) {
         error:      error ? String(error).slice(0, 500) : null,
         entityId:   entityId || null,
         entityType: entityType || null,
-        meta:       meta || null,
+        meta:       {
+          ...(meta || {}),
+          durationMs: req?._startAt ? Date.now() - req._startAt : null
+        },
       },
     });
   } catch (loggingError) {
@@ -70,5 +76,3 @@ async function logEvent(prisma, opts) {
     console.warn('[analytics] logEvent failed silently:', loggingError?.message);
   }
 }
-
-export { analyticsMiddleware, logEvent };

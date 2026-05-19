@@ -22,22 +22,26 @@ import { useLocation } from 'react-router-dom';
 
 // ── Яндекс Метрика counter ID ──────────────────────
 // Replace XXXXXXXX with your real counter number from metrika.yandex.ru
-const METRIKA_ID = window.__YM_COUNTER_ID__ || 'XXXXXXXX';
+const getMetrikaId = () => (typeof window !== 'undefined' && Number.isFinite(window.__YM_COUNTER_ID__) ? window.__YM_COUNTER_ID__ : null);
 
 /**
  * Low-level ym() wrapper — safe to call even if script hasn't loaded yet.
  * Яндекс Метрика queues calls made before init completes.
  */
 function ym(action, ...args) {
-  if (typeof window !== 'undefined' && typeof window.ym === 'function') {
-    window.ym(METRIKA_ID, action, ...args);
-  } else {
-    // Queue for when metrika loads (it processes window.ym.a array on init)
-    window.ym = window.ym || function() {
-      (window.ym.a = window.ym.a || []).push(arguments);
-    };
-    window.ym(METRIKA_ID, action, ...args);
+  if (typeof window === 'undefined') return;
+  const metrikaId = getMetrikaId();
+  if (!metrikaId) return;
+
+  if (typeof window.ym === 'function') {
+    window.ym(metrikaId, action, ...args);
+    return;
   }
+
+  window.ym = window.ym || function() {
+    (window.ym.a = window.ym.a || []).push(arguments);
+  };
+  window.ym(metrikaId, action, ...args);
 }
 
 // ── Named Metrika goal constants ───────────────────
