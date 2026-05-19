@@ -2,7 +2,7 @@
  * src/App.jsx — updated with:
  *   1. PageTracker (Яндекс Метрика auto page-hit on every route change)
  *   2. AnimatePresence for smooth page transitions
- *   3. React.lazy() code-splitting per route (reduces initial JS bundle)
+ *   3. React.lazy() code-splitting per route
  *   4. ErrorBoundary wrapping each lazy page
  */
 
@@ -10,22 +10,20 @@ import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 
-import { Layout }      from './components/Layout';
-import { PageTracker } from './components/PageTracker'; // ← NEW
-import { ErrorBoundary } from './components/ErrorBoundary'; // ← NEW (file below)
+import { Layout }        from './components/Layout';
+import { PageTracker }   from './components/PageTracker';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
-// ── Lazy-loaded pages (code-split per route) ───────
-// Each page only loads when the user navigates to it.
-const HomePage         = lazy(() => import('./pages/Pages').then(m => ({ default: m.HomePage })));
-const CompanyPathPage  = lazy(() => import('./pages/Pages').then(m => ({ default: m.CompanyPathPage })));
-const StudentPathPage  = lazy(() => import('./pages/Pages').then(m => ({ default: m.StudentPathPage })));
-const HowItWorksPage   = lazy(() => import('./pages/Pages').then(m => ({ default: m.HowItWorksPage })));
-const AIArchPage       = lazy(() => import('./pages/Pages').then(m => ({ default: m.AIArchPage })));
-const RussianStackPage = lazy(() => import('./pages/Pages').then(m => ({ default: m.RussianStackPage })));
-const PartnersPage     = lazy(() => import('./pages/Pages').then(m => ({ default: m.PartnersPage })));
-const GoalsPage        = lazy(() => import('./pages/Pages').then(m => ({ default: m.GoalsPage })));
-const ContactsPage     = lazy(() => import('./pages/ContactsPage').then(m => ({ default: m.ContactsPage })));
-const NotFoundPage     = lazy(() => import('./pages/Pages').then(m => ({ default: m.NotFoundPage })));
+// ── Lazy-loaded pages (names must match exports in pages/Pages.jsx) ──
+const HeroPage           = lazy(() => import('./pages/Pages').then(m => ({ default: m.HeroPage })));
+const CompanyPathPage    = lazy(() => import('./pages/Pages').then(m => ({ default: m.CompanyPathPage })));
+const StudentPathPage    = lazy(() => import('./pages/Pages').then(m => ({ default: m.StudentPathPage })));
+const HowItWorksPage     = lazy(() => import('./pages/Pages').then(m => ({ default: m.HowItWorksPage })));
+const AiArchitecturePage = lazy(() => import('./pages/Pages').then(m => ({ default: m.AiArchitecturePage })));
+const TechStackPage      = lazy(() => import('./pages/Pages').then(m => ({ default: m.TechStackPage })));
+const PartnersPage       = lazy(() => import('./pages/Pages').then(m => ({ default: m.PartnersPage })));
+const GoalsPage          = lazy(() => import('./pages/Pages').then(m => ({ default: m.GoalsPage })));
+const ContactsPage       = lazy(() => import('./pages/ContactsPage').then(m => ({ default: m.ContactsPage })));
 
 // ── Page transition variants ────────────────────────
 const pageVariants = {
@@ -73,16 +71,16 @@ function AnimatedRoutes() {
       >
         <Suspense fallback={<PageSkeleton />}>
           <Routes location={location}>
-            <Route path="/"                element={<ErrorBoundary><HomePage /></ErrorBoundary>} />
+            <Route path="/"                element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
             <Route path="/company-path"    element={<ErrorBoundary><CompanyPathPage /></ErrorBoundary>} />
             <Route path="/student-path"    element={<ErrorBoundary><StudentPathPage /></ErrorBoundary>} />
             <Route path="/how-it-works"    element={<ErrorBoundary><HowItWorksPage /></ErrorBoundary>} />
-            <Route path="/ai-architecture" element={<ErrorBoundary><AIArchPage /></ErrorBoundary>} />
-            <Route path="/russian-stack"   element={<ErrorBoundary><RussianStackPage /></ErrorBoundary>} />
+            <Route path="/ai-architecture" element={<ErrorBoundary><AiArchitecturePage /></ErrorBoundary>} />
+            <Route path="/russian-stack"   element={<ErrorBoundary><TechStackPage /></ErrorBoundary>} />
             <Route path="/partners"        element={<ErrorBoundary><PartnersPage /></ErrorBoundary>} />
             <Route path="/goals"           element={<ErrorBoundary><GoalsPage /></ErrorBoundary>} />
             <Route path="/contacts"        element={<ErrorBoundary><ContactsPage /></ErrorBoundary>} />
-            <Route path="*"               element={<ErrorBoundary><NotFoundPage /></ErrorBoundary>} />
+            <Route path="*"               element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
           </Routes>
         </Suspense>
       </motion.div>
