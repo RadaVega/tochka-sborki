@@ -20,14 +20,19 @@ export class ErrorBoundary extends Component {
 
   componentDidCatch(error, info) {
     // Log to Metrika as a custom event
-    if (typeof window !== 'undefined' && typeof window.ym === 'function') {
-      window.ym(window.__YM_COUNTER_ID__, 'params', {
-        event: 'js_error',
-        error: error?.message || 'unknown',
-        component: info?.componentStack?.split('\n')[1]?.trim() || 'unknown',
-        url: window.location.pathname,
-      });
+    try {
+      if (typeof window !== 'undefined' && typeof window.ym === 'function' && Number.isFinite(window.__YM_COUNTER_ID__)) {
+        window.ym(window.__YM_COUNTER_ID__, 'params', {
+          event: 'js_error',
+          error: error?.message || 'unknown',
+          component: info?.componentStack?.split('\n')[1]?.trim() || 'unknown',
+          url: window.location.pathname,
+        });
+      }
+    } catch {
+      // analytics must never crash boundary
     }
+
     console.error('[ErrorBoundary]', error, info);
   }
 

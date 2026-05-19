@@ -65,7 +65,10 @@ export async function logEvent(prisma, opts) {
         error:      error ? String(error).slice(0, 500) : null,
         entityId:   entityId || null,
         entityType: entityType || null,
-        meta:       meta || null,
+        meta:       {
+          ...(meta || {}),
+          durationMs: req?._startAt ? Date.now() - req._startAt : null
+        },
       },
     });
   } catch (loggingError) {

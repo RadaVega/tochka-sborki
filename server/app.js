@@ -10,6 +10,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'node:path';
 import { z } from 'zod';
+import { sendMail } from './mailer.js';
 import { analyticsMiddleware, logEvent } from './analytics.js';
 
 const allowedOrigins = process.env.CLIENT_URL
@@ -81,7 +82,6 @@ function validate(schema) {
 
 export function createApp(prisma) {
   const app = express();
-
   app.use(helmet());
   app.use(cors({ origin: allowedOrigins, credentials: true }));
   app.use(express.json({ limit: '1mb' }));
@@ -108,6 +108,13 @@ export function createApp(prisma) {
         entityId: doc.id,
         entityType: 'Contact'
       });
+      try {
+        await sendMail({
+          subject: 'Новая заявка с сайта Точка Сборки',
+          replyTo: req.validated.email,
+          text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
+        });
+      } catch {}
       res.status(201).json({
         success: true,
         message: 'Сообщение отправлено. Мы свяжемся с вами.',
@@ -142,6 +149,13 @@ export function createApp(prisma) {
         entityId: doc.id,
         entityType: 'Subscriber'
       });
+      try {
+        await sendMail({
+          subject: 'Новая подписка на новости Точка Сборки',
+          replyTo: req.validated.email,
+          text: `Email: ${req.validated.email}`
+        });
+      } catch {}
       res.status(201).json({
         success: true,
         message: 'Подписка оформлена.',

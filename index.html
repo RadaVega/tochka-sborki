@@ -47,9 +47,10 @@
         a.parentNode.insertBefore(k, a);
       })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
 
-      const metrikaId = Number(window.YANDEX_METRIKA_ID || 0);
-      if (Number.isFinite(metrikaId) && metrikaId > 0) {
-        ym(metrikaId, 'init', {
+      const metrikaId = Number(window.__YM_COUNTER_ID__ || window.YANDEX_METRIKA_ID || window.__ENV__?.YANDEX_METRIKA_ID || 0);
+      window.__YM_COUNTER_ID__ = Number.isFinite(metrikaId) && metrikaId > 0 ? metrikaId : null;
+      if (window.__YM_COUNTER_ID__) {
+        ym(window.__YM_COUNTER_ID__, 'init', {
           clickmap:     true,
           trackLinks:   true,
           accurateTrackBounce: true,
