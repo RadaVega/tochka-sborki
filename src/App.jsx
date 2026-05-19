@@ -19,7 +19,6 @@ import {
   PartnersPage,
   GoalsPage,
 } from './pages/Pages';
-
 import { ContactsPage } from './pages/ContactsPage';
 
 function AppRoutes() {
