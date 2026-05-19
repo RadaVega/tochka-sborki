@@ -6,7 +6,7 @@
  *
  * SETUP:
  *   In server/app.js, add:
- *     const { analyticsMiddleware, logEvent } = require('./analytics');
+ *     // import { analyticsMiddleware, logEvent } from './analytics.js'
  *     app.use(analyticsMiddleware);   // ← before all routes
  */
 

@@ -11,10 +11,10 @@
 
 'use strict';
 
-const express    = require('express');
-const cors       = require('cors');
-const { PrismaClient } = require('@prisma/client');
-const { analyticsMiddleware, logEvent } = require('./analytics');
+import express from 'express';
+import cors from 'cors';
+import { PrismaClient } from '@prisma/client';
+import { analyticsMiddleware, logEvent } from './analytics.js';
 
 const app    = express();
 const prisma = new PrismaClient();
