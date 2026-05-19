@@ -50,12 +50,12 @@
       const metrikaId = Number(window.YANDEX_METRIKA_ID || 0);
       if (Number.isFinite(metrikaId) && metrikaId > 0) {
         ym(metrikaId, 'init', {
-        clickmap:     true,   // Карта кликов
-        trackLinks:   true,   // Отслеживание внешних ссылок
-        accurateTrackBounce: true, // Точный показатель отказов
-        webvisor:     true,   // Вебвизор (запись сессий)
-        ecommerce:    'dataLayer', // eCommerce если понадобится
-        triggerEvent: true    // Разрешить ручные ym() вызовы
+          clickmap:     true,
+          trackLinks:   true,
+          accurateTrackBounce: true,
+          webvisor:     true,
+          ecommerce:    'dataLayer',
+          triggerEvent: true
         });
       }
     </script>
