@@ -82,7 +82,22 @@ function validate(schema) {
 
 export function createApp(prisma) {
   const app = express();
-  app.use(helmet());
+
+  // ── Security headers with CSP for Yandex Metrika ──
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "https://mc.yandex.ru", "https://yandex.ru", "https://metrika.yandex.ru"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https://mc.yandex.ru", "https://yandex.ru"],
+        connectSrc: ["'self'", "https://mc.yandex.ru", "https://yandex.ru"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+      },
+    },
+  }));
+
   app.use(cors({ origin: allowedOrigins, credentials: true }));
   app.use(express.json({ limit: '1mb' }));
   app.use(morgan('tiny'));
