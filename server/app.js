@@ -6,227 +6,188 @@
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import path from 'node:path';
+import { z } from 'zod';
 import { analyticsMiddleware, logEvent } from './analytics.js';
+
+const allowedOrigins = process.env.CLIENT_URL
+  ? process.env.CLIENT_URL.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : ['https://tochka-sborki-five.vercel.app'];
+
+// Always allow local dev
+allowedOrigins.push('http://localhost:5173');
+allowedOrigins.push('http://localhost:3000');
+
+const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
+const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
+const consent = z.boolean({ required_error: 'Необходимо согласие на обработку ПДн' })
+  .refine((value) => value === true, 'Необходимо согласие на обработку ПДн');
+
+const contactSchema = z.object({
+  name: requiredString('Имя').min(2).max(120),
+  email,
+  message: requiredString('Сообщение').min(10).max(4000),
+  consent
+});
+
+const subscribeSchema = z.object({ email, consent });
+
+const stackField = z.union([
+  z.array(z.string().trim().min(1)),
+  requiredString('Стек')
+]).transform((value) => Array.isArray(value)
+  ? value
+  : value.split(/[,;\n]/).map((item) => item.trim()).filter(Boolean)
+).refine((value) => value.length > 0);
+
+const projectSchema = z.object({
+  companyName: requiredString('Название компании').min(2).max(160),
+  contactName: requiredString('Контактное лицо').min(2).max(160),
+  email,
+  phone: z.string().trim().max(80).optional().or(z.literal('')),
+  stack: stackField,
+  description: requiredString('Описание проекта').min(20).max(8000),
+  budget: requiredString('Бюджет').max(120),
+  deadline: requiredString('Дедлайн')
+    .refine((value) => !Number.isNaN(Date.parse(value)))
+    .transform((value) => new Date(value).toISOString().slice(0, 10)),
+  fileUrl: z.string().trim().url().optional().or(z.literal('')),
+  consent
+});
+
+function requireConsent(req, res, next) {
+  if (req.body?.consent !== true) {
+    return res.status(400).json({ message: 'Требуется согласие на обработку персональных данных' });
+  }
+  return next();
+}
+
+function validate(schema) {
+  return (req, res, next) => {
+    const result = schema.safeParse(req.body);
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Проверьте поля формы',
+        errors: result.error.flatten().fieldErrors
+      });
+    }
+    req.validated = result.data;
+    return next();
+  };
+}
 
 export function createApp(prisma) {
   const app = express();
 
-  // ── CORS ────────────────────────────────────────────
-  const allowedOrigins = (process.env.CLIENT_URL || '')
-    .split(',')
-    .map(o => o.trim())
-    .filter(Boolean);
-
-  allowedOrigins.push('http://localhost:5173');
-  allowedOrigins.push('http://localhost:3000');
-
-  app.use(cors({
-    origin: allowedOrigins,
-    methods: ['GET', 'POST'],
-  }));
-
-  // ── Body parsing ────────────────────────────────────
+  app.use(helmet());
+  app.use(cors({ origin: allowedOrigins, credentials: true }));
   app.use(express.json({ limit: '1mb' }));
-  app.use(express.urlencoded({ extended: true }));
-
-  // ── Analytics timing middleware ─────────────────────
+  app.use(morgan('tiny'));
   app.use(analyticsMiddleware);
 
-  // ── Simple in-memory rate limiter ──
-  const rateLimitStore = new Map();
-  function rateLimit(windowMs = 60_000, max = 5) {
-    return (req, res, next) => {
-      const key = req.ip || 'unknown';
-      const now = Date.now();
-      const entry = rateLimitStore.get(key) || { count: 0, resetAt: now + windowMs };
+  // Helper to get prisma — uses injected instance or falls back to req.app.locals
+  const getPrisma = (req) => req.app?.locals?.prisma || prisma;
 
-      if (now > entry.resetAt) {
-        entry.count = 0;
-        entry.resetAt = now + windowMs;
-      }
-      entry.count++;
-      rateLimitStore.set(key, entry);
-
-      if (entry.count > max) {
-        return res.status(429).json({
-          success: false,
-          error: 'Слишком много запросов. Подождите немного и попробуйте снова.',
-        });
-      }
-      next();
-    };
-  }
+  app.get('/api/health', (req, res) => res.json({ success: true, service: 'tochka-sborki-api' }));
 
   // ════════════════════════════════════════════════════
   // POST /api/contact
   // ════════════════════════════════════════════════════
-  app.post('/api/contact', rateLimit(60_000, 5), async (req, res) => {
-    const { name, email, message, role } = req.body;
-
-    await logEvent(prisma, {
-      req,
-      eventType: 'form_submit',
-      eventName: 'contact',
-      meta: { role, hasMessage: !!message },
-    });
-
-    if (!name?.trim() || !email?.trim() || !message?.trim()) {
-      await logEvent(prisma, {
+  app.post('/api/contact', requireConsent, validate(contactSchema), async (req, res, next) => {
+    try {
+      const doc = await getPrisma(req).contact.create({
+        data: { ...req.validated, consent: Boolean(req.validated.consent) }
+      });
+      await logEvent(getPrisma(req), {
+        req,
+        eventType: 'form_success',
+        eventName: 'contact',
+        entityId: doc.id,
+        entityType: 'Contact'
+      });
+      res.status(201).json({
+        success: true,
+        message: 'Сообщение отправлено. Мы свяжемся с вами.',
+        id: doc.id
+      });
+    } catch (error) {
+      await logEvent(getPrisma(req), {
         req,
         eventType: 'form_error',
         eventName: 'contact',
         success: false,
-        error: 'validation_failed',
-        meta: { missing: { name: !name, email: !email, message: !message } },
+        error: error?.message
       });
-      return res.status(400).json({ success: false, error: 'Заполните все обязательные поля.' });
-    }
-
-    try {
-      const contact = await prisma.contact.create({
-        data: {
-          name:    name.trim(),
-          email:   email.trim().toLowerCase(),
-          message: message.trim(),
-        },
-      });
-
-      await logEvent(prisma, {
-        req,
-        eventType:  'form_success',
-        eventName:  'contact',
-        entityId:   contact.id,
-        entityType: 'Contact',
-        meta: { role },
-      });
-
-      return res.json({ success: true, message: 'Ваше сообщение получено! Ответим в течение рабочего дня.' });
-    } catch (err) {
-      await logEvent(prisma, {
-        req,
-        eventType: 'form_error',
-        eventName: 'contact',
-        success:   false,
-        error:     err.message,
-      });
-      return res.status(500).json({ success: false, error: 'Не удалось сохранить сообщение. Напишите нам напрямую.' });
+      next(error);
     }
   });
 
   // ════════════════════════════════════════════════════
   // POST /api/subscribe
   // ════════════════════════════════════════════════════
-  app.post('/api/subscribe', rateLimit(60_000, 3), async (req, res) => {
-    const { email } = req.body;
-
-    await logEvent(prisma, { req, eventType: 'form_submit', eventName: 'subscribe' });
-
-    if (!email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      await logEvent(prisma, {
-        req, eventType: 'form_error', eventName: 'subscribe',
-        success: false, error: 'invalid_email',
-      });
-      return res.status(400).json({ success: false, error: 'Введите корректный email.' });
-    }
-
+  app.post('/api/subscribe', requireConsent, validate(subscribeSchema), async (req, res, next) => {
     try {
-      const subscriber = await prisma.subscriber.create({
-        data: { email: email.trim().toLowerCase() },
+      const doc = await getPrisma(req).subscriber.upsert({
+        where: { email: req.validated.email },
+        update: { consent: Boolean(req.validated.consent) },
+        create: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
-
-      await logEvent(prisma, {
+      await logEvent(getPrisma(req), {
         req,
-        eventType:  'form_success',
-        eventName:  'subscribe',
-        entityId:   subscriber.id,
-        entityType: 'Subscriber',
+        eventType: 'form_success',
+        eventName: 'subscribe',
+        entityId: doc.id,
+        entityType: 'Subscriber'
       });
-
-      return res.json({ success: true, message: '✅ Вы подписаны на дайджест Точки Сборки!' });
-    } catch (err) {
-      if (err.code === 'P2002') {
-        await logEvent(prisma, {
-          req, eventType: 'form_error', eventName: 'subscribe',
-          success: false, error: 'already_subscribed',
-        });
-        return res.json({ success: true, message: '✅ Этот email уже подписан. Спасибо!' });
-      }
-      await logEvent(prisma, {
-        req, eventType: 'form_error', eventName: 'subscribe',
-        success: false, error: err.message,
+      res.status(201).json({
+        success: true,
+        message: 'Подписка оформлена.',
+        id: doc.id
       });
-      return res.status(500).json({ success: false, error: 'Не удалось подписаться. Попробуйте позже.' });
+    } catch (error) {
+      await logEvent(getPrisma(req), {
+        req,
+        eventType: 'form_error',
+        eventName: 'subscribe',
+        success: false,
+        error: error?.message
+      });
+      next(error);
     }
   });
 
   // ════════════════════════════════════════════════════
   // POST /api/submit-project
   // ════════════════════════════════════════════════════
-  app.post('/api/submit-project', rateLimit(300_000, 3), async (req, res) => {
-    const { companyName, contactName, email, stack, budget, deadline, description } = req.body;
-
-    await logEvent(prisma, {
-      req,
-      eventType: 'form_submit',
-      eventName: 'project_submission',
-      meta: { budget, hasDeadline: !!deadline, stackLength: stack?.length },
-    });
-
-    const missing = [];
-    if (!companyName?.trim())   missing.push('companyName');
-    if (!contactName?.trim())   missing.push('contactName');
-    if (!email?.trim())         missing.push('email');
-    if (!stack?.trim())         missing.push('stack');
-    if (!budget)                missing.push('budget');
-    if (!deadline)              missing.push('deadline');
-    if (!description?.trim() || description.trim().length < 30) missing.push('description');
-
-    if (missing.length > 0) {
-      await logEvent(prisma, {
-        req, eventType: 'form_error', eventName: 'project_submission',
-        success: false, error: 'validation_failed', meta: { missing },
-      });
-      return res.status(400).json({
-        success: false,
-        error: `Заполните обязательные поля: ${missing.join(', ')}`,
-      });
-    }
-
+  app.post('/api/submit-project', requireConsent, validate(projectSchema), async (req, res, next) => {
     try {
-      const submission = await prisma.projectSubmission.create({
-        data: {
-          companyName: companyName.trim(),
-          contactName: contactName.trim(),
-          email:       email.trim().toLowerCase(),
-          stack:       stack.trim(),
-          budget,
-          deadline,
-          description: description.trim(),
-        },
+      const doc = await getPrisma(req).projectSubmission.create({
+        data: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
-
-      await logEvent(prisma, {
+      await logEvent(getPrisma(req), {
         req,
-        eventType:  'form_success',
-        eventName:  'project_submission',
-        entityId:   submission.id,
-        entityType: 'ProjectSubmission',
-        meta: { budget, companyName: companyName.trim() },
+        eventType: 'form_success',
+        eventName: 'project_submission',
+        entityId: doc.id,
+        entityType: 'ProjectSubmission'
       });
-
-      return res.json({
+      res.status(201).json({
         success: true,
-        message: '✅ Заявка получена! AI-агент Intake проверит ТЗ и ответит за 2–4 часа.',
+        message: 'Техническое задание отправлено. Мы свяжемся с вами.',
+        id: doc.id
       });
-    } catch (err) {
-      await logEvent(prisma, {
-        req, eventType: 'form_error', eventName: 'project_submission',
-        success: false, error: err.message,
-      });
-      return res.status(500).json({
+    } catch (error) {
+      await logEvent(getPrisma(req), {
+        req,
+        eventType: 'form_error',
+        eventName: 'project_submission',
         success: false,
-        error: 'Не удалось сохранить заявку. Напишите нам: tochka.sborki21@vk.com',
+        error: error?.message
       });
+      next(error);
     }
   });
 
@@ -250,30 +211,30 @@ export function createApp(prisma) {
         eventsByName,
         dailySubmissions,
       ] = await Promise.all([
-        prisma.contact.count(),
-        prisma.subscriber.count(),
-        prisma.projectSubmission.count(),
-        prisma.analyticsEvent.count(),
+        getPrisma(req).contact.count(),
+        getPrisma(req).subscriber.count(),
+        getPrisma(req).projectSubmission.count(),
+        getPrisma(req).analyticsEvent.count(),
 
-        prisma.analyticsEvent.findMany({
+        getPrisma(req).analyticsEvent.findMany({
           orderBy: { createdAt: 'desc' },
           take: 20,
           select: { id: true, eventType: true, eventName: true, success: true, page: true, createdAt: true, meta: true },
         }),
 
-        prisma.analyticsEvent.groupBy({
+        getPrisma(req).analyticsEvent.groupBy({
           by: ['eventType'],
           _count: { id: true },
           orderBy: { _count: { id: 'desc' } },
         }),
 
-        prisma.analyticsEvent.groupBy({
+        getPrisma(req).analyticsEvent.groupBy({
           by: ['eventName'],
           _count: { id: true },
           orderBy: { _count: { id: 'desc' } },
         }),
 
-        prisma.$queryRaw`
+        getPrisma(req).$queryRaw`
           SELECT
             DATE("createdAt") as date,
             "eventName",
@@ -305,20 +266,24 @@ export function createApp(prisma) {
     }
   });
 
-  // ── Health check ────────────────────────────────────
-  app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', ts: new Date().toISOString() });
-  });
-
-  // ── 404 catch-all ───────────────────────────────────
-  app.use((req, res) => {
-    res.status(404).json({ error: 'Not found' });
-  });
+  // ── Static files in production ──────────────────────
+  if (process.env.NODE_ENV === 'production') {
+    const distPath = path.resolve('dist');
+    app.use(express.static(distPath));
+    app.get('*', (_req, res) => res.sendFile('index.html', { root: distPath }));
+  }
 
   // ── Global error handler ────────────────────────────
-  app.use((err, req, res, _next) => {
-    console.error('[server error]', err);
-    res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера.' });
+  app.use((error, _req, res, next) => {
+    if (res.headersSent) return next(error);
+    if (error.code === 'P2002') {
+      return res.status(400).json({ success: false, error: 'Такая запись уже существует' });
+    }
+    if (['P1000', 'P1001', 'P1002', 'P1003'].includes(error.code)) {
+      return res.status(400).json({ success: false, error: 'Не удалось подключиться к базе данных' });
+    }
+    console.error('[server error]', error);
+    return res.status(500).json({ success: false, error: 'Внутренняя ошибка сервера' });
   });
 
   return app;
