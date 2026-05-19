@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { ConsentCheckbox } from '../components/ConsentCheckbox';
+import { TrackedButton, TrackedLink } from '../components/Tracked';
 import {
   Badge,
   Card,
@@ -395,7 +396,8 @@ export function ContactsPage() {
 
             {CHANNELS.map((ch) => (
               <Reveal key={ch.label}>
-                <a
+                <TrackedLink
+                  event="contact_channel_click"
                   href={ch.href}
                   target={ch.href.startsWith('mailto') ? undefined : '_blank'}
                   rel="noreferrer"
@@ -408,7 +410,7 @@ export function ContactsPage() {
                     <span>{ch.desc}</span>
                   </div>
                   <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
-                </a>
+                </TrackedLink>
               </Reveal>
             ))}
 
