@@ -1,0 +1,1 @@
+export { ProblemPage } from './PagesLegacy';

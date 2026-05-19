@@ -1,0 +1,1 @@
+export { IndustriesPage } from './PagesLegacy';

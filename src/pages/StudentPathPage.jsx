@@ -1,0 +1,1 @@
+export { StudentPathPage } from './PagesLegacy';

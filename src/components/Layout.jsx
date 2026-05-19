@@ -35,7 +35,7 @@ function CookieBanner() {
   );
 }
 
-export function Layout() {
+export function Layout({ children }) {
   const [open, setOpen] = useState(false);
   const location = useLocation();
 
@@ -75,7 +75,7 @@ export function Layout() {
         </nav>
       </header>
       <main key={location.pathname}>
-        <Outlet />
+        {children ?? <Outlet />}
       </main>
       <footer className="site-footer">
         <div className="footer-shell">

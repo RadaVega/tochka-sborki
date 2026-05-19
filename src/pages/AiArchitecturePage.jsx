@@ -1,0 +1,1 @@
+export { AiArchitecturePage } from './PagesLegacy';
