@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary meta ────────────────────────────── -->
+    <title>Точка Сборки | Assembly Point</title>
+    <meta name="description" content="Точка Сборки — Team-as-a-Service из Школы Цифровых Технологий Сбера. Готовая IT-команда за 7 дней, фикс-прайс, без онбординга." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://tochka-sborki-five.vercel.app/" />
+
+    <!-- ── Open Graph (VK, Telegram previews) ──────── -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content="https://tochka-sborki-five.vercel.app/" />
+    <meta property="og:title"       content="Точка Сборки — IT-команда за 7 дней" />
+    <meta property="og:description" content="Team-as-a-Service из Школы Цифровых Технологий Сбера. Фикс-прайс, без онбординга, с AI-оркестрацией." />
+    <meta property="og:image"       content="https://tochka-sborki-five.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale"      content="ru_RU" />
+    <meta property="og:site_name"   content="Точка Сборки" />
+
+    <!-- ── VK-specific ─────────────────────────────── -->
+    <meta property="vk:image" content="https://tochka-sborki-five.vercel.app/og-image.png" />
+
+    <!-- ── Favicon placeholder ─────────────────────── -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- ═══════════════════════════════════════════════
+         ЯНДЕКС МЕТРИКА
+         Получить счётчик: https://metrika.yandex.ru
+         Замените XXXXXXXX на ваш реальный номер счётчика
+         после регистрации сайта в Яндекс Метрике.
+    ════════════════════════════════════════════════ -->
+    <script type="text/javascript">
+      (function(m, e, t, r, i, k, a) {
+        m[i] = m[i] || function() { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) { return; }
+        }
+        k = e.createElement(t);
+        a = e.getElementsByTagName(t)[0];
+        k.async = 1;
+        k.src = r;
+        a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(XXXXXXXX, 'init', {
+        clickmap:     true,   // Карта кликов
+        trackLinks:   true,   // Отслеживание внешних ссылок
+        accurateTrackBounce: true, // Точный показатель отказов
+        webvisor:     true,   // Вебвизор (запись сессий)
+        ecommerce:    'dataLayer', // eCommerce если понадобится
+        triggerEvent: true    // Разрешить ручные ym() вызовы
+      });
+    </script>
+    <!-- Noscript fallback (Яндекс рекомендует) -->
+    <noscript>
+      <div>
+        <img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute; left:-9999px;" alt="" />
+      </div>
+    </noscript>
+    <!-- ── Конец Яндекс Метрика ─────────────────────── -->
+
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

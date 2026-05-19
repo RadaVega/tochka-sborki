@@ -1,0 +1,111 @@
+// prisma/schema.prisma — добавить модель AnalyticsEvent
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ── Existing models (unchanged) ────────────────────
+
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model Subscriber {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model ProjectSubmission {
+  id          Int      @id @default(autoincrement())
+  companyName String
+  contactName String
+  email       String
+  phone       String?
+  stack       String[]
+  description String
+  deadline    String
+  budget      String
+  fileUrl     String?
+  createdAt   DateTime @default(now())
+}
+
+// ── NEW: server-side analytics event log ───────────
+// Captures every form submission, API call result, and key server event.
+// Complements Metrika (client-side) with server-verified data.
+
+model AnalyticsEvent {
+  id         Int      @id @default(autoincrement())
+
+  // What happened
+  eventType  String   // 'form_submit' | 'form_success' | 'form_error' | 'subscribe' | 'api_call'
+  eventName  String   // e.g. 'project_submission', 'contact', 'subscribe'
+
+  // Context
+  page       String?  // Referer path (from X-Referer header or request body)
+  userAgent  String?
+  ip         String?  // anonymised: only first 2 octets stored (e.g. "178.45")
+
+  // Outcome
+  success    Boolean  @default(true)
+  error      String?  // error message if failed
+
+  // Optional linked record ID (so you can join to ProjectSubmission etc.)
+  entityId   Int?
+  entityType String?  // 'ProjectSubmission' | 'Contact' | 'Subscriber'
+
+  // Metadata blob for any extra k/v pairs
+  meta       Json?
+
+  createdAt  DateTime @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([eventName, createdAt])
+  @@index([createdAt])
+}
+
+/*
+ * ════════════════════════════════════════════════════
+ * MIGRATION — run these commands after updating schema:
+ *
+ *   npx prisma migrate dev --name add_analytics_event
+ *   npx prisma generate
+ *
+ * OR if you want raw SQL (for production without migrate):
+ * ════════════════════════════════════════════════════
+
+CREATE TABLE "AnalyticsEvent" (
+  "id"          SERIAL PRIMARY KEY,
+  "eventType"   TEXT NOT NULL,
+  "eventName"   TEXT NOT NULL,
+  "page"        TEXT,
+  "userAgent"   TEXT,
+  "ip"          TEXT,
+  "success"     BOOLEAN NOT NULL DEFAULT true,
+  "error"       TEXT,
+  "entityId"    INTEGER,
+  "entityType"  TEXT,
+  "meta"        JSONB,
+  "createdAt"   TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX "AnalyticsEvent_eventType_createdAt_idx"
+  ON "AnalyticsEvent"("eventType", "createdAt");
+
+CREATE INDEX "AnalyticsEvent_eventName_createdAt_idx"
+  ON "AnalyticsEvent"("eventName", "createdAt");
+
+CREATE INDEX "AnalyticsEvent_createdAt_idx"
+  ON "AnalyticsEvent"("createdAt");
+
+ * ════════════════════════════════════════════════════
+ */
