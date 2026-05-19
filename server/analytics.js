@@ -71,4 +71,4 @@ async function logEvent(prisma, opts) {
   }
 }
 
-module.exports = { analyticsMiddleware, logEvent };
+export { analyticsMiddleware, logEvent };
