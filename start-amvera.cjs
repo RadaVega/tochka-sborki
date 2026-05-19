@@ -19,7 +19,7 @@ async function main() {
     .catch((error) => console.error('❌ Ошибка подключения к БД:', error.message));
 
   const port = Number(process.env.PORT || 80);
-  const app = createApp(prisma);  // ← pass prisma into createApp
+  const app = createApp(prisma);
   app.locals.prisma = prisma;
   app.locals.pgPool = pool;
 
