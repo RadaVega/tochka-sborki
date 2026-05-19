@@ -1,24 +1,15 @@
 /**
  * server/app.js — updated with server-side analytics logging
- *
- * Changes vs original:
- *   1. Import analyticsMiddleware + logEvent from ./analytics
- *   2. app.use(analyticsMiddleware) before all routes
- *   3. Every route logs form_submit → form_success / form_error
- *   4. New GET /api/analytics/summary route for the admin dashboard
- *   5. Rate-limiter on form endpoints to prevent spam
  */
 
 'use strict';
 
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
 import { analyticsMiddleware, logEvent } from './analytics.js';
 
-export function createApp() {
-  const app    = express();
-  const prisma = new PrismaClient();
+export function createApp(prisma) {
+  const app = express();
 
   // ── CORS ────────────────────────────────────────────
   const allowedOrigins = (process.env.CLIENT_URL || '')
@@ -26,7 +17,6 @@ export function createApp() {
     .map(o => o.trim())
     .filter(Boolean);
 
-  // Always allow local dev
   allowedOrigins.push('http://localhost:5173');
   allowedOrigins.push('http://localhost:3000');
 
@@ -42,7 +32,7 @@ export function createApp() {
   // ── Analytics timing middleware ─────────────────────
   app.use(analyticsMiddleware);
 
-  // ── Simple in-memory rate limiter (no extra deps) ──
+  // ── Simple in-memory rate limiter ──
   const rateLimitStore = new Map();
   function rateLimit(windowMs = 60_000, max = 5) {
     return (req, res, next) => {
@@ -73,7 +63,6 @@ export function createApp() {
   app.post('/api/contact', rateLimit(60_000, 5), async (req, res) => {
     const { name, email, message, role } = req.body;
 
-    // Log attempt
     await logEvent(prisma, {
       req,
       eventType: 'form_submit',
@@ -81,7 +70,6 @@ export function createApp() {
       meta: { role, hasMessage: !!message },
     });
 
-    // Validate
     if (!name?.trim() || !email?.trim() || !message?.trim()) {
       await logEvent(prisma, {
         req,
@@ -156,7 +144,6 @@ export function createApp() {
 
       return res.json({ success: true, message: '✅ Вы подписаны на дайджест Точки Сборки!' });
     } catch (err) {
-      // P2002 = unique constraint violation = already subscribed
       if (err.code === 'P2002') {
         await logEvent(prisma, {
           req, eventType: 'form_error', eventName: 'subscribe',
@@ -185,7 +172,6 @@ export function createApp() {
       meta: { budget, hasDeadline: !!deadline, stackLength: stack?.length },
     });
 
-    // Validate required fields
     const missing = [];
     if (!companyName?.trim())   missing.push('companyName');
     if (!contactName?.trim())   missing.push('contactName');
@@ -245,7 +231,7 @@ export function createApp() {
   });
 
   // ════════════════════════════════════════════════════
-  // GET /api/analytics/summary  (simple admin endpoint)
+  // GET /api/analytics/summary
   // ════════════════════════════════════════════════════
   app.get('/api/analytics/summary', async (req, res) => {
     const adminKey = process.env.ADMIN_KEY;

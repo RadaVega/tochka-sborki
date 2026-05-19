@@ -1,4 +1,3 @@
-// start-amvera.cjs — точка входа для Amvera (CommonJS)
 require('dotenv/config');
 
 async function main() {
@@ -20,7 +19,7 @@ async function main() {
     .catch((error) => console.error('❌ Ошибка подключения к БД:', error.message));
 
   const port = Number(process.env.PORT || 80);
-  const app = createApp();
+  const app = createApp(prisma);  // ← pass prisma into createApp
   app.locals.prisma = prisma;
   app.locals.pgPool = pool;
 
