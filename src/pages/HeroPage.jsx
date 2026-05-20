@@ -11,7 +11,7 @@ export function HeroPage() {
         <Reveal className="hero-copy">
           <Logo />
           <Badge>{page.tag}</Badge>
-          <h1>{page.title[0]}<<br /><span>{page.title[1]}</span><br /><em>{page.title[2]}</em></h1>
+          <h1>{page.title[0]}<br /><span>{page.title[1]}</span><br /><em>{page.title[2]}</em></h1>
           <div className="hero-line" />
           <div className="metric-grid three">
             {page.metrics.map((metric) => <MetricBox key={metric.value} {...metric} />)}
