@@ -25,6 +25,7 @@ import {
   TechStackPage,
   PartnersPage,
   GoalsPage,
+  PrivacyPage,
 } from './pages/Pages';
 import { ContactsPage } from './pages/ContactsPage';
 
@@ -48,6 +49,7 @@ function AppRoutes() {
       <Route path="/transformation"  element={<ErrorBoundary><TransformationPage /></ErrorBoundary>} />
       <Route path="/goals"           element={<ErrorBoundary><GoalsPage /></ErrorBoundary>} />
       <Route path="/contacts"        element={<ErrorBoundary><ContactsPage /></ErrorBoundary>} />
+      <Route path="/privacy"         element={<ErrorBoundary><PrivacyPage /></ErrorBoundary>} />
       <Route path="*"               element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
     </Routes>
   );
