@@ -1,22 +1,15 @@
-meta:
-  environment: node
-  toolchain:
-    name: npm
-    version: "20"
 build:
   additionalCommands: "npx prisma generate && npm run build"
   artifacts:
-    "dist/**": /dist/
-    "server/**": /server/
-    "prisma/**": /prisma/
+    "dist": /
+    "server": /
+    "prisma": /
+    "node_modules": /
     "package.json": /
     "package-lock.json": /
-    "node_modules/**": /node_modules/
+    "prisma.config.ts": /
     "start-amvera.cjs": /
     ".env.example": /
 run:
   scriptName: start-amvera.cjs
-service:
-  port: 80
-  healthcheck:
-    path: /api/health
+  containerPort: 80
