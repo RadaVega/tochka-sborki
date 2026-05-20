@@ -129,33 +129,34 @@ export function createApp(prisma) {
       const doc = await getPrisma(req).contact.create({
         data: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
-      await logEvent(getPrisma(req), {
-        req,
-        eventType: 'form_success',
-        eventName: 'contact',
-        entityId: doc.id,
-        entityType: 'Contact'
-      });
-      try {
-        await sendMail({
-          subject: 'Новая заявка с сайта Точка Сборки',
-          replyTo: req.validated.email,
-          text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
-        });
-      } catch {}
+
       res.status(201).json({
         success: true,
         message: 'Сообщение отправлено. Мы свяжемся с вами.',
         id: doc.id
       });
+
+      void runNonCritical('contact.analytics_success', () => logEvent(getPrisma(req), {
+        req,
+        eventType: 'form_success',
+        eventName: 'contact',
+        entityId: doc.id,
+        entityType: 'Contact'
+      }));
+
+      void runNonCritical('contact.send_mail', () => sendMail({
+        subject: 'Новая заявка с сайта Точка Сборки',
+        replyTo: req.validated.email,
+        text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
+      }));
     } catch (error) {
-      await logEvent(getPrisma(req), {
+      void runNonCritical('contact.analytics_error', () => logEvent(getPrisma(req), {
         req,
         eventType: 'form_error',
         eventName: 'contact',
         success: false,
         error: error?.message
-      });
+      }));
       next(error);
     }
   });
@@ -170,33 +171,34 @@ export function createApp(prisma) {
         update: { consent: Boolean(req.validated.consent) },
         create: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
-      await logEvent(getPrisma(req), {
-        req,
-        eventType: 'form_success',
-        eventName: 'subscribe',
-        entityId: doc.id,
-        entityType: 'Subscriber'
-      });
-      try {
-        await sendMail({
-          subject: 'Новая подписка на новости Точка Сборки',
-          replyTo: req.validated.email,
-          text: `Email: ${req.validated.email}`
-        });
-      } catch {}
+
       res.status(201).json({
         success: true,
         message: 'Подписка оформлена.',
         id: doc.id
       });
+
+      void runNonCritical('subscribe.analytics_success', () => logEvent(getPrisma(req), {
+        req,
+        eventType: 'form_success',
+        eventName: 'subscribe',
+        entityId: doc.id,
+        entityType: 'Subscriber'
+      }));
+
+      void runNonCritical('subscribe.send_mail', () => sendMail({
+        subject: 'Новая подписка на новости Точка Сборки',
+        replyTo: req.validated.email,
+        text: `Email: ${req.validated.email}`
+      }));
     } catch (error) {
-      await logEvent(getPrisma(req), {
+      void runNonCritical('subscribe.analytics_error', () => logEvent(getPrisma(req), {
         req,
         eventType: 'form_error',
         eventName: 'subscribe',
         success: false,
         error: error?.message
-      });
+      }));
       next(error);
     }
   });
