@@ -14,7 +14,7 @@ build:
     "start-amvera.cjs": /
     ".env.example": /
 run:
-  command: "npm install --production --no-audit --no-fund --maxsockets=1 && npx prisma generate && node start-amvera.cjs"
+  command: "rm -rf node_modules && npm install --omit=dev --no-audit --no-fund --maxsockets=1 --ignore-scripts && npx prisma generate && node start-amvera.cjs"
 service:
   port: 80
   healthcheck:
