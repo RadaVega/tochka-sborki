@@ -58,6 +58,19 @@ const projectSchema = z.object({
   consent
 });
 
+const NON_CRITICAL_TIMEOUT_MS = Number(process.env.NON_CRITICAL_TIMEOUT_MS || 4000);
+
+async function runNonCritical(taskName, task) {
+  try {
+    await Promise.race([
+      task(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error(`${taskName} timeout`)), NON_CRITICAL_TIMEOUT_MS))
+    ]);
+  } catch (error) {
+    console.error(`[non-critical] ${taskName} failed:`, error?.message || error);
+  }
+}
+
 function requireConsent(req, res, next) {
   if (req.body?.consent !== true) {
     return res.status(400).json({ message: 'Требуется согласие на обработку персональных данных' });
@@ -196,26 +209,44 @@ export function createApp(prisma) {
       const doc = await getPrisma(req).projectSubmission.create({
         data: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
-      await logEvent(getPrisma(req), {
+
+      res.status(200).json({
+        success: true,
+        message: 'Техническое задание отправлено. Мы свяжемся с вами.',
+        id: doc.id
+      });
+
+      // Non-critical side effects must never block or fail the API response
+      void runNonCritical('project_submission.analytics_success', () => logEvent(getPrisma(req), {
         req,
         eventType: 'form_success',
         eventName: 'project_submission',
         entityId: doc.id,
         entityType: 'ProjectSubmission'
-      });
-      res.status(201).json({
-        success: true,
-        message: 'Техническое задание отправлено. Мы свяжемся с вами.',
-        id: doc.id
-      });
+      }));
+
+      void runNonCritical('project_submission.send_mail', () => sendMail({
+        subject: 'Новое техническое задание — Точка Сборки',
+        replyTo: req.validated.email,
+        text:
+          `Компания: ${req.validated.companyName}\n` +
+          `Контакт: ${req.validated.contactName}\n` +
+          `Email: ${req.validated.email}\n` +
+          `Телефон: ${req.validated.phone || 'не указан'}\n` +
+          `Стек: ${req.validated.stack.join(', ')}\n` +
+          `Бюджет: ${req.validated.budget}\n` +
+          `Дедлайн: ${req.validated.deadline}\n` +
+          `Файл ТЗ: ${req.validated.fileUrl || 'не указан'}\n\n` +
+          `${req.validated.description}`
+      }));
     } catch (error) {
-      await logEvent(getPrisma(req), {
+      void runNonCritical('project_submission.analytics_error', () => logEvent(getPrisma(req), {
         req,
         eventType: 'form_error',
         eventName: 'project_submission',
         success: false,
         error: error?.message
-      });
+      }));
       next(error);
     }
   });

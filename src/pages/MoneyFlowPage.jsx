@@ -1,4 +1,4 @@
-import { Card, Checklist, MetricBox, PageShell, ProgressBar, Reveal } from '../components/UI';
+import { Card, Checklist, MetricBox, PageShell, ProgressBar, Reveal, TagRow } from '../components/UI';
 import { MoneyFlowDiagram } from '../components/Diagrams';
 import { pages } from '../data/content';
 

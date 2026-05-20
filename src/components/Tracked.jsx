@@ -85,12 +85,11 @@ export function TrackedExternalLink({
   className = '',
   ...rest
 }) {
-  const { trackExternalLink } = useAnalytics();
+  const { trackExternalLink, goal } = useAnalytics();
 
   const handleClick = () => {
     trackExternalLink(channel || 'external', href);
     if (goalName) {
-      const { goal } = useAnalytics(); // hook stable ref — safe in handler
       goal(goalName);
     }
   };
