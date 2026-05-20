@@ -6,6 +6,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import { Layout }        from './components/Layout';
 import { PageTracker }   from './components/PageTracker';
+import { PerformanceTracker } from './components/PerformanceTracker';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Eager imports — no lazy loading
@@ -59,6 +60,7 @@ export default function App() {
   return (
     <Router>
       <PageTracker />
+      <PerformanceTracker />
       <Layout>
         <AppRoutes />
       </Layout>
