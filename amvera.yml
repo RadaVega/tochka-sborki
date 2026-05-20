@@ -5,6 +5,15 @@ meta:
     version: "20"
 build:
   additionalCommands: "npx prisma generate && npm run build"
+  artifacts:
+    "dist/**": /dist/
+    "server/**": /server/
+    "prisma/**": /prisma/
+    "node_modules/**": /node_modules/
+    "package.json": /
+    "package-lock.json": /
+    "start-amvera.cjs": /
+    ".env.example": /
 run:
   scriptName: start-amvera.cjs
 service:
