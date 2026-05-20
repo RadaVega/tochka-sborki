@@ -33,16 +33,26 @@ const PAGE_NAMES = {
   '/partners':         'Партнёры',
   '/goals':            'Цели и метрики',
   '/contacts':         'Контакты',
+  '/communications':   'Коммуникации',
+  '/money-flow':       'Деньги',
+  '/mentors':          'Менторы',
+  '/tech-stack':       'Стек',
+  '/problem':          'Проблема',
+  '/solution':         'Решение',
 };
 
 export function PageTracker() {
   const location = useLocation();
-  const { hit, trackScrollDepth, track } = useAnalytics();
+  const { hit, trackScrollDepth, track, trackTimeOnPage, attachAutoTracking } = useAnalytics();
   const prevPath = useRef(null);
 
+  useEffect(() => attachAutoTracking(), [attachAutoTracking]);
+
   useEffect(() => {
-    const path = location.pathname;
-    const pageName = PAGE_NAMES[path] || path;
+    const start = performance.now();
+    const routePath = location.pathname;
+    const path = location.pathname + location.search;
+    const pageName = PAGE_NAMES[routePath] || routePath;
 
     // Don't double-fire on first render if Metrika already caught it
     if (prevPath.current !== null) {
@@ -54,12 +64,22 @@ export function PageTracker() {
     track('page_view', { page: path, name: pageName });
 
     // Scroll depth tracking — clean up when route changes
-    const cleanup = trackScrollDepth(pageName);
+    const cleanupScroll = trackScrollDepth(pageName);
+    const cleanupTime = trackTimeOnPage(pageName);
     // Reset scroll to top on navigation
     window.scrollTo(0, 0);
+    requestAnimationFrame(() => {
+      track('page_render_complete', {
+        page: path,
+        renderMs: Math.round(performance.now() - start),
+      });
+    });
 
-    return cleanup;
-  }, [location.pathname]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      cleanupScroll?.();
+      cleanupTime?.();
+    };
+  }, [location.pathname, location.search]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return null; // renders nothing
 }

@@ -1,4 +1,4 @@
-import { Card, MetricBox, PageShell, ProgressBar, Reveal } from '../components/UI';
+import { Card, Checklist, MetricBox, PageShell, ProgressBar, Reveal } from '../components/UI';
 import { pages } from '../data/content';
 
 export function GoalsPage() {

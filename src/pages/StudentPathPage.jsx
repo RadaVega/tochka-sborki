@@ -1,4 +1,4 @@
-import { Card, PageShell, ProcessNode, Reveal } from '../components/UI';
+import { Card, PageShell, ProcessNode, Reveal, TagRow } from '../components/UI';
 import { pages } from '../data/content';
 
 export function StudentPathPage() {

@@ -203,6 +203,22 @@ export function createApp(prisma) {
         entityId: doc.id,
         entityType: 'ProjectSubmission'
       });
+      try {
+        await sendMail({
+          subject: 'Новое техническое задание — Точка Сборки',
+          replyTo: req.validated.email,
+          text:
+            `Компания: ${req.validated.companyName}\n` +
+            `Контакт: ${req.validated.contactName}\n` +
+            `Email: ${req.validated.email}\n` +
+            `Телефон: ${req.validated.phone || 'не указан'}\n` +
+            `Стек: ${req.validated.stack.join(', ')}\n` +
+            `Бюджет: ${req.validated.budget}\n` +
+            `Дедлайн: ${req.validated.deadline}\n` +
+            `Файл ТЗ: ${req.validated.fileUrl || 'не указан'}\n\n` +
+            `${req.validated.description}`
+        });
+      } catch {}
       res.status(201).json({
         success: true,
         message: 'Техническое задание отправлено. Мы свяжемся с вами.',
