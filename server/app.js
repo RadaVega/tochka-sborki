@@ -73,7 +73,10 @@ async function runNonCritical(taskName, task) {
 
 function requireConsent(req, res, next) {
   if (req.body?.consent !== true) {
-    return res.status(400).json({ message: 'Требуется согласие на обработку персональных данных' });
+    return res.status(400).json({
+      success: false,
+      error: 'Требуется согласие на обработку персональных данных'
+    });
   }
   return next();
 }
@@ -125,8 +128,16 @@ export function createApp(prisma) {
   // POST /api/contact
   // ════════════════════════════════════════════════════
   app.post('/api/contact', requireConsent, validate(contactSchema), async (req, res, next) => {
+    const prismaClient = getPrisma(req);
+    void runNonCritical('contact.analytics_submit', () => logEvent(prismaClient, {
+      req,
+      eventType: 'form_submit',
+      eventName: 'contact',
+      meta: { email: req.validated.email }
+    }));
+
     try {
-      const doc = await getPrisma(req).contact.create({
+      const doc = await prismaClient.contact.create({
         data: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
 
@@ -136,7 +147,7 @@ export function createApp(prisma) {
         id: doc.id
       });
 
-      void runNonCritical('contact.analytics_success', () => logEvent(getPrisma(req), {
+      void runNonCritical('contact.analytics_success', () => logEvent(prismaClient, {
         req,
         eventType: 'form_success',
         eventName: 'contact',
@@ -150,7 +161,7 @@ export function createApp(prisma) {
         text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
       }));
     } catch (error) {
-      void runNonCritical('contact.analytics_error', () => logEvent(getPrisma(req), {
+      void runNonCritical('contact.analytics_error', () => logEvent(prismaClient, {
         req,
         eventType: 'form_error',
         eventName: 'contact',
@@ -165,8 +176,16 @@ export function createApp(prisma) {
   // POST /api/subscribe
   // ════════════════════════════════════════════════════
   app.post('/api/subscribe', requireConsent, validate(subscribeSchema), async (req, res, next) => {
+    const prismaClient = getPrisma(req);
+    void runNonCritical('subscribe.analytics_submit', () => logEvent(prismaClient, {
+      req,
+      eventType: 'form_submit',
+      eventName: 'subscribe',
+      meta: { email: req.validated.email }
+    }));
+
     try {
-      const doc = await getPrisma(req).subscriber.upsert({
+      const doc = await prismaClient.subscriber.upsert({
         where: { email: req.validated.email },
         update: { consent: Boolean(req.validated.consent) },
         create: { ...req.validated, consent: Boolean(req.validated.consent) }
@@ -178,7 +197,7 @@ export function createApp(prisma) {
         id: doc.id
       });
 
-      void runNonCritical('subscribe.analytics_success', () => logEvent(getPrisma(req), {
+      void runNonCritical('subscribe.analytics_success', () => logEvent(prismaClient, {
         req,
         eventType: 'form_success',
         eventName: 'subscribe',
@@ -192,7 +211,7 @@ export function createApp(prisma) {
         text: `Email: ${req.validated.email}`
       }));
     } catch (error) {
-      void runNonCritical('subscribe.analytics_error', () => logEvent(getPrisma(req), {
+      void runNonCritical('subscribe.analytics_error', () => logEvent(prismaClient, {
         req,
         eventType: 'form_error',
         eventName: 'subscribe',
@@ -207,8 +226,19 @@ export function createApp(prisma) {
   // POST /api/submit-project
   // ════════════════════════════════════════════════════
   app.post('/api/submit-project', requireConsent, validate(projectSchema), async (req, res, next) => {
+    const prismaClient = getPrisma(req);
+    void runNonCritical('project_submission.analytics_submit', () => logEvent(prismaClient, {
+      req,
+      eventType: 'form_submit',
+      eventName: 'project_submission',
+      meta: {
+        companyName: req.validated.companyName,
+        stack: req.validated.stack
+      }
+    }));
+
     try {
-      const doc = await getPrisma(req).projectSubmission.create({
+      const doc = await prismaClient.projectSubmission.create({
         data: { ...req.validated, consent: Boolean(req.validated.consent) }
       });
 
@@ -219,7 +249,7 @@ export function createApp(prisma) {
       });
 
       // Non-critical side effects must never block or fail the API response
-      void runNonCritical('project_submission.analytics_success', () => logEvent(getPrisma(req), {
+      void runNonCritical('project_submission.analytics_success', () => logEvent(prismaClient, {
         req,
         eventType: 'form_success',
         eventName: 'project_submission',
@@ -242,7 +272,7 @@ export function createApp(prisma) {
           `${req.validated.description}`
       }));
     } catch (error) {
-      void runNonCritical('project_submission.analytics_error', () => logEvent(getPrisma(req), {
+      void runNonCritical('project_submission.analytics_error', () => logEvent(prismaClient, {
         req,
         eventType: 'form_error',
         eventName: 'project_submission',
@@ -257,7 +287,7 @@ export function createApp(prisma) {
   // GET /api/analytics/summary
   // ════════════════════════════════════════════════════
   app.get('/api/analytics/summary', async (req, res) => {
-    const adminKey = process.env.ADMIN_KEY;
+    const adminKey = process.env.ADMIN_PASSWORD || process.env.ADMIN_KEY;
     if (!adminKey || req.query.key !== adminKey) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
@@ -270,7 +300,6 @@ export function createApp(prisma) {
         totalEvents,
         recentEvents,
         eventsByType,
-        eventsByName,
         dailySubmissions,
       ] = await Promise.all([
         getPrisma(req).contact.count(),
@@ -281,17 +310,11 @@ export function createApp(prisma) {
         getPrisma(req).analyticsEvent.findMany({
           orderBy: { createdAt: 'desc' },
           take: 20,
-          select: { id: true, eventType: true, eventName: true, success: true, page: true, createdAt: true, meta: true },
+          select: { id: true, event: true, path: true, createdAt: true, metadata: true },
         }),
 
         getPrisma(req).analyticsEvent.groupBy({
-          by: ['eventType'],
-          _count: { id: true },
-          orderBy: { _count: { id: 'desc' } },
-        }),
-
-        getPrisma(req).analyticsEvent.groupBy({
-          by: ['eventName'],
+          by: ['event'],
           _count: { id: true },
           orderBy: { _count: { id: 'desc' } },
         }),
@@ -299,16 +322,29 @@ export function createApp(prisma) {
         getPrisma(req).$queryRaw`
           SELECT
             DATE("createdAt") as date,
-            "eventName",
+            "event",
             COUNT(*) as count
           FROM "AnalyticsEvent"
           WHERE
             "createdAt" > NOW() - INTERVAL '14 days'
-            AND "eventType" = 'form_success'
-          GROUP BY DATE("createdAt"), "eventName"
+            AND "event" LIKE 'form_success:%'
+          GROUP BY DATE("createdAt"), "event"
           ORDER BY date DESC
         `,
       ]);
+
+      const groupedEvents = eventsByType.map(e => ({
+        event: e.event,
+        type: e.event.split(':')[0],
+        name: e.event.split(':')[1] || e.event,
+        count: e._count.id
+      }));
+
+      const eventsByTypeTotals = Object.values(groupedEvents.reduce((acc, item) => {
+        acc[item.type] = acc[item.type] || { type: item.type, count: 0 };
+        acc[item.type].count += item.count;
+        return acc;
+      }, {}));
 
       return res.json({
         totals: {
@@ -317,9 +353,12 @@ export function createApp(prisma) {
           projects:    totalProjects,
           events:      totalEvents,
         },
-        eventsByType: eventsByType.map(e => ({ type: e.eventType, count: e._count.id })),
-        eventsByName: eventsByName.map(e => ({ name: e.eventName, count: e._count.id })),
-        dailySubmissions,
+        eventsByType: eventsByTypeTotals,
+        eventsByName: groupedEvents,
+        dailySubmissions: dailySubmissions.map(item => ({
+          ...item,
+          count: Number(item.count)
+        })),
         recentEvents,
         generatedAt: new Date().toISOString(),
       });

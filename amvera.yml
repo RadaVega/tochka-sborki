@@ -11,10 +11,11 @@ build:
     "prisma/**": /prisma/
     "package.json": /
     "package-lock.json": /
+    "node_modules/**": /node_modules/
     "start-amvera.cjs": /
     ".env.example": /
 run:
-  command: "rm -rf node_modules && npm install --omit=dev --no-audit --no-fund --maxsockets=1 --ignore-scripts --cache /tmp/npm-cache && npx prisma generate && node start-amvera.cjs"
+  scriptName: start-amvera.cjs
 service:
   port: 80
   healthcheck:

@@ -50,29 +50,38 @@ export async function logEvent(prisma, opts) {
   try {
     const { req, eventType, eventName, success = true, error, entityId, entityType, meta } = opts;
 
+    if (!prisma?.analyticsEvent?.create) {
+      throw new Error('Prisma analyticsEvent delegate is unavailable');
+    }
+
+    const event = `${eventType}:${eventName}`;
+    const path = req?.headers?.referer || req?.body?.page || null;
+    const metadata = JSON.stringify({
+      ...(meta || {}),
+      eventType,
+      eventName,
+      success,
+      error: error ? String(error).slice(0, 500) : null,
+      entityId: entityId || null,
+      entityType: entityType || null,
+      userAgent: req?.headers?.['user-agent']?.slice(0, 300) || null,
+      ip: anonymiseIp(
+        req?.headers?.['x-forwarded-for'] ||
+        req?.headers?.['x-real-ip'] ||
+        req?.socket?.remoteAddress
+      ),
+      durationMs: req?._startAt ? Date.now() - req._startAt : null
+    });
+
     await prisma.analyticsEvent.create({
       data: {
-        eventType,
-        eventName,
-        page:       req?.headers?.referer || req?.body?.page || null,
-        userAgent:  req?.headers?.['user-agent']?.slice(0, 300) || null,
-        ip:         anonymiseIp(
-                      req?.headers?.['x-forwarded-for'] ||
-                      req?.headers?.['x-real-ip']       ||
-                      req?.socket?.remoteAddress
-                    ),
-        success,
-        error:      error ? String(error).slice(0, 500) : null,
-        entityId:   entityId || null,
-        entityType: entityType || null,
-        meta:       {
-          ...(meta || {}),
-          durationMs: req?._startAt ? Date.now() - req._startAt : null
-        },
+        event,
+        path,
+        metadata
       },
     });
   } catch (loggingError) {
     // Never let analytics logging crash the main request
-    console.warn('[analytics] logEvent failed silently:', loggingError?.message);
+    console.warn('[analytics] logEvent failed:', loggingError?.message);
   }
 }

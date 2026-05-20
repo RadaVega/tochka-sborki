@@ -99,7 +99,7 @@ const STACK_GROUPS = [
   { title: '⌨️ Разработка и IDE', tools: ['GitVerse', 'Giga IDE', 'Giga Code', 'Docker / K8s'] },
   { title: 'Трекинг проекта', tools: ['Kaiten', 'Яндекс Трекер', 'Яндекс 360'] },
   { title: '☁️ Облако и AI', tools: ['Яндекс Cloud', 'VK Cloud', 'GigaChat Pro', 'YandexGPT 4'] },
-  { title: 'Коммуникации', tools: ['VK Teams', 'MAX Messenger', 'Яндекс Телемост'] },
+  { title: 'Коммуникации', tools: ['MAX Messenger', 'Яндекс Телемост'] },
   { title: '⚖️ Юридика', tools: ['Контур.Диадок', 'Мой налог', 'КриптоПро ЭЦП'] }
 ];
 
