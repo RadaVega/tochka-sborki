@@ -1,4 +1,4 @@
-import { Card, PageShell, Reveal } from '../components/UI';
+import { Card, Checklist, PageShell, Reveal } from '../components/UI';
 import { pages } from '../data/content';
 
 export function MentorsPage() {
