@@ -1,4 +1,4 @@
-import { Card, ChannelCard, PageShell, Reveal } from '../components/UI';
+import { Card, ChannelCard, PageShell, Reveal, TagRow } from '../components/UI';
 import { pages } from '../data/content';
 
 export function CommunicationsPage() {

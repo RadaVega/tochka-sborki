@@ -17,7 +17,7 @@
  *   hit('/company-path');
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 // ── Яндекс Метрика counter ID ──────────────────────
@@ -193,5 +193,60 @@ export function useAnalytics() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [track]);
 
-  return { goal, track, hit, trackExternalLink, trackScrollDepth, GOALS };
+  const trackTimeOnPage = useCallback((pageName, thresholds = [30, 60, 120]) => {
+    const timers = thresholds.map((sec) => window.setTimeout(() => {
+      track('time_on_page', { page: pageName, seconds: sec });
+    }, sec * 1000));
+    return () => timers.forEach((id) => window.clearTimeout(id));
+  }, [track]);
+
+  const attachAutoTracking = useCallback(() => {
+    const onClick = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!target) return;
+      const el = target.closest('a,button');
+      if (!el) return;
+
+      const analyticsType = el.getAttribute('data-analytics');
+      const text = (el.textContent || '').trim().slice(0, 80);
+
+      if (analyticsType === 'cta') {
+        track('cta_click', { text, path: location.pathname });
+      }
+
+      if (el.tagName === 'A') {
+        const href = el.getAttribute('href') || '';
+        if (href.startsWith('http')) {
+          track('external_link_click', { href, text, path: location.pathname });
+        } else if (href.startsWith('/')) {
+          track('navigation_click', { href, text, path: location.pathname });
+        }
+      }
+    };
+
+    const onFocus = (event) => {
+      const target = event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement
+        ? event.target
+        : null;
+      if (!target) return;
+      const form = target.form?.getAttribute('name') || target.form?.id || 'unknown_form';
+      const field = target.name || target.id || 'unknown_field';
+      track('form_field_focus', { form, field, path: location.pathname });
+    };
+
+    document.addEventListener('click', onClick, true);
+    document.addEventListener('focusin', onFocus, true);
+
+    return () => {
+      document.removeEventListener('click', onClick, true);
+      document.removeEventListener('focusin', onFocus, true);
+    };
+  }, [location.pathname, track]);
+
+  return { goal, track, hit, trackExternalLink, trackScrollDepth, trackTimeOnPage, attachAutoTracking, GOALS };
+}
+
+export function useAnalyticsAutoCapture() {
+  const { attachAutoTracking } = useAnalytics();
+  useEffect(() => attachAutoTracking(), [attachAutoTracking]);
 }

@@ -1,4 +1,4 @@
-import { Card, PageShell, Reveal, StepCard } from '../components/UI';
+import { Card, PageShell, Reveal, StepCard, TagRow } from '../components/UI';
 import { pages } from '../data/content';
 
 export function HowItWorksPage() {
