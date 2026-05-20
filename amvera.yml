@@ -9,7 +9,6 @@ build:
     "dist/**": /dist/
     "server/**": /server/
     "prisma/**": /prisma/
-    "node_modules/**": /node_modules/
     "package.json": /
     "package-lock.json": /
     "start-amvera.cjs": /
