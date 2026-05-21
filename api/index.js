@@ -1,159 +1,73 @@
+/**
+ * api/index.js — Vercel/serverless entry point (CSP fix for consistency)
+ */
+
 import express from 'express';
-import cors from 'cors';
 import helmet from 'helmet';
+import cors from 'cors';
 import morgan from 'morgan';
-import { z } from 'zod';
-import { PrismaClient } from '@prisma/client';
-import nodemailer from 'nodemailer';
+import path from 'node:path';
+import { createApp } from '../server/app.js';
+import { prisma } from '../server/db.js';
 
-// ── Prisma для serverless ──
-const prisma = new PrismaClient({
-  datasources: { db: { url: process.env.DATABASE_URL } }
-});
-
-// ── Транспорт для писем ──
-let transporter;
-function getTransporter() {
-  if (!transporter) {
-    transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: parseInt(process.env.EMAIL_PORT, 10),
-      secure: false,
-      auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
-    });
-  }
-  return transporter;
-}
-
-// ── Валидация ──
-const requiredString = (field) => z.string({ required_error: `${field} обязательно` }).trim().min(1, `${field} обязательно`);
-const email = z.string({ required_error: 'Email обязателен' }).trim().email('Введите корректный email').toLowerCase();
-const consent = z.boolean({ required_error: 'Необходимо согласие на обработку ПДн' })
-  .refine((value) => value === true, 'Необходимо согласие на обработку ПДн');
-
-const contactSchema = z.object({
-  name: requiredString('Имя').min(2).max(120),
-  email,
-  message: requiredString('Сообщение').min(10).max(4000),
-  consent
-});
-const subscribeSchema = z.object({ email, consent });
-const projectSchema = z.object({
-  companyName: requiredString('Название компании').min(2).max(160),
-  contactName: requiredString('Контактное лицо').min(2).max(160),
-  email,
-  phone: z.string().trim().max(80).optional().or(z.literal('')),
-  stack: z.union([z.array(z.string().trim().min(1)), requiredString('Стек')])
-    .transform(v => Array.isArray(v) ? v : v.split(/[,;\n]/).map(s => s.trim()).filter(Boolean))
-    .refine(v => v.length > 0, 'Укажите хотя бы одну технологию'),
-  description: requiredString('Описание проекта').min(20).max(8000),
-  budget: requiredString('Бюджет').max(120),
-  deadline: requiredString('Дедлайн')
-    .refine(v => !isNaN(Date.parse(v)), 'Введите корректный дедлайн')
-    .transform(v => new Date(v).toISOString().slice(0, 10)),
-  fileUrl: z.string().trim().url().optional().or(z.literal('')),
-  consent
-});
-
-function requireConsent(req, res, next) {
-  const { consent } = req.body;
-  if (consent !== true) {
-    return res.status(400).json({ message: 'Требуется согласие на обработку персональных данных' });
-  }
-  return next();
-}
-
-function validate(schema) {
-  return (req, res, next) => {
-    const result = schema.safeParse(req.body);
-    if (!result.success) {
-      return res.status(400).json({
-        success: false,
-        error: 'Проверьте поля формы',
-        errors: result.error.flatten().fieldErrors
-      });
-    }
-    req.validated = result.data;
-    next();
-  };
-}
-
-// ── Приложение ──
 const app = express();
-app.use(helmet());
-app.use(cors({ origin: process.env.CLIENT_URL ? [process.env.CLIENT_URL] : true, credentials: true }));
+const port = process.env.PORT || 3001;
+
+// ── Security headers: disable CSP, controlled via <meta> in index.html ──
+// 🔧 FIX: Prevent default Helmet CSP from blocking Yandex Metrika
+app.use(helmet({
+  contentSecurityPolicy: false,  // 🔧 Let index.html <meta> handle CSP
+  crossOriginEmbedderPolicy: false, // 🔧 Needed for Yandex blob workers
+  // All other Helmet protections remain active
+}));
+
+app.use(cors({ origin: process.env.CLIENT_URL?.split(',') || ['http://localhost:5173'], credentials: true }));
 app.use(express.json({ limit: '1mb' }));
 app.use(morgan('tiny'));
 
-app.get('/api/health', (req, res) => res.json({ success: true, service: 'tochka-sborki-api' }));
+// Reuse the main app logic from server/app.js
+const mainApp = createApp(prisma);
 
-app.post('/api/contact', requireConsent, validate(contactSchema), async (req, res, next) => {
-  try {
-    const doc = await prisma.contact.create({ data: { ...req.validated, consent: Boolean(req.validated.consent) } });
-    try {
-      await getTransporter().sendMail({
-        from: process.env.EMAIL_FROM,
-        to: process.env.EMAIL_TO,
-        replyTo: req.validated.email,
-        subject: 'Новая заявка с сайта Точка Сборки',
-        text: `Имя: ${req.validated.name}\nEmail: ${req.validated.email}\n\n${req.validated.message}`
-      });
-    } catch (e) { console.error('Ошибка отправки письма:', e.message); }
-    res.status(201).json({ success: true, message: 'Сообщение отправлено. Мы свяжемся с вами.', id: doc.id });
-  } catch (error) { next(error); }
-});
+// Mount API routes
+app.use('/api', mainApp._router);
 
-app.post('/api/subscribe', requireConsent, validate(subscribeSchema), async (req, res, next) => {
-  try {
-    const doc = await prisma.subscriber.upsert({ where: { email: req.validated.email }, update: { consent: Boolean(req.validated.consent) }, create: { ...req.validated, consent: Boolean(req.validated.consent) } });
-    try {
-      await getTransporter().sendMail({
-        from: process.env.EMAIL_FROM,
-        to: process.env.EMAIL_TO,
-        replyTo: req.validated.email,
-        subject: 'Новая подписка на новости Точка Сборки',
-        text: `Email: ${req.validated.email}`
-      });
-    } catch (e) { console.error('Ошибка отправки письма:', e.message); }
-    res.status(201).json({ success: true, message: 'Подписка оформлена.', id: doc.id });
-  } catch (error) { next(error); }
-});
+// Serve static files in production (Vercel)
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.resolve('dist');
+  
+  // Hashed assets can be cached forever
+  app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.includes('/assets/')) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+      }
+    }
+  }));
+  
+  // SPA fallback with no-cache headers
+  app.get('*', (req, res) => {
+    if (req.path.startsWith('/api')) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+    res.sendFile('index.html', { root: distPath });
+  });
+}
 
-app.post('/api/submit-project', requireConsent, validate(projectSchema), async (req, res, next) => {
-  try {
-    const doc = await prisma.projectSubmission.create({ data: { ...req.validated, consent: Boolean(req.validated.consent) } });
-    try {
-      await getTransporter().sendMail({
-        from: process.env.EMAIL_FROM,
-        to: process.env.EMAIL_TO,
-        replyTo: req.validated.email,
-        subject: 'Новое ТЗ от компании для Точки Сборки',
-        text: [
-          `Компания: ${req.validated.companyName}`,
-          `Контакт: ${req.validated.contactName}`,
-          `Email: ${req.validated.email}`,
-          `Телефон: ${req.validated.phone || 'не указан'}`,
-          `Стек: ${req.validated.stack.join(', ')}`,
-          `Бюджет: ${req.validated.budget}`,
-          `Дедлайн: ${req.validated.deadline}`,
-          `Файл ТЗ: ${req.validated.fileUrl || 'не указан'}`,
-          '',
-          req.validated.description
-        ].join('\n')
-      });
-    } catch (e) { console.error('Ошибка отправки письма:', e.message); }
-    res.status(201).json({ success: true, message: 'Техническое задание отправлено. Мы свяжемся с вами.', id: doc.id });
-  } catch (error) { next(error); }
-});
-
-app.use((error, req, res, next) => {
+// Global error handler
+app.use((error, _req, res, next) => {
   if (res.headersSent) return next(error);
-  console.error(error);
-  if (error.code === 'P2002') return res.status(400).json({ success: false, error: 'Такая запись уже существует' });
-  res.status(400).json({ success: false, error: 'Внутренняя ошибка сервера' });
+  console.error('[api error]', error);
+  return res.status(500).json({ success: false, error: 'Internal server error' });
 });
+
+// Start server (for local dev / non-Vercel environments)
+if (process.env.VERCEL !== '1') {
+  app.listen(port, '0.0.0.0', () => {
+    console.log(`API server running on port ${port}`);
+  });
+}
 
 export default app;
