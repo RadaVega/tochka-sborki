@@ -1,5 +1,5 @@
 /**
- * server/app.js — updated with server-side analytics logging
+ * server/app.js — updated with CSP fix and no-cache headers for index.html
  */
 
 'use strict';
@@ -99,19 +99,12 @@ function validate(schema) {
 export function createApp(prisma) {
   const app = express();
 
-  // ── Security headers with CSP for Yandex Metrika ──
+  // ── Security headers (CSP controlled via <meta> in index.html) ──
+  // 🔧 FIX: Disable Helmet CSP injection to let HTML <meta> tag control policy
   app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://mc.yandex.ru", "https://yandex.ru", "https://metrika.yandex.ru"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", "data:", "https://mc.yandex.ru", "https://yandex.ru"],
-        connectSrc: ["'self'", "https://mc.yandex.ru", "https://yandex.ru"],
-        fontSrc: ["'self'"],
-        objectSrc: ["'none'"],
-      },
-    },
+    contentSecurityPolicy: false,  // 🔧 Let index.html <meta> handle CSP for Yandex Metrika
+    crossOriginEmbedderPolicy: false, // 🔧 Needed for Yandex blob workers
+    // All other Helmet protections remain active
   }));
 
   app.use(cors({ origin: allowedOrigins, credentials: true }));
@@ -370,8 +363,27 @@ export function createApp(prisma) {
   // ── Static files in production ──────────────────────
   if (process.env.NODE_ENV === 'production') {
     const distPath = path.resolve('dist');
-    app.use(express.static(distPath));
-    app.get('*', (_req, res) => res.sendFile('index.html', { root: distPath }));
+    
+    // 🔧 FIX: Serve static files with proper cache headers
+    app.use(express.static(distPath, {
+      setHeaders: (res, filePath) => {
+        // Never cache index.html — forces fresh CSP meta tag on every deploy
+        if (filePath.endsWith('index.html')) {
+          res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+          res.setHeader('Pragma', 'no-cache');
+          res.setHeader('Expires', '0');
+        } else {
+          // Hash-based assets can be cached forever
+          res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+        }
+      }
+    }));
+    
+    // 🔧 FIX: SPA fallback with no-cache headers
+    app.get('*', (_req, res) => {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.sendFile('index.html', { root: distPath });
+    });
   }
 
   // ── Global error handler ────────────────────────────
