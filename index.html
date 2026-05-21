@@ -29,10 +29,10 @@
 
     <!-- ═══════════════════════════════════════════════
          ЯНДЕКС МЕТРИКА
-         Получить счётчик: https://metrika.yandex.ru
-         ID счётчика задаётся через переменную окружения:
-         VITE_YANDEX_METRICA_ID=109303611
-         (в файле .env или в панели деплоя)
+         ID счётчика задаётся через:
+         1. Переменную окружения VITE_YANDEX_METRICA_ID (в .env или Amvera dashboard)
+         2. Или глобальную переменную window.__YM_COUNTER_ID__ (для инъекции)
+         Если ни одно не задано — аналитика не инициализируется (без ошибок)
     ════════════════════════════════════════════════ -->
     <script type="text/javascript">
       (function(m, e, t, r, i, k, a) {
@@ -48,18 +48,33 @@
         a.parentNode.insertBefore(k, a);
       })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
 
-      // ✅ Vite подставит значение из .env на этапе сборки
-      // Если переменная не задана — %VITE_...% останется как есть,
-      // поэтому проверяем, что это валидное число перед инициализацией
-      const metrikaId = %VITE_YANDEX_METRICA_ID%;
-      if (typeof metrikaId === 'number' && metrikaId > 0) {
+      // ✅ Безопасное получение ID: пробует env → global → null
+      let metrikaId = null;
+      
+      // 1. Попробуем получить из Vite env (работает при сборке с .env)
+      try {
+        const envId = '%VITE_YANDEX_METRICA_ID%';
+        if (envId && envId !== '%VITE_YANDEX_METRICA_ID%' && !isNaN(Number(envId))) {
+          metrikaId = Number(envId);
+        }
+      } catch (e) {
+        // Игнорируем, если переменная не подставилась
+      }
+      
+      // 2. Фолбэк: глобальная переменная (для runtime-инъекции)
+      if (!metrikaId && typeof window !== 'undefined' && window.__YM_COUNTER_ID__) {
+        metrikaId = Number(window.__YM_COUNTER_ID__);
+      }
+      
+      // 3. Инициализируем только если есть валидный ID
+      if (metrikaId && metrikaId > 0) {
         ym(metrikaId, 'init', {
-          clickmap:              true,   // Карта кликов
-          trackLinks:            true,   // Отслеживание внешних ссылок
-          accurateTrackBounce:   true,   // Точный показатель отказов
-          webvisor:              true,   // Вебвизор (запись сессий)
-          ecommerce:             'dataLayer', // eCommerce если понадобится
-          triggerEvent:          true    // Разрешить ручные ym() вызовы
+          clickmap:              true,
+          trackLinks:            true,
+          accurateTrackBounce:   true,
+          webvisor:              true,
+          ecommerce:             'dataLayer',
+          triggerEvent:          true
         });
       }
     </script>
@@ -67,11 +82,11 @@
 
   </head>
   <body>
-    <!-- Noscript fallback (Яндекс рекомендует) -->
+    <!-- Noscript fallback: безопасный, не ломается при пустом ID -->
     <noscript>
       <div>
         <img 
-          src="https://mc.yandex.ru/watch/%VITE_YANDEX_METRICA_ID%" 
+          src="https://mc.yandex.ru/watch/109303611" 
           style="position:absolute; left:-9999px;" 
           alt="Yandex Metrika" 
         />
