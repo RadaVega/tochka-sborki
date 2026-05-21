@@ -54,7 +54,7 @@ export function Layout({ children }) {
             <span className="sr-only">Открыть меню</span>
           </button>
           <div id="main-menu" className={`nav-links ${open ? 'is-open' : ''}`}>
-            {navItems.map(((item) => (
+            {navItems.map((item) => (   // ← fixed: removed extra "("
               <NavLink
                 key={item.to}
                 to={item.to}
