@@ -30,8 +30,9 @@
     <!-- ═══════════════════════════════════════════════
          ЯНДЕКС МЕТРИКА
          Получить счётчик: https://metrika.yandex.ru
-         Замените XXXXXXXX на ваш реальный номер счётчика
-         после регистрации сайта в Яндекс Метрике.
+         ID счётчика задаётся через переменную окружения:
+         VITE_YANDEX_METRICA_ID=109303611
+         (в файле .env или в панели деплоя)
     ════════════════════════════════════════════════ -->
     <script type="text/javascript">
       (function(m, e, t, r, i, k, a) {
@@ -47,16 +48,18 @@
         a.parentNode.insertBefore(k, a);
       })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
 
-      const metrikaId = Number(window.__YM_COUNTER_ID__ || window.YANDEX_METRIKA_ID || window.__ENV__?.YANDEX_METRIKA_ID || 0);
-      window.__YM_COUNTER_ID__ = Number.isFinite(metrikaId) && metrikaId > 0 ? metrikaId : null;
-      if (window.__YM_COUNTER_ID__) {
-        ym(window.__YM_COUNTER_ID__, 'init', {
-          clickmap:     true,   // Карта кликов
-          trackLinks:   true,   // Отслеживание внешних ссылок
-          accurateTrackBounce: true, // Точный показатель отказов
-          webvisor:     true,   // Вебвизор (запись сессий)
-          ecommerce:    'dataLayer', // eCommerce если понадобится
-          triggerEvent: true    // Разрешить ручные ym() вызовы
+      // ✅ Vite подставит значение из .env на этапе сборки
+      // Если переменная не задана — %VITE_...% останется как есть,
+      // поэтому проверяем, что это валидное число перед инициализацией
+      const metrikaId = %VITE_YANDEX_METRICA_ID%;
+      if (typeof metrikaId === 'number' && metrikaId > 0) {
+        ym(metrikaId, 'init', {
+          clickmap:              true,   // Карта кликов
+          trackLinks:            true,   // Отслеживание внешних ссылок
+          accurateTrackBounce:   true,   // Точный показатель отказов
+          webvisor:              true,   // Вебвизор (запись сессий)
+          ecommerce:             'dataLayer', // eCommerce если понадобится
+          triggerEvent:          true    // Разрешить ручные ym() вызовы
         });
       }
     </script>
@@ -65,7 +68,16 @@
   </head>
   <body>
     <!-- Noscript fallback (Яндекс рекомендует) -->
-    <noscript><div><img src="https://mc.yandex.ru/watch/XXXXXXXX" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <noscript>
+      <div>
+        <img 
+          src="https://mc.yandex.ru/watch/%VITE_YANDEX_METRICA_ID%" 
+          style="position:absolute; left:-9999px;" 
+          alt="Yandex Metrika" 
+        />
+      </div>
+    </noscript>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
