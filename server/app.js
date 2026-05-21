@@ -99,12 +99,52 @@ function validate(schema) {
 export function createApp(prisma) {
   const app = express();
 
-  // ── Security headers (CSP controlled via <meta> in index.html) ──
-  // 🔧 FIX: Disable Helmet CSP injection to let HTML <meta> tag control policy
+  // ── Security headers ────────────────────────────────
+  // 🔧 FIX: CSP via HTTP header — single source of truth
   app.use(helmet({
-    contentSecurityPolicy: false,  // 🔧 Let index.html <meta> handle CSP for Yandex Metrika
-    crossOriginEmbedderPolicy: false, // 🔧 Needed for Yandex blob workers
-    // All other Helmet protections remain active
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          "https://mc.yandex.ru",
+          "https://mc.yandex.com",
+          "https://yandex.ru",
+          "https://yandex.com",
+          "https://metrika.yandex.ru"
+        ],
+        imgSrc: [
+          "'self'",
+          "data:",
+          "blob:",
+          "https://mc.yandex.ru",
+          "https://mc.yandex.com",
+          "https://yandex.ru",
+          "https://yandex.com"
+        ],
+        connectSrc: [
+          "'self'",
+          "https://mc.yandex.ru",
+          "https://mc.yandex.com",
+          "https://yandex.ru",
+          "https://yandex.com",
+          "https://metrika.yandex.ru",
+          "wss://mc.yandex.com",
+          "wss://mc.yandex.ru"
+        ],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        fontSrc: ["'self'", "data:"],
+        frameSrc: [
+          "'self'",
+          "https://mc.yandex.ru",
+          "https://mc.yandex.com",
+          "https://yandex.ru"
+        ],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // Required for Yandex Metrika blob workers
   }));
 
   app.use(cors({ origin: allowedOrigins, credentials: true }));
