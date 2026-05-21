@@ -54,7 +54,8 @@
       // 1. Попробуем получить из Vite env (работает при сборке с .env)
       try {
         const envId = '%VITE_YANDEX_METRICA_ID%';
-        if (envId && envId !== '%VITE_YANDEX_METRICA_ID%' && !isNaN(Number(envId))) {
+        // 🔧 FIX: убрана проверка "envId !== '%VITE_YANDEX_METRICA_ID%'", которая блокировала валидный ID
+        if (envId && !isNaN(Number(envId))) {
           metrikaId = Number(envId);
         }
       } catch (e) {
