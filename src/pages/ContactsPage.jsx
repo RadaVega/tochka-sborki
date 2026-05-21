@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { ConsentCheckbox } from '../components/ConsentCheckbox';
-import { TrackedButton, TrackedLink } from '../components/Tracked';
+import { TrackedButton, TrackedLink, TrackedExternalLink } from '../components/Tracked';
 import {
   Badge,
   Card,
@@ -35,6 +35,7 @@ const CHANNELS = [
     desc: 'Деловые запросы и партнёрства',
     href: 'mailto:tochka.sborki21@vk.com',
     cta: 'Написать',
+    channel: 'email',
   },
   {
     icon: '⚡',
@@ -44,6 +45,7 @@ const CHANNELS = [
     desc: 'Анонсы проектов, вакансии команд, дайджест',
     href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI',
     cta: 'Подписаться',
+    channel: 'max',
   },
   {
     icon: '💬',
@@ -53,6 +55,7 @@ const CHANNELS = [
     desc: 'Вопросы о вступлении, нетворкинг, поддержка',
     href: 'https://web.max.ru/-74708826221932',
     cta: 'Вступить в чат',
+    channel: 'max',
   },
   {
     icon: '🔵',
@@ -62,6 +65,7 @@ const CHANNELS = [
     desc: 'Кейсы выпускников, контент, сообщество',
     href: 'https://vk.com/tochkasborki21',
     cta: 'Подписаться',
+    channel: 'vk',
   },
   {
     icon: '📱',
@@ -71,6 +75,7 @@ const CHANNELS = [
     desc: 'Новости проекта и важные обновления',
     href: 'https://t.me/+6re5Frc7sM0yNWIx',
     cta: 'Открыть',
+    channel: 'telegram',
   },
 ];
 
@@ -396,21 +401,35 @@ export function ContactsPage() {
 
             {CHANNELS.map((ch) => (
               <Reveal key={ch.label}>
-                <TrackedLink
-                  event="contact_channel_click"
-                  href={ch.href}
-                  target={ch.href.startsWith('mailto') ? undefined : '_blank'}
-                  rel="noreferrer"
-                  className={`ct-channel ct-channel-${ch.accent}`}
-                >
-                  <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
-                  <div className="ct-ch-body">
-                    <small>{ch.label}</small>
-                    <strong>{ch.handle}</strong>
-                    <span>{ch.desc}</span>
-                  </div>
-                  <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
-                </TrackedLink>
+                {ch.channel === 'email' ? (
+                  <TrackedLink
+                    event="contact_channel_click"
+                    href={ch.href}
+                    className={`ct-channel ct-channel-${ch.accent}`}
+                  >
+                    <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
+                    <div className="ct-ch-body">
+                      <small>{ch.label}</small>
+                      <strong>{ch.handle}</strong>
+                      <span>{ch.desc}</span>
+                    </div>
+                    <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
+                  </TrackedLink>
+                ) : (
+                  <TrackedExternalLink
+                    href={ch.href}
+                    channel={ch.channel}
+                    className={`ct-channel ct-channel-${ch.accent}`}
+                  >
+                    <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
+                    <div className="ct-ch-body">
+                      <small>{ch.label}</small>
+                      <strong>{ch.handle}</strong>
+                      <span>{ch.desc}</span>
+                    </div>
+                    <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
+                  </TrackedExternalLink>
+                )}
               </Reveal>
             ))}
 

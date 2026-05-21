@@ -131,8 +131,13 @@ export function useAnalytics() {
     }
   }, [location.pathname]);
 
+  // ── UPDATED: trackExternalLink now fires OPEN_MAX_CHANNEL for Max ──
   const trackExternalLink = useCallback((channel, href) => {
-    goal(GOALS.CONTACT_CHANNEL_CLICK, { channel });
+    if (channel === 'max') {
+      goal(GOALS.OPEN_MAX_CHANNEL, { channel });
+    } else {
+      goal(GOALS.CONTACT_CHANNEL_CLICK, { channel });
+    }
     track('external_link_click', { channel, href });
   }, [goal, track]);
 

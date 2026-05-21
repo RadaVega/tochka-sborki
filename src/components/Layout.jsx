@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { Logo } from './Logo';
 import { navItems } from '../data/content';
+import { TrackedExternalLink } from './Tracked';
 
 const communityLinks = [
-  { label: 'ВКонтакте', href: 'https://vk.com/tochkasborki21', icon: 'VK' },
-  { label: 'MAX-канал', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', icon: 'MX' },
-  { label: 'MAX-чат', href: 'https://web.max.ru/-74708826221932', icon: 'MX' },
-  { label: 'Telegram', href: 'https://t.me/+6re5Frc7sM0yNWIx', icon: 'TG' }
+  { label: 'ВКонтакте', href: 'https://vk.com/tochkasborki21', icon: 'VK', channel: 'vk' },
+  { label: 'MAX-канал', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3muJk-Op4kaBJRw2D60o7uOI', icon: 'MX', channel: 'max' },
+  { label: 'MAX-чат', href: 'https://web.max.ru/-74708826221932', icon: 'MX', channel: 'max' },
+  { label: 'Telegram', href: 'https://t.me/+6re5Frc7sM0yNWIx', icon: 'TG', channel: 'telegram' }
 ];
 
 function CookieBanner() {
@@ -53,7 +54,7 @@ export function Layout({ children }) {
             <span className="sr-only">Открыть меню</span>
           </button>
           <div id="main-menu" className={`nav-links ${open ? 'is-open' : ''}`}>
-            {navItems.map((item) => (
+            {navItems.map(((item) => (
               <NavLink
                 key={item.to}
                 to={item.to}
@@ -87,13 +88,18 @@ export function Layout({ children }) {
             <strong>Присоединяйтесь к нам</strong>
             <div className="community-links">
               {communityLinks.map((link) => (
-                <a key={link.href} href={link.href} target="_blank" rel="noreferrer" aria-label={link.label}>
+                <TrackedExternalLink
+                  key={link.href}
+                  href={link.href}
+                  channel={link.channel}
+                  className="community-link"
+                >
                   <span>{link.icon}</span>
                   {link.label}
-                </a>
+                </TrackedExternalLink>
               ))}
             </div>
-            <p>MAX Messenger: канал ⚡ Точка Сборки и 💬 Чат для студентов.</p>
+            <p>MAX Messenger: канал ⚑ Точка Сборки и 💬 Чат для студентов.</p>
           </div>
         </div>
       </footer>
