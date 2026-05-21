@@ -12,6 +12,7 @@ ensureDbConnection().then((ok) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`API запущен: http://localhost:${port}`);
+// 🔧 FIX: Слушаем 0.0.0.0 вместо localhost для работы в Docker/Amvera
+app.listen(port, '0.0.0.0', () => {
+  console.log(`API запущен: http://0.0.0.0:${port}`);
 });
