@@ -504,7 +504,7 @@ export function ContactsPage() {
               <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">
                 📝 Отправить ТЗ сейчас
               </TrackedLink>
-              <TrackedLink to="/how-it-works" goal="NAV_HOW_IT_WORKS" className="ct-outline-btn">
+              <TrackedLink to="/how-it-works" className="ct-outline-btn">
                 Как это работает →
               </TrackedLink>
             </div>

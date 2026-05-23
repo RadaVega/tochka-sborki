@@ -44,4 +44,3 @@ export function HeroPage() {
       </div>
     </PageShell>
   );
-}{/* force clean build */}
