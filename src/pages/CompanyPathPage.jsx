@@ -1,10 +1,11 @@
-import { useState } from 'react';
+mport { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { Badge, Card, Checklist, PageShell, Reveal, TagRow } from '../components/UI';
 import { Logo } from '../components/Logo';
 import { ConsentCheckbox } from '../components/ConsentCheckbox';
-import { TrackedButton } from '../components/Tracked';
+import { TrackedButton, TrackedExternalLink } from '../components/Tracked';
+import { useAnalytics } from '../hooks/useAnalytics';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -188,11 +189,21 @@ function ProcessTimeline() {
 
 function FAQSection() {
   const [open, setOpen] = useState(0);
+  const { goal } = useAnalytics();
+
+  const handleToggle = (index) => {
+    const isOpening = open !== index;
+    setOpen(open === index ? null : index);
+    if (isOpening) {
+      goal('FAQ_OPEN', { questionIndex: index, question: FAQS[index].q });
+    }
+  };
+
   return (
     <div className="company-faq">
       {FAQS.map((item, index) => (
         <div className="faq-item" key={item.q}>
-          <button className="faq-q" type="button" onClick={() => setOpen(open === index ? null : index)} aria-expanded={open === index}>
+          <button className="faq-q" type="button" onClick={() => handleToggle(index)} aria-expanded={open === index}>
             <span>{item.q}</span>
             <span className="faq-icon">{open === index ? '×' : '+'}</span>
           </button>
@@ -209,6 +220,8 @@ function ProjectForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const { goal } = useAnalytics();
+
   const minDate = (() => {
     const date = new Date();
     date.setDate(date.getDate() + 14);
@@ -234,6 +247,7 @@ function ProjectForm() {
       };
       const result = await api('/api/submit-project', payload);
       setSuccess(result.message || '✅ Заявка отправлена! AI-агент ответит за 2–4 часа.');
+      goal('COMPANY_FORM_SUCCESS', { budget: values.budget, stack: values.stack });
       reset();
       setFormState({ consent: false });
     } catch (error) {
@@ -337,7 +351,7 @@ export function CompanyPathPage() {
             <Reveal><MetricPills /></Reveal>
             <Reveal>
               <div className="company-hero-ctas">
-                <TrackedButton event="company_cta_submit_top" as="a" href="#submit" className="primary-button">Отправить техзадание</TrackedButton>
+                <TrackedButton goal="COMPANY_FORM_SUCCESS" as="a" href="#submit" className="primary-button">Отправить техзадание</TrackedButton>
                 <a href="#process" className="outline-button">Как это работает ↓</a>
               </div>
               <div className="company-social-proof">
@@ -404,7 +418,7 @@ export function CompanyPathPage() {
           <p className="subtitle">Цена зависит от объёма, не от часов. Итоговая сумма известна до старта.</p>
         </Reveal>
         <div className="grid three company-pricing-grid">
-          {PLANS.map((plan) => <Reveal key={plan.tier}><Card accent={plan.accent} className={`pricing-card ${plan.featured ? 'pricing-featured' : ''}`}>{plan.featured && <div className="pricing-badge">Популярный</div>}<div className="pricing-tier">{plan.tier}</div><div className={`pricing-price accent-${plan.accent}`}>{plan.price}</div><div className="pricing-range">{plan.unit}</div><Checklist items={plan.items} /><TrackedButton event="company_cta_pricing" as="a" href="#submit" className="primary-button pricing-cta">Оставить заявку →</TrackedButton></Card></Reveal>)}
+          {PLANS.map((plan) => <Reveal key={plan.tier}><Card accent={plan.accent} className={`pricing-card ${plan.featured ? 'pricing-featured' : ''}`}>{plan.featured && <div className="pricing-badge">Популярный</div>}<div className="pricing-tier">{plan.tier}</div><div className={`pricing-price accent-${plan.accent}`}>{plan.price}</div><div className="pricing-range">{plan.unit}</div><Checklist items={plan.items} /><TrackedButton goal="COMPANY_FORM_SUCCESS" as="a" href="#submit" className="primary-button pricing-cta">Оставить заявку →</TrackedButton></Card></Reveal>)}
         </div>
         <Reveal><div className="escrow-highlight"><span>🛡️</span><div><strong>Эскроу-схема защищает вас:</strong> 50% аванс замораживается при подписании и разблокируется только после вашего подписания акта сдачи. Оставшиеся 50% — после финального демо.</div></div></Reveal>
       </PageShell>
@@ -473,10 +487,25 @@ export function CompanyPathPage() {
           <div className="company-contacts">
             {[
               { icon: '✉️', label: 'Email', val: 'tochka.sborki21@vk.com', href: 'mailto:tochka.sborki21@vk.com' },
-              { icon: 'VK', label: 'ВКонтакте', val: 'vk.com/tochkasborki21', href: 'https://vk.com/tochkasborki21' },
-              { icon: 'MAX', label: 'MAX Messenger', val: '⚡ Точка Сборки', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI' },
-              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki', href: 'https://t.me/tochka_sborki' }
-            ].map((contact) => <a key={contact.label} href={contact.href} target="_blank" rel="noreferrer" className="company-contact-card"><span className="company-contact-icon">{contact.icon}</span><div><small>{contact.label}</small><strong>{contact.val}</strong></div></a>)}
+              { icon: 'VK', label: 'ВКонтакте', val: 'vk.com/tochkasborki21', href: 'https://vk.com/tochkasborki21', channel: 'vk' },
+              { icon: 'MAX', label: 'MAX Messenger', val: '⚡ Точка Сборки', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', channel: 'max' },
+              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki', href: 'https://t.me/tochka_sborki', channel: 'telegram' }
+            ].map((contact) => contact.channel ? (
+              <TrackedExternalLink
+                key={contact.label}
+                href={contact.href}
+                channel={contact.channel}
+                className="company-contact-card"
+              >
+                <span className="company-contact-icon">{contact.icon}</span>
+                <div><small>{contact.label}</small><strong>{contact.val}</strong></div>
+              </TrackedExternalLink>
+            ) : (
+              <a key={contact.label} href={contact.href} className="company-contact-card">
+                <span className="company-contact-icon">{contact.icon}</span>
+                <div><small>{contact.label}</small><strong>{contact.val}</strong></div>
+              </a>
+            ))}
           </div>
         </Reveal>
         <Reveal>
@@ -485,7 +514,7 @@ export function CompanyPathPage() {
             <h2>Соберём команду за <em>7 дней.</em><br />Результат за <span>1 спринт.</span></h2>
             <p>Team-as-a-Service из Школы Цифровых Технологий Сбера — фикс-прайс, без онбординга, с полной прозрачностью.</p>
             <div className="final-cta-buttons">
-              <TrackedButton event="company_cta_submit_bottom" as="a" href="#submit" className="primary-button btn-lg">Отправить ТЗ сейчас</TrackedButton>
+              <TrackedButton goal="COMPANY_FORM_SUCCESS" as="a" href="#submit" className="primary-button btn-lg">Отправить ТЗ сейчас</TrackedButton>
               <Link to="/how-it-works" className="outline-button">Подробнее о процессе →</Link>
             </div>
           </div>

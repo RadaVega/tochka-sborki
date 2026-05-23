@@ -4,6 +4,21 @@ import { Link } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { ConsentCheckbox } from '../components/ConsentCheckbox';
 import { TrackedButton, TrackedLink, TrackedExternalLink } from '../components/Tracked';
+import { useAnalytics } from '../hooks/useAnalytics';
+
+/* ─── Email link with goal tracking ─────────────── */
+function EmailLink({ href, className, children }) {
+  const { goal } = useAnalytics();
+  return (
+    <a
+      href={href}
+      className={className}
+      onClick={() => goal('CONTACT_CHANNEL_CLICK', { channel: 'email' })}
+    >
+      {children}
+    </a>
+  );
+}
 import {
   Badge,
   Card,
@@ -118,6 +133,7 @@ function SubscribeForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const { goal } = useAnalytics();
 
   const onSubmit = async ({ email }) => {
     setOk(''); setErr(''); setConsentError('');
@@ -130,6 +146,7 @@ function SubscribeForm() {
     try {
       const res = await api('/api/subscribe', { email, consent: formState.consent });
       setOk(res.message || '✅ Вы подписаны на новости Точки Сборки!');
+      goal('SUBSCRIBE_SUCCESS', { email });
       reset();
       setFormState({ consent: false });
     } catch (e) {
@@ -177,6 +194,7 @@ function ContactForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const { goal } = useAnalytics();
 
   const onSubmit = async (values) => {
     setOk(''); setErr(''); setConsentError('');
@@ -189,6 +207,7 @@ function ContactForm() {
     try {
       const res = await api('/api/contact', { ...values, consent: formState.consent });
       setOk(res.message || '✅ Сообщение отправлено! Ответим в течение рабочего дня.');
+      goal('CONTACT_FORM_SUCCESS', { role: values.role });
       reset();
       setFormState({ consent: false });
     } catch (e) {
@@ -300,8 +319,12 @@ export function ContactsPage() {
                 готовая IT-команда за 7 дней, фикс-прайс, без онбординга.
               </p>
               <div className="ct-hero-ctas">
-                <Link to="/company-path" className="primary-button">📝 Отправить ТЗ</Link>
-                <Link to="/student-path" className="ct-outline-btn">🎓 Студентам →</Link>
+                <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">
+                  📝 Отправить ТЗ
+                </TrackedLink>
+                <TrackedLink to="/student-path" goal="HERO_CTA_STUDENT" className="ct-outline-btn">
+                  🎓 Студентам →
+                </TrackedLink>
               </div>
             </div>
 
@@ -370,9 +393,13 @@ export function ContactsPage() {
                 <Card key={block.title} accent={block.accent} className="ct-value-card">
                   <h3>{block.title}</h3>
                   <Checklist items={block.items} />
-                  <Link to={block.cta.to} className={`ct-card-cta ct-cta-${block.accent}`}>
+                  <TrackedLink
+                    to={block.cta.to}
+                    goal={block.accent === 'cyan' ? 'HERO_CTA_COMPANY' : 'HERO_CTA_STUDENT'}
+                    className={`ct-card-cta ct-cta-${block.accent}`}
+                  >
                     {block.cta.label}
-                  </Link>
+                  </TrackedLink>
                 </Card>
               ))}
             </Reveal>
@@ -402,8 +429,7 @@ export function ContactsPage() {
             {CHANNELS.map((ch) => (
               <Reveal key={ch.label}>
                 {ch.channel === 'email' ? (
-                  <TrackedLink
-                    event="contact_channel_click"
+                  <EmailLink
                     href={ch.href}
                     className={`ct-channel ct-channel-${ch.accent}`}
                   >
@@ -414,11 +440,12 @@ export function ContactsPage() {
                       <span>{ch.desc}</span>
                     </div>
                     <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
-                  </TrackedLink>
+                  </EmailLink>
                 ) : (
                   <TrackedExternalLink
                     href={ch.href}
                     channel={ch.channel}
+                    goalName={ch.channel === 'vk' ? 'OPEN_VK_GROUP' : ch.channel === 'telegram' ? 'OPEN_TELEGRAM' : undefined}
                     className={`ct-channel ct-channel-${ch.accent}`}
                   >
                     <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
@@ -474,8 +501,12 @@ export function ContactsPage() {
               <p>Фикс-прайс · No-Equity · Полная прозрачность · Российский стек</p>
             </div>
             <div className="ct-final-actions">
-              <Link to="/company-path" className="primary-button">📝 Отправить ТЗ сейчас</Link>
-              <Link to="/how-it-works" className="ct-outline-btn">Как это работает →</Link>
+              <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">
+                📝 Отправить ТЗ сейчас
+              </TrackedLink>
+              <TrackedLink to="/how-it-works" goal="NAV_HOW_IT_WORKS" className="ct-outline-btn">
+                Как это работает →
+              </TrackedLink>
             </div>
           </div>
         </Reveal>

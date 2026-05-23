@@ -1,3 +1,4 @@
+import { TrackedLink } from '../components/Tracked';
 import { Logo } from '../components/Logo';
 import { OrbitalDiagram } from '../components/Diagrams';
 import { Badge, MetricBox, PageShell, Reveal } from '../components/UI';
@@ -19,6 +20,22 @@ export function HeroPage() {
           <p>{page.subtitle}</p>
           <div className="audience-row">
             {page.audience.map((item) => <span key={item}>{item}</span>)}
+          </div>
+          <div className="hero-cta-row" style={{ marginTop: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <TrackedLink
+              to="/company-path"
+              goal="HERO_CTA_COMPANY"
+              className="primary-button"
+            >
+              🏢 Для компаний →
+            </TrackedLink>
+            <TrackedLink
+              to="/student-path"
+              goal="HERO_CTA_STUDENT"
+              className="outline-button"
+            >
+              🎓 Для студентов →
+            </TrackedLink>
           </div>
         </Reveal>
         <Reveal>
