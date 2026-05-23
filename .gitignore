@@ -1,11 +1,17 @@
-node_modules
-dist
+# Dependencies & build artifacts
+node_modules/
+dist/
+.vite/
+
+# Env files
 .env
 .env.*
 !.env.example
+
+# Misc
 .vercel
 .DS_Store
 npm-debug.log*
 
+# Prisma generated
 /src/generated/prisma
-.env.example
