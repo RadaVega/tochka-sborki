@@ -350,7 +350,7 @@ export function CompanyPathPage() {
             <Reveal><MetricPills /></Reveal>
             <Reveal>
               <div className="company-hero-ctas">
-                <<TrackedButton as="a" href="#submit" className="primary-button">Отправить техзадание</TrackedButton>
+                <TrackedButton as="a" href="#submit" className="primary-button">Отправить техзадание</TrackedButton>
                 <a href="#process" className="outline-button">Как это работает ↓</a>
               </div>
               <div className="company-social-proof">
@@ -417,7 +417,7 @@ export function CompanyPathPage() {
           <p className="subtitle">Цена зависит от объёма, не от часов. Итоговая сумма известна до старта.</p>
         </Reveal>
         <div className="grid three company-pricing-grid">
-          {PLANS.map((plan) => <Reveal key={plan.tier}><Card accent={plan.accent} className={`pricing-card ${plan.featured ? 'pricing-featured' : ''}`}>{plan.featured && <div className="pricing-badge">Популярный</div>}<div className="pricing-tier">{plan.tier}</div><div className={`pricing-price accent-${plan.accent}`}>{plan.price}</div><div className="pricing-range">{plan.unit}</div><Checklist items={plan.items} /><<TrackedButton as="a" href="#submit" className="primary-button pricing-cta">Оставить заявку →</TrackedButton></Card></Reveal>)}
+          {PLANS.map((plan) => <Reveal key={plan.tier}><Card accent={plan.accent} className={`pricing-card ${plan.featured ? 'pricing-featured' : ''}`}>{plan.featured && <div className="pricing-badge">Популярный</div>}<div className="pricing-tier">{plan.tier}</div><div className={`pricing-price accent-${plan.accent}`}>{plan.price}</div><div className="pricing-range">{plan.unit}</div><Checklist items={plan.items} /><TrackedButton as="a" href="#submit" className="primary-button pricing-cta">Оставить заявку →</TrackedButton></Card></Reveal>)}
         </div>
         <Reveal><div className="escrow-highlight"><span>🛡️</span><div><strong>Эскроу-схема защищает вас:</strong> 50% аванс замораживается при подписании и разблокируется только после вашего подписания акта сдачи. Оставшиеся 50% — после финального демо.</div></div></Reveal>
       </PageShell>
@@ -513,7 +513,7 @@ export function CompanyPathPage() {
             <h2>Соберём команду за <em>7 дней.</em><br />Результат за <span>1 спринт.</span></h2>
             <p>Team-as-a-Service из Школы Цифровых Технологий Сбера — фикс-прайс, без онбординга, с полной прозрачностью.</p>
             <div className="final-cta-buttons">
-              <<TrackedButton as="a" href="#submit" className="primary-button btn-lg">Отправить ТЗ сейчас</TrackedButton>
+              <TrackedButton as="a" href="#submit" className="primary-button btn-lg">Отправить ТЗ сейчас</TrackedButton>
               <Link to="/how-it-works" className="outline-button">Подробнее о процессе →</Link>
             </div>
           </div>
