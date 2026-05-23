@@ -5,7 +5,7 @@ meta:
     version: "20"
 
 build:
-  additionalCommands: "curl -s https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/HeroPage.jsx > src/pages/HeroPage.jsx && curl -s https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/CompanyPathPage.jsx > src/pages/CompanyPathPage.jsx && curl -s https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/ContactsPage.jsx > src/pages/ContactsPage.jsx && curl -s https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/StudentPathPage.jsx > src/pages/StudentPathPage.jsx && rm -rf node_modules dist && npm ci && npx prisma generate && npm run build"
+  additionalCommands: "CACHE_BUST=$(date +%s) && curl -s \"https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/HeroPage.jsx?${CACHE_BUST}\" > src/pages/HeroPage.jsx && curl -s \"https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/CompanyPathPage.jsx?${CACHE_BUST}\" > src/pages/CompanyPathPage.jsx && curl -s \"https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/ContactsPage.jsx?${CACHE_BUST}\" > src/pages/ContactsPage.jsx && curl -s \"https://raw.githubusercontent.com/RadaVega/tochka-sborki/main/src/pages/StudentPathPage.jsx?${CACHE_BUST}\" > src/pages/StudentPathPage.jsx && rm -rf node_modules dist && npm ci && npx prisma generate && npm run build"
 
 run:
   scriptName: start-amvera.cjs

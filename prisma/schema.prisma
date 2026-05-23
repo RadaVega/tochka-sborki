@@ -1,5 +1,3 @@
-// prisma/schema.prisma — application data model
-
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
@@ -7,7 +5,10 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
+
+// ── Existing models ───────────────────────────────
 
 model Contact {
   id        Int      @id @default(autoincrement())
@@ -38,10 +39,9 @@ model ProjectSubmission {
   fileUrl     String?
   consent     Boolean  @default(false)
   createdAt   DateTime @default(now())
-}
 
-// Server-side analytics event log.
-// Matches the existing Supabase table: event/path/metadata/createdAt.
+  teamMatches TeamMatch[]
+}
 
 model AnalyticsEvent {
   id        String    @id @default(cuid())
@@ -52,4 +52,107 @@ model AnalyticsEvent {
 
   @@index([event, createdAt])
   @@index([createdAt])
+}
+
+// ════════════════════════════════════════════════════
+// NEW: StudentProfile
+// ════════════════════════════════════════════════════
+
+model StudentProfile {
+  id   Int    @id @default(autoincrement())
+
+  name      String
+  email     String  @unique
+  telegram  String?
+  phone     String?
+
+  stack          String[]
+  preferredStack String?
+  experience     String
+
+  skillScore     Float?
+  codeQuality    Float?
+  docScore       Float?
+  speedScore     Float?
+
+  portfolio      String?
+  linkedIn       String?
+  resumeUrl      String?
+  about          String
+
+  availableFrom   DateTime?
+  maxHoursPerWeek Int       @default(20)
+  completedProjects Int     @default(0)
+  totalEarned    Float      @default(0)
+
+  status    StudentStatus @default(PENDING)
+
+  consent        Boolean  @default(false)
+  selfEmployed   Boolean  @default(false)
+  ndaSigned      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  teamMatches TeamMatch[]
+
+  @@index([status])
+  @@index([experience])
+  @@index([skillScore])
+  @@index([availableFrom])
+}
+
+enum StudentStatus {
+  PENDING
+  SCORING
+  ACTIVE
+  MATCHED
+  SUSPENDED
+  REJECTED
+}
+
+// ════════════════════════════════════════════════════
+// NEW: TeamMatch
+// ════════════════════════════════════════════════════
+
+model TeamMatch {
+  id Int @id @default(autoincrement())
+
+  studentId   Int
+  student     StudentProfile    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  projectId   Int
+  project     ProjectSubmission @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  role        String?
+  isMentor    Boolean           @default(false)
+
+  matchScore  Float?
+  stackFit    Float?
+  teamFit     Float?
+
+  status      MatchStatus @default(PROPOSED)
+
+  proposedAt  DateTime  @default(now())
+  acceptedAt  DateTime?
+  completedAt DateTime?
+
+  earnedAmount Float?
+  offerMade    Boolean  @default(false)
+  rating       Int?
+  notes        String?  // ← ADDED: stores Hermes AI reasoning
+
+  @@unique([studentId, projectId])
+  @@index([projectId, status])
+  @@index([studentId, status])
+  @@index([matchScore])
+}
+
+enum MatchStatus {
+  PROPOSED
+  ACCEPTED
+  DECLINED
+  ACTIVE
+  COMPLETED
+  DROPPED
 }
