@@ -246,11 +246,11 @@ export function createApp(prisma) {
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://mc.yandex.ru", "https://yastatic.net"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://mc.yandex.ru", "https://mc.yandex.com", "https://yastatic.net"],
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://llm.api.cloud.yandex.net"],
+        connectSrc: ["'self'", "https://llm.api.cloud.yandex.net", "https://mc.yandex.ru", "https://mc.yandex.com"],
       },
     },
   }));
@@ -290,10 +290,9 @@ export function createApp(prisma) {
     try {
       await prisma.analyticsEvent.create({
         data: {
-          eventType,
-          eventName,
-          entityId,
-          entityType,
+          event: `${eventType}:${eventName}`,
+          entityId: entityId ? String(entityId) : null,
+          entityType: entityType || null,
           meta: meta || {},
           ip: req?.ip,
           userAgent: req?.headers?.['user-agent'],
@@ -685,6 +684,3 @@ export function createApp(prisma) {
 
   return app;
 }
-
-export default createApp;
-export { hermesMatchProject };
