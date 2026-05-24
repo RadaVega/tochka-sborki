@@ -1,11 +1,13 @@
 /**
- * server/routes/students.js — ES Module version
- * Routes: student profiles, team matching, Hermes AI matcher
+ * server/app.js — ES Module version
+ * Express app factory with student routes, rate limiting, and analytics
  */
 
 'use strict';
 
 import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
 import { z } from 'zod';
 
 // ── YandexGPT client (for Hermes matching) ──────────
@@ -220,9 +222,66 @@ SkillScore: ${s.skillScore || 'N/A'}
 }
 
 // ════════════════════════════════════════════════════
-// ROUTER FACTORY
+// APP FACTORY
 // ════════════════════════════════════════════════════
-export default function studentRoutes(prisma, rateLimit, logEvent) {
+export function createApp(prisma) {
+  const app = express();
+
+  // ── Middleware ────────────────────────────────────
+  app.use(helmet());
+  app.use(cors());
+  app.use(express.json());
+
+  // ── rateLimit factory (defined BEFORE use) ─────────
+  function rateLimit(windowMs, max) {
+    const requests = new Map();
+    return (req, res, next) => {
+      const ip = req.ip || req.connection.remoteAddress;
+      const now = Date.now();
+
+      if (!requests.has(ip)) {
+        requests.set(ip, { count: 1, startTime: now });
+        return next();
+      }
+
+      const record = requests.get(ip);
+      if (now - record.startTime > windowMs) {
+        record.count = 1;
+        record.startTime = now;
+        return next();
+      }
+
+      if (record.count >= max) {
+        return res.status(429).json({ error: 'Too many requests' });
+      }
+
+      record.count++;
+      next();
+    };
+  }
+
+  // ── logEvent helper ───────────────────────────────
+  async function logEvent(prisma, { req, eventType, eventName, entityId, entityType, meta }) {
+    try {
+      await prisma.analyticsEvent.create({
+        data: {
+          eventType,
+          eventName,
+          entityId,
+          entityType,
+          meta: meta || {},
+          ip: req?.ip,
+          userAgent: req?.headers?.['user-agent'],
+        },
+      });
+    } catch (e) {
+      console.error('[logEvent] failed:', e.message);
+    }
+  }
+
+  // ═══════════════════════════════════════════════════
+  // ROUTER
+  // ═══════════════════════════════════════════════════
   const router = express.Router();
 
   // ── Validation helper ─────────────────────────────
@@ -504,7 +563,11 @@ export default function studentRoutes(prisma, rateLimit, logEvent) {
     }
   });
 
-  return router;
+  // ── Mount router ──────────────────────────────────
+  app.use('/api', router);
+
+  return app;
 }
 
+export default createApp;
 export { hermesMatchProject };

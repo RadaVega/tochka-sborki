@@ -1,7 +1,7 @@
 require('dotenv/config');
 
 async function main() {
-  const [{ PrismaClient }, { PrismaPg }, pgModule, { createApp }] = await Promise.all([
+  const [{ PrismaClient }, { PrismaPg }, pgModule, appModule] = await Promise.all([
     import('@prisma/client'),
     import('@prisma/adapter-pg'),
     import('pg'),
@@ -19,6 +19,13 @@ async function main() {
     .catch((error) => console.error('❌ Ошибка подключения к БД:', error.message));
 
   const port = Number(process.env.PORT || 80);
+  
+  // Fix: ES module default export
+  const createApp = appModule.default || appModule.createApp;
+  if (!createApp) {
+    throw new Error('createApp not found in server/app.js export');
+  }
+  
   const app = createApp(prisma);
   app.locals.prisma = prisma;
   app.locals.pgPool = pool;
