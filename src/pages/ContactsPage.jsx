@@ -6,25 +6,16 @@ import { ConsentCheckbox } from '../components/ConsentCheckbox';
 import { TrackedButton, TrackedLink, TrackedExternalLink } from '../components/Tracked';
 import { useAnalytics } from '../hooks/useAnalytics';
 
-/* ─── Email link with goal tracking ─────────────── */
 function EmailLink({ href, className, children }) {
   const { goal } = useAnalytics();
   return (
-    <a
-      href={href}
-      className={className}
-      onClick={() => goal('CONTACT_CHANNEL_CLICK', { channel: 'email' })}
-    >
+    <a href={href} className={className} onClick={() => goal('CONTACT_CHANNEL_CLICK', { channel: 'email' })}>
       {children}
     </a>
   );
 }
-import {
-  Badge,
-  Card,
-  Checklist,
-  Reveal,
-} from '../components/UI';
+
+import { Badge, Card, Checklist, Reveal } from '../components/UI';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -40,71 +31,56 @@ const api = async (url, payload) => {
   return data;
 };
 
-/* ─── Channel data with hrefs ─────────────────────── */
 const CHANNELS = [
   {
-    icon: '✉️',
-    accent: 'pink',
-    label: 'Email',
+    icon: '✉️', accent: 'pink', label: 'Email',
     handle: 'tochka.sborki21@vk.com',
-    desc: 'Деловые запросы и партнёрства',
-    href: 'mailto:tochka.sborki21@vk.com',
-    cta: 'Написать',
-    channel: 'email',
+    desc: 'Официальная связь: NDA, договорённости, партнёрства',
+    href: 'mailto:tochka.sborki21@vk.com', cta: 'Написать', channel: 'email',
   },
   {
-    icon: '⚡',
-    accent: 'cyan',
-    label: 'MAX Messenger — канал',
-    handle: 'Точка Сборки · Новости',
-    desc: 'Анонсы проектов, вакансии команд, дайджест',
+    icon: '⚡', accent: 'cyan', label: 'MAX — Сигналы',
+    handle: 'Инфраструктура Будущего',
+    desc: 'Анонсы, AI, инженерная культура, запуск команд. Для компаний и инвесторов.',
     href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI',
-    cta: 'Подписаться',
-    channel: 'max',
+    cta: 'Подписаться', channel: 'max',
   },
   {
-    icon: '💬',
-    accent: 'purple',
-    label: 'MAX Messenger — чат',
-    handle: 'Чат для студентов',
-    desc: 'Вопросы о вступлении, нетворкинг, поддержка',
-    href: 'https://web.max.ru/-74708826221932',
-    cta: 'Вступить в чат',
-    channel: 'max',
+    icon: '💬', accent: 'purple', label: 'MAX — Комьюнити',
+    handle: 'Живое ядро экосистемы',
+    desc: 'Нетворкинг, поиск команд, обсуждения, движ. Для студентов и строителей.',
+    href: 'https://web.max.ru/-74708826221932', cta: 'Вступить', channel: 'max',
   },
   {
-    icon: '🔵',
-    accent: 'cyan',
-    label: 'ВКонтакте',
-    handle: 'vk.com/tochkasborki21',
-    desc: 'Кейсы выпускников, контент, сообщество',
-    href: 'https://vk.com/tochkasborki21',
-    cta: 'Подписаться',
-    channel: 'vk',
+    icon: '🔵', accent: 'cyan', label: 'VK — Истории',
+    handle: 'Инженерное комьюнити нового поколения',
+    desc: 'Кейсы, success stories, команды, проекты. Для всех, кто хочет войти в движение.',
+    href: 'https://vk.com/tochkasborki21', cta: 'Вступить', channel: 'vk',
   },
   {
-    icon: '📱',
-    accent: 'purple',
-    label: 'Telegram',
-    handle: '@tochka_sborki',
-    desc: 'Новости проекта и важные обновления',
-    href: 'https://t.me/+6re5Frc7sM0yNWIx',
-    cta: 'Открыть',
-    channel: 'telegram',
+    icon: '🔥', accent: 'pink', label: 'VK — Движение',
+    handle: 'Инженерная культура и AI',
+    desc: 'Вдохновение, стартапы, молодые инженеры, cultural movement.',
+    href: 'https://vk.com/tochkasborki21?w=channel', cta: 'Подписаться', channel: 'vk',
+  },
+  {
+    icon: '📡', accent: 'purple', label: 'Telegram — Апдейты',
+    handle: 'Быстрые новости и ссылки',
+    desc: 'Оперативные обновления, важные анонсы, utility layer.',
+    href: 'https://t.me/+6re5Frc7sM0yNWIx', cta: 'Открыть', channel: 'telegram',
   },
 ];
 
 const STATS = [
   { value: '120', label: 'студентов', accent: 'purple' },
-  { value: '20',  label: 'партнёров', accent: 'cyan'   },
+  { value: '20', label: 'партнёров', accent: 'cyan' },
   { value: '7 дн', label: 'сборка команды', accent: 'pink' },
   { value: 'No-Equity', label: 'фикс-прайс', accent: 'green' },
 ];
 
 const VALUE_BLOCKS = [
   {
-    title: '🎓 Студентам',
-    accent: 'purple',
+    title: '🎓 Студентам', accent: 'purple',
     items: [
       'Доход 40–90k ₽ во время учёбы',
       'Кейс с живым заказчиком в портфолио',
@@ -114,8 +90,7 @@ const VALUE_BLOCKS = [
     cta: { label: 'Подать заявку →', to: '/student-path' },
   },
   {
-    title: '🏢 Компаниям',
-    accent: 'cyan',
+    title: '🏢 Компаниям', accent: 'cyan',
     items: [
       'Готовая команда за 7 дней',
       'Фикс-прайс — платите за результат',
@@ -126,7 +101,6 @@ const VALUE_BLOCKS = [
   },
 ];
 
-/* ─── Subscribe form ──────────────────────────────── */
 function SubscribeForm() {
   const [ok, setOk] = useState('');
   const [err, setErr] = useState('');
@@ -137,18 +111,15 @@ function SubscribeForm() {
 
   const onSubmit = async ({ email }) => {
     setOk(''); setErr(''); setConsentError('');
-
     if (formState.consent !== true) {
       setConsentError('Необходимо согласие на обработку персональных данных');
       return;
     }
-
     try {
       const res = await api('/api/subscribe', { email, consent: formState.consent });
       setOk(res.message || '✅ Вы подписаны на новости Точки Сборки!');
       goal('SUBSCRIBE_SUCCESS', { email });
-      reset();
-      setFormState({ consent: false });
+      reset(); setFormState({ consent: false });
     } catch (e) {
       setErr(e.message || 'Не удалось подписаться. Попробуйте позже.');
     }
@@ -157,10 +128,7 @@ function SubscribeForm() {
   return (
     <form className="subscribe-form" onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="subscribe-row">
-        <input
-          type="email"
-          placeholder="ваш@email.ru"
-          aria-label="Email для подписки"
+        <input type="email" placeholder="ваш@email.ru" aria-label="Email для подписки"
           {...register('email', {
             required: 'Укажите email',
             pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Введите корректный email' },
@@ -173,7 +141,6 @@ function SubscribeForm() {
       {errors.email && <small className="form-error">{errors.email.message}</small>}
       {err && <small className="form-error">{err}</small>}
       {ok && <small className="form-success">{ok}</small>}
-
       <ConsentCheckbox
         checked={formState.consent}
         onChange={(event) => {
@@ -187,7 +154,6 @@ function SubscribeForm() {
   );
 }
 
-/* ─── Contact form ────────────────────────────────── */
 function ContactForm() {
   const [ok, setOk] = useState('');
   const [err, setErr] = useState('');
@@ -198,18 +164,15 @@ function ContactForm() {
 
   const onSubmit = async (values) => {
     setOk(''); setErr(''); setConsentError('');
-
     if (formState.consent !== true) {
       setConsentError('Необходимо согласие на обработку персональных данных');
       return;
     }
-
     try {
       const res = await api('/api/contact', { ...values, consent: formState.consent });
       setOk(res.message || '✅ Сообщение отправлено! Ответим в течение рабочего дня.');
       goal('CONTACT_FORM_SUCCESS', { role: values.role });
-      reset();
-      setFormState({ consent: false });
+      reset(); setFormState({ consent: false });
     } catch (e) {
       setErr(e.message);
     }
@@ -219,28 +182,19 @@ function ContactForm() {
     <Card accent="purple" className="ct-form-card">
       <div className="ct-form-header">
         <div className="ct-form-icon">✉️</div>
-        <div>
-          <h2>Написать напрямую</h2>
-          <p>Ответим в течение рабочего дня</p>
-        </div>
+        <div><h2>Написать напрямую</h2><p>Ответим в течение рабочего дня</p></div>
       </div>
-
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="ct-form">
         <label>
           <span>Имя <span className="req">*</span></span>
-          <input
-            type="text"
-            placeholder="Иван Петров"
+          <input type="text" placeholder="Иван Петров"
             {...register('name', { required: 'Укажите имя', minLength: { value: 2, message: 'Минимум 2 символа' } })}
           />
           {errors.name && <small className="form-error">{errors.name.message}</small>}
         </label>
-
         <label>
           <span>Email <span className="req">*</span></span>
-          <input
-            type="email"
-            placeholder="ivan@company.ru"
+          <input type="email" placeholder="ivan@company.ru"
             {...register('email', {
               required: 'Укажите email',
               pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Введите корректный email' },
@@ -248,7 +202,6 @@ function ContactForm() {
           />
           {errors.email && <small className="form-error">{errors.email.message}</small>}
         </label>
-
         <label>
           <span>Кто вы?</span>
           <select {...register('role')}>
@@ -261,17 +214,13 @@ function ContactForm() {
             <option value="other">Другое</option>
           </select>
         </label>
-
         <label>
           <span>Сообщение <span className="req">*</span></span>
-          <textarea
-            rows={4}
-            placeholder="Расскажите о вашем запросе..."
+          <textarea rows={4} placeholder="Расскажите о вашем запросе..."
             {...register('message', { required: 'Напишите сообщение', minLength: { value: 10, message: 'Минимум 10 символов' } })}
           />
           {errors.message && <small className="form-error">{errors.message.message}</small>}
         </label>
-
         <ConsentCheckbox
           checked={formState.consent}
           onChange={(event) => {
@@ -281,11 +230,9 @@ function ContactForm() {
           }}
           error={consentError}
         />
-
         <button className="primary-button" type="submit" disabled={isSubmitting || formState.consent !== true} style={{ width: '100%' }}>
           {isSubmitting ? '⏳ Отправляем...' : '📨 Отправить сообщение'}
         </button>
-
         {err && <p className="form-error form-message">{err}</p>}
         {ok && <p className="form-success">{ok}</p>}
       </form>
@@ -293,42 +240,26 @@ function ContactForm() {
   );
 }
 
-/* ═══════════════════════════════════════════════════
-   CONTACTS PAGE
-═══════════════════════════════════════════════════ */
 export function ContactsPage() {
   return (
     <section className="page page-purple contacts-page">
-      <div className="glow glow-a" />
-      <div className="glow glow-b" />
-
+      <div className="glow glow-a" /><div className="glow glow-b" />
       <div className="page-inner">
-
-        {/* ── HERO BANNER ─────────────────────────────── */}
         <Reveal>
           <div className="ct-hero">
             <div className="ct-hero-left">
               <Logo />
               <Badge accent="pink" style={{ marginTop: '18px' }}>Готовы начать?</Badge>
-              <h1 className="ct-hero-title">
-                Собираем Команды.<br />
-                <em>Совершаем Подвиги!</em>
-              </h1>
+              <h1 className="ct-hero-title">Собираем Команды.<br /><em>Совершаем Подвиги!</em></h1>
               <p className="ct-hero-sub">
                 <strong>Team-as-a-Service</strong> из Школы Цифровых Технологий Сбера —
                 готовая IT-команда за 7 дней, фикс-прайс, без онбординга.
               </p>
               <div className="ct-hero-ctas">
-                <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">
-                  📝 Отправить ТЗ
-                </TrackedLink>
-                <TrackedLink to="/student-path" goal="HERO_CTA_STUDENT" className="ct-outline-btn">
-                  🎓 Студентам →
-                </TrackedLink>
+                <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">📝 Отправить ТЗ</TrackedLink>
+                <TrackedLink to="/student-path" goal="HERO_CTA_STUDENT" className="ct-outline-btn">🎓 Студентам →</TrackedLink>
               </div>
             </div>
-
-            {/* Right: orbital node visual */}
             <div className="ct-orbital" aria-hidden="true">
               <svg width="220" height="220" viewBox="0 0 220 220" fill="none">
                 <defs>
@@ -369,98 +300,62 @@ export function ContactsPage() {
           </div>
         </Reveal>
 
-        {/* ── STATS STRIP ─────────────────────────────── */}
         <Reveal>
           <div className="ct-stats">
             {STATS.map((s) => (
               <div key={s.label} className={`ct-stat ct-stat-${s.accent}`}>
-                <strong>{s.value}</strong>
-                <span>{s.label}</span>
+                <strong>{s.value}</strong><span>{s.label}</span>
               </div>
             ))}
           </div>
         </Reveal>
 
-        {/* ── MAIN 3-COLUMN GRID ─────────────────────── */}
         <div className="ct-main">
-
-          {/* COL 1: Value props + channels */}
           <div className="ct-col-left">
-
-            {/* Value props */}
             <Reveal>
               {VALUE_BLOCKS.map((block) => (
                 <Card key={block.title} accent={block.accent} className="ct-value-card">
                   <h3>{block.title}</h3>
                   <Checklist items={block.items} />
-                  <TrackedLink
-                    to={block.cta.to}
-                    goal={block.accent === 'cyan' ? 'HERO_CTA_COMPANY' : 'HERO_CTA_STUDENT'}
-                    className={`ct-card-cta ct-cta-${block.accent}`}
-                  >
+                  <TrackedLink to={block.cta.to} goal={block.accent === 'cyan' ? 'HERO_CTA_COMPANY' : 'HERO_CTA_STUDENT'} className={`ct-card-cta ct-cta-${block.accent}`}>
                     {block.cta.label}
                   </TrackedLink>
                 </Card>
               ))}
             </Reveal>
-
-            {/* Newsletter subscribe */}
             <Reveal>
               <div className="ct-subscribe-block">
                 <div className="ct-subscribe-header">
                   <span>📬</span>
-                  <div>
-                    <h3>Дайджест Точки Сборки</h3>
-                    <p>Новые проекты, кейсы команд, советы по карьере — раз в неделю</p>
-                  </div>
+                  <div><h3>Дайджест Точки Сборки</h3><p>Новые проекты, кейсы команд, советы по карьере — раз в неделю</p></div>
                 </div>
                 <SubscribeForm />
               </div>
             </Reveal>
           </div>
 
-          {/* COL 2: Direct channels */}
           <div className="ct-col-mid">
             <Reveal>
-              <h2 className="ct-col-heading">Свяжитесь напрямую</h2>
-              <p className="ct-col-sub">Выберите удобный канал — ответим в течение часа в рабочее время</p>
+              <h2 className="ct-col-heading">Экосистема Точки Сборки</h2>
+              <p className="ct-col-sub">MAX — интеллектуальное движение. VK — инженерное комьюнити. Выберите свой уровень участия.</p>
             </Reveal>
-
             {CHANNELS.map((ch) => (
               <Reveal key={ch.label}>
                 {ch.channel === 'email' ? (
-                  <EmailLink
-                    href={ch.href}
-                    className={`ct-channel ct-channel-${ch.accent}`}
-                  >
+                  <EmailLink href={ch.href} className={`ct-channel ct-channel-${ch.accent}`}>
                     <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
-                    <div className="ct-ch-body">
-                      <small>{ch.label}</small>
-                      <strong>{ch.handle}</strong>
-                      <span>{ch.desc}</span>
-                    </div>
+                    <div className="ct-ch-body"><small>{ch.label}</small><strong>{ch.handle}</strong><span>{ch.desc}</span></div>
                     <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
                   </EmailLink>
                 ) : (
-                  <TrackedExternalLink
-                    href={ch.href}
-                    channel={ch.channel}
-                    goalName={ch.channel === 'vk' ? 'OPEN_VK_GROUP' : ch.channel === 'telegram' ? 'OPEN_TELEGRAM' : undefined}
-                    className={`ct-channel ct-channel-${ch.accent}`}
-                  >
+                  <TrackedExternalLink href={ch.href} channel={ch.channel} goalName={ch.channel === 'vk' ? 'OPEN_VK_GROUP' : ch.channel === 'telegram' ? 'OPEN_TELEGRAM' : undefined} className={`ct-channel ct-channel-${ch.accent}`}>
                     <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
-                    <div className="ct-ch-body">
-                      <small>{ch.label}</small>
-                      <strong>{ch.handle}</strong>
-                      <span>{ch.desc}</span>
-                    </div>
+                    <div className="ct-ch-body"><small>{ch.label}</small><strong>{ch.handle}</strong><span>{ch.desc}</span></div>
                     <div className={`ct-ch-cta ct-ch-cta-${ch.accent}`}>{ch.cta} →</div>
                   </TrackedExternalLink>
                 )}
               </Reveal>
             ))}
-
-            {/* Trust badges */}
             <Reveal>
               <div className="ct-trust">
                 <span>🛡️ NDA через Контур.Диадок</span>
@@ -470,13 +365,8 @@ export function ContactsPage() {
             </Reveal>
           </div>
 
-          {/* COL 3: Contact form */}
           <div className="ct-col-right">
-            <Reveal>
-              <ContactForm />
-            </Reveal>
-
-            {/* Quick links */}
+            <Reveal><ContactForm /></Reveal>
             <Reveal>
               <div className="ct-quick-links">
                 <h3>Быстрые ссылки</h3>
@@ -493,7 +383,6 @@ export function ContactsPage() {
           </div>
         </div>
 
-        {/* ── FINAL CTA BAND ──────────────────────────── */}
         <Reveal>
           <div className="ct-final">
             <div className="ct-final-text">
@@ -501,16 +390,11 @@ export function ContactsPage() {
               <p>Фикс-прайс · No-Equity · Полная прозрачность · Российский стек</p>
             </div>
             <div className="ct-final-actions">
-              <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">
-                📝 Отправить ТЗ сейчас
-              </TrackedLink>
-              <TrackedLink to="/how-it-works" className="ct-outline-btn">
-                Как это работает →
-              </TrackedLink>
+              <TrackedLink to="/company-path" goal="HERO_CTA_COMPANY" className="primary-button">📝 Отправить ТЗ сейчас</TrackedLink>
+              <TrackedLink to="/how-it-works" className="ct-outline-btn">Как это работает →</TrackedLink>
             </div>
           </div>
         </Reveal>
-
       </div>
     </section>
   );
