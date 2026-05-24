@@ -65,7 +65,7 @@ const CHANNELS = [
   },
   {
     icon: '📡', accent: 'purple', label: 'Telegram — Апдейты',
-    handle: 'Быстрые новости и ссылки',
+    handle: '@tochka_sborki_21',
     desc: 'Оперативные обновления, важные анонсы, utility layer.',
     href: 'https://t.me/+6re5Frc7sM0yNWIx', cta: 'Открыть', channel: 'telegram',
   },
