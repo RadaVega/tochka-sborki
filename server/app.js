@@ -495,7 +495,6 @@ export function createApp(prisma) {
           budget: budget ? String(budget).trim() : '',
           deadline: deadline ? parseRussianDate(deadline) : '', // ← String, не Date
           fileUrl: fileUrl ? String(fileUrl).trim() : '',
-          nda: Boolean(nda),
           status: 'PENDING',
         },
       });
@@ -687,6 +686,3 @@ export function createApp(prisma) {
 
   return app;
 }
-
-export default createApp;
-export { hermesMatchProject };
