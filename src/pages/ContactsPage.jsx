@@ -61,7 +61,7 @@ const CHANNELS = [
     icon: '🔥', accent: 'pink', label: 'VK — Движение',
     handle: 'Инженерная культура и AI',
     desc: 'Вдохновение, стартапы, молодые инженеры, cultural movement.',
-    href: 'https://vk.com/tochkasborki21?w=channel', cta: 'Подписаться', channel: 'vk',
+    href: 'https://vk.com/im/channels/-239035460?entrypoint=channel', cta: 'Подписаться', channel: 'vk',
   },
   {
     icon: '📡', accent: 'purple', label: 'Telegram — Апдейты',
