@@ -7,4 +7,6 @@ dist/
 .vercel
 .DS_Store
 npm-debug.log*
-/src/generated/prisma
+/src/generated/prisma*.session.json
+.env
+.env.*
