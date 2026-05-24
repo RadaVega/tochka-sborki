@@ -1,6 +1,6 @@
 /**
  * server/app.js — ES Module version
- * Express app factory with student routes, rate limiting, analytics, and SPA fallback
+ * Express app factory with student routes, project submission, rate limiting, analytics, and SPA fallback
  */
 
 'use strict';
@@ -232,7 +232,18 @@ export function createApp(prisma) {
   const app = express();
 
   // ── Middleware ────────────────────────────────────
-  app.use(helmet());
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://mc.yandex.ru", "https://yastatic.net"],
+        styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+        fontSrc: ["'self'", "https://fonts.gstatic.com"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://llm.api.cloud.yandex.net"],
+      },
+    },
+  }));
   app.use(cors());
   app.use(express.json());
 
@@ -315,6 +326,15 @@ export function createApp(prisma) {
       console.error(`[non-critical] ${taskName} failed:`, e?.message || e);
     }
   }
+
+  // ═══════════════════════════════════════════════════
+  // HEALTH / STATUS
+  // ═══════════════════════════════════════════════════
+
+  // GET /api/health — health check
+  router.get('/health', (req, res) => {
+    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  });
 
   // ═══════════════════════════════════════════════════
   // STUDENT PROFILE ROUTES
@@ -537,6 +557,72 @@ export function createApp(prisma) {
         })),
       });
     } catch (err) {
+      next(err);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════
+  // PROJECT SUBMISSION ROUTE (Company form)
+  // ═══════════════════════════════════════════════════
+
+  // POST /api/submit-project — company submits a project
+  router.post('/submit-project', rateLimit(60 * 60 * 1000, 5), async (req, res, next) => {
+    try {
+      const {
+        companyName,
+        contactName,
+        email,
+        phone,
+        stack,
+        budget,
+        deadline,
+        description,
+        fileUrl,
+        nda,
+      } = req.body;
+
+      // Basic validation
+      if (!companyName || !email || !description) {
+        return res.status(400).json({
+          success: false,
+          error: 'companyName, email and description are required',
+        });
+      }
+
+      const project = await prisma.projectSubmission.create({
+        data: {
+          companyName: String(companyName).trim(),
+          contactName: contactName ? String(contactName).trim() : '',
+          email: String(email).toLowerCase().trim(),
+          phone: phone ? String(phone).trim() : '',
+          stack: parseStack(stack || ''),
+          description: String(description).trim(),
+          budget: budget ? String(budget).trim() : '',
+          deadline: deadline ? new Date(deadline) : null,
+          fileUrl: fileUrl ? String(fileUrl).trim() : '',
+          nda: Boolean(nda),
+          status: 'PENDING',
+        },
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Проект отправлен. Мы свяжемся с вами в течение 24 часов.',
+        id: project.id,
+      });
+
+      runNonCritical('project.analytics', () => logEvent(prisma, {
+        req,
+        eventType: 'form_success',
+        eventName: 'project_submit',
+        entityId: project.id,
+        entityType: 'ProjectSubmission',
+        meta: { companyName, budget, stack: project.stack },
+      }));
+    } catch (err) {
+      if (err.code === 'P2002') {
+        return res.status(400).json({ success: false, error: 'Проект с таким email уже зарегистрирован' });
+      }
       next(err);
     }
   });
