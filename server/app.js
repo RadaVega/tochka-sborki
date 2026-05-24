@@ -106,6 +106,16 @@ function stackOverlap(projectStack, studentStack) {
   };
 }
 
+function parseRussianDate(dateStr) {
+  if (!dateStr) return '';
+  // dd.mm.yyyy → yyyy-mm-dd
+  const parts = dateStr.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  if (parts) {
+    return `${parts[3]}-${parts[2]}-${parts[1]}`;
+  }
+  return String(dateStr).trim();
+}
+
 // ════════════════════════════════════════════════════
 // HERMES: AI-powered project↔student matching
 // ════════════════════════════════════════════════════
@@ -383,30 +393,16 @@ export function createApp(prisma) {
       const where = { status: 'ACTIVE' };
       if (req.query.experience) where.experience = req.query.experience;
       if (req.query.stack) {
-        where.stack = { hasSome: req.query.stack.split(',').map((s) => s.trim()) };
+        where.stack = { hasSome: req.query.stack.split(',').map((s) => s.trim()).filter(Boolean) };
       }
+      if (req.query.availability) where.availability = req.query.availability;
 
       const [students, total] = await Promise.all([
         prisma.studentProfile.findMany({
           where,
           skip,
           take: limit,
-          orderBy: { skillScore: 'desc' },
-          select: {
-            id: true,
-            name: true,
-            stack: true,
-            experience: true,
-            skillScore: true,
-            completedProjects: true,
-            availability: true,
-            hourlyRate: true,
-            bio: true,
-            portfolioUrl: true,
-            githubUrl: true,
-            telegram: true,
-            createdAt: true,
-          },
+          orderBy: { createdAt: 'desc' },
         }),
         prisma.studentProfile.count({ where }),
       ]);
@@ -414,158 +410,58 @@ export function createApp(prisma) {
       res.json({
         success: true,
         data: students,
-        pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit),
+        },
       });
     } catch (err) {
       next(err);
     }
   });
 
-  // GET /api/students/:id — single profile
+  // GET /api/students/:id — get single student
   router.get('/students/:id', async (req, res, next) => {
     try {
       const student = await prisma.studentProfile.findUnique({
         where: { id: req.params.id },
-        include: {
-          teamMatches: {
-            include: {
-              project: { select: { companyName: true, stack: true, budget: true, status: true } },
-            },
-            orderBy: { createdAt: 'desc' },
-            take: 10,
-          },
-        },
       });
-
-      if (!student) return res.status(404).json({ success: false, error: 'Профиль не найден' });
-
+      if (!student) {
+        return res.status(404).json({ success: false, error: 'Студент не найден' });
+      }
       res.json({ success: true, data: student });
     } catch (err) {
       next(err);
     }
   });
 
-  // PATCH /api/students/:id — update profile
+  // PATCH /api/students/:id — update student
   router.patch('/students/:id', validate(studentUpdateSchema), async (req, res, next) => {
     try {
-      const updateData = { ...req.validated };
-      if (updateData.stack) updateData.stack = parseStack(updateData.stack);
+      const data = { ...req.validated };
+      if (data.stack) data.stack = parseStack(data.stack);
 
       const student = await prisma.studentProfile.update({
         where: { id: req.params.id },
-        data: updateData,
+        data,
       });
 
-      res.json({ success: true, data: student });
+      res.json({ success: true, message: 'Профиль обновлён.', data: student });
     } catch (err) {
-      if (err.code === 'P2025') return res.status(404).json({ success: false, error: 'Профиль не найден' });
-      next(err);
-    }
-  });
-
-  // DELETE /api/students/:id — remove profile
-  router.delete('/students/:id', async (req, res, next) => {
-    try {
-      await prisma.studentProfile.delete({ where: { id: req.params.id } });
-      res.json({ success: true, message: 'Профиль удалён' });
-    } catch (err) {
-      if (err.code === 'P2025') return res.status(404).json({ success: false, error: 'Профиль не найден' });
-      next(err);
-    }
-  });
-
-  // ═══════════════════════════════════════════════════
-  // TEAM MATCH ROUTES
-  // ═══════════════════════════════════════════════════
-
-  // GET /api/matches — list all matches (admin view)
-  router.get('/matches', async (req, res, next) => {
-    try {
-      const matches = await prisma.teamMatch.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 100,
-        include: {
-          student: { select: { id: true, name: true, email: true, stack: true, experience: true } },
-          project: { select: { id: true, companyName: true, stack: true, budget: true, deadline: true } },
-        },
-      });
-      res.json({ success: true, data: matches });
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  // GET /api/matches/:id
-  router.get('/matches/:id', async (req, res, next) => {
-    try {
-      const match = await prisma.teamMatch.findUnique({
-        where: { id: req.params.id },
-        include: {
-          student: true,
-          project: true,
-        },
-      });
-      if (!match) return res.status(404).json({ success: false, error: 'Матч не найден' });
-      res.json({ success: true, data: match });
-    } catch (err) {
-      next(err);
-    }
-  });
-
-  // PATCH /api/matches/:id — update match status
-  router.patch('/matches/:id', validate(matchDecisionSchema), async (req, res, next) => {
-    try {
-      const match = await prisma.teamMatch.update({
-        where: { id: req.params.id },
-        data: {
-          status: req.validated.status,
-          metadata: {
-            note: req.validated.note,
-            updatedAt: new Date().toISOString(),
-          },
-        },
-      });
-
-      // If accepted, mark student as busy
-      if (req.validated.status === 'ACCEPTED' || req.validated.status === 'ACTIVE') {
-        await prisma.studentProfile.update({
-          where: { id: match.studentId },
-          data: { status: 'BUSY' },
-        });
+      if (err.code === 'P2025') {
+        return res.status(404).json({ success: false, error: 'Студент не найден' });
       }
-
-      res.json({ success: true, data: match });
-    } catch (err) {
-      if (err.code === 'P2025') return res.status(404).json({ success: false, error: 'Матч не найден' });
-      next(err);
-    }
-  });
-
-  // POST /api/projects/:id/match — trigger Hermes for a specific project
-  router.post('/projects/:id/match', rateLimit(60 * 1000, 5), async (req, res, next) => {
-    try {
-      const matches = await hermesMatchProject(prisma, req.params.id, req.query.top ? parseInt(req.query.top, 10) : 5);
-      res.json({
-        success: true,
-        matched: matches.length,
-        data: matches.map((m) => ({
-          matchId: m.id,
-          studentId: m.studentId,
-          studentName: m.student?.name,
-          matchScore: m.matchScore,
-          status: m.status,
-        })),
-      });
-    } catch (err) {
       next(err);
     }
   });
 
   // ═══════════════════════════════════════════════════
-  // PROJECT SUBMISSION ROUTE (Company form)
+  // PROJECT SUBMISSION ROUTES
   // ═══════════════════════════════════════════════════
 
-  // POST /api/submit-project — company submits a project
+  // POST /api/submit-project — submit new project (FIXED: deadline as String)
   router.post('/submit-project', rateLimit(60 * 60 * 1000, 5), async (req, res, next) => {
     try {
       const {
@@ -574,18 +470,17 @@ export function createApp(prisma) {
         email,
         phone,
         stack,
+        description,
         budget,
         deadline,
-        description,
         fileUrl,
         nda,
       } = req.body;
 
-      // Basic validation
       if (!companyName || !email || !description) {
         return res.status(400).json({
           success: false,
-          error: 'companyName, email and description are required',
+          error: 'companyName, email и description обязательны',
         });
       }
 
@@ -598,7 +493,7 @@ export function createApp(prisma) {
           stack: parseStack(stack || ''),
           description: String(description).trim(),
           budget: budget ? String(budget).trim() : '',
-          deadline: deadline ? new Date(deadline) : null,
+          deadline: deadline ? parseRussianDate(deadline) : '', // ← String, не Date
           fileUrl: fileUrl ? String(fileUrl).trim() : '',
           nda: Boolean(nda),
           status: 'PENDING',
@@ -607,7 +502,7 @@ export function createApp(prisma) {
 
       res.status(201).json({
         success: true,
-        message: 'Проект отправлен. Мы свяжемся с вами в течение 24 часов.',
+        message: 'Проект успешно отправлен.',
         id: project.id,
       });
 
@@ -617,54 +512,176 @@ export function createApp(prisma) {
         eventName: 'project_submit',
         entityId: project.id,
         entityType: 'ProjectSubmission',
-        meta: { companyName, budget, stack: project.stack },
+        meta: { companyName: project.companyName, budget: project.budget },
       }));
     } catch (err) {
-      if (err.code === 'P2002') {
-        return res.status(400).json({ success: false, error: 'Проект с таким email уже зарегистрирован' });
+      next(err);
+    }
+  });
+
+  // GET /api/projects — list projects (admin/internal)
+  router.get('/projects', async (req, res, next) => {
+    try {
+      const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+      const limit = Math.min(50, Math.max(1, parseInt(req.query.limit, 10) || 10));
+      const skip = (page - 1) * limit;
+
+      const where = {};
+      if (req.query.status) where.status = req.query.status;
+
+      const [projects, total] = await Promise.all([
+        prisma.projectSubmission.findMany({
+          where,
+          skip,
+          take: limit,
+          orderBy: { createdAt: 'desc' },
+          include: {
+            _count: { select: { teamMatches: true } },
+          },
+        }),
+        prisma.projectSubmission.count({ where }),
+      ]);
+
+      res.json({
+        success: true,
+        data: projects,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit),
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // GET /api/projects/:id — get single project with matches
+  router.get('/projects/:id', async (req, res, next) => {
+    try {
+      const project = await prisma.projectSubmission.findUnique({
+        where: { id: req.params.id },
+        include: {
+          teamMatches: {
+            include: { student: true },
+            orderBy: { matchScore: 'desc' },
+          },
+        },
+      });
+
+      if (!project) {
+        return res.status(404).json({ success: false, error: 'Проект не найден' });
+      }
+
+      res.json({ success: true, data: project });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // POST /api/projects/:id/match — run Hermes matching
+  router.post('/projects/:id/match', async (req, res, next) => {
+    try {
+      const topN = Math.min(20, Math.max(1, parseInt(req.query.top, 10) || 5));
+      const results = await hermesMatchProject(prisma, req.params.id, topN);
+      res.json({ success: true, data: results });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // PATCH /api/matches/:id — update match decision
+  router.patch('/matches/:id', validate(matchDecisionSchema), async (req, res, next) => {
+    try {
+      const match = await prisma.teamMatch.update({
+        where: { id: req.params.id },
+        data: {
+          status: req.validated.status,
+          note: req.validated.note || '',
+        },
+      });
+      res.json({ success: true, data: match });
+    } catch (err) {
+      if (err.code === 'P2025') {
+        return res.status(404).json({ success: false, error: 'Матч не найден' });
       }
       next(err);
     }
   });
 
   // ═══════════════════════════════════════════════════
-  // ANALYTICS / HEALTH
+  // ANALYTICS ROUTES
   // ═══════════════════════════════════════════════════
 
-  // GET /api/students/leaderboard — top students by skillScore
-  router.get('/students/leaderboard', async (req, res, next) => {
+  // POST /api/analytics/event — track client event
+  router.post('/analytics/event', async (req, res, next) => {
     try {
-      const top = await prisma.studentProfile.findMany({
-        where: { status: 'ACTIVE', skillScore: { not: null } },
-        orderBy: { skillScore: 'desc' },
-        take: Math.min(50, parseInt(req.query.limit, 10) || 10),
-        select: {
-          id: true,
-          name: true,
-          stack: true,
-          skillScore: true,
-          experience: true,
-          completedProjects: true,
-        },
+      const { eventType, eventName, entityId, entityType, meta } = req.body;
+      await logEvent(prisma, {
+        req,
+        eventType: String(eventType).slice(0, 64),
+        eventName: String(eventName).slice(0, 128),
+        entityId: entityId ? String(entityId).slice(0, 64) : null,
+        entityType: entityType ? String(entityType).slice(0, 64) : null,
+        meta: meta || {},
       });
-      res.json({ success: true, data: top });
+      res.json({ success: true });
     } catch (err) {
       next(err);
     }
   });
 
-  // ── Mount API router ──────────────────────────────
+  // GET /api/analytics/dashboard — simple stats
+  router.get('/analytics/dashboard', async (req, res, next) => {
+    try {
+      const [students, projects, matches, events] = await Promise.all([
+        prisma.studentProfile.count(),
+        prisma.projectSubmission.count(),
+        prisma.teamMatch.groupBy({
+          by: ['status'],
+          _count: { status: true },
+        }),
+        prisma.analyticsEvent.count({
+          where: { createdAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
+        }),
+      ]);
+
+      res.json({
+        success: true,
+        data: {
+          students,
+          projects,
+          matches: matches.reduce((acc, m) => {
+            acc[m.status] = m._count.status;
+            return acc;
+          }, {}),
+          eventsLast7Days: events,
+        },
+      });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════
+  // MOUNT & FALLBACK
+  // ═══════════════════════════════════════════════════
   app.use('/api', router);
 
-  // ── Serve frontend static files ───────────────────
-  const distPath = path.join(__dirname, '../dist');
-  app.use(express.static(distPath));
+  // ── Static & SPA fallback ─────────────────────────
+  app.use(express.static(path.join(__dirname, '../dist')));
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../dist/index.html'));
+  });
 
-  // ── SPA fallback: all non-API routes → index.html ──
-  app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api')) return next();
-    res.sendFile(path.join(distPath, 'index.html'), (err) => {
-      if (err) next(err);
+  // ── Global error handler ──────────────────────────
+  app.use((err, req, res, next) => {
+    console.error('[error]', err);
+    if (res.headersSent) return next(err);
+    res.status(500).json({
+      success: false,
+      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
     });
   });
 
