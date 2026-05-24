@@ -1,6 +1,6 @@
 /**
  * server/app.js — ES Module version
- * Express app factory with student routes, rate limiting, and analytics
+ * Express app factory with student routes, rate limiting, analytics, and SPA fallback
  */
 
 'use strict';
@@ -9,6 +9,10 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { z } from 'zod';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // ── YandexGPT client (for Hermes matching) ──────────
 const YANDEX_GPT_API_KEY = process.env.YANDEX_GPT_API_KEY;
@@ -563,8 +567,20 @@ export function createApp(prisma) {
     }
   });
 
-  // ── Mount router ──────────────────────────────────
+  // ── Mount API router ──────────────────────────────
   app.use('/api', router);
+
+  // ── Serve frontend static files ───────────────────
+  const distPath = path.join(__dirname, '../dist');
+  app.use(express.static(distPath));
+
+  // ── SPA fallback: all non-API routes → index.html ──
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(distPath, 'index.html'), (err) => {
+      if (err) next(err);
+    });
+  });
 
   return app;
 }
