@@ -4,7 +4,7 @@ export const brand = {
   english: 'Assembly Point',
   slogan: 'Build Crew. Ship Feats.',
   school: 'Школа 21 · Школа цифровых технологий · 2026',
-  email: 'tochka.sborki21@vk.com'
+  email: 'Tochka.Sborki21@yandex.ru'
 };
 
 export const navItems = [
@@ -29,19 +29,51 @@ export const navItems = [
 export const pages = {
   hero: {
     theme: 'purple',
-    tag: 'Школа Цифровых Технологий Сбера · Team-as-a-Service',
-    title: ['Команды,', 'которые', 'побеждают'],
-    subtitle: 'IT-профессионалы из Школы Цифровых Технологий Сбера — решат Ваши Задачи за 1 Спринт!',
+    tag: '⚡ AI-native Engineering Ecosystem',
+    poweredBy: 'Powered by Hermes AI',
+    title: ['Новая Инженерная', 'Инфраструктура', 'России'],
+    subtitle:
+      'Точка Сборки — AI-native экосистема, которая соединяет студентов, стартапы и компании в единый механизм создания продуктов. Hermes AI собирает engineering-команды за 7 дней. Фикс-прайс. Без онбординга. Без equity.',
     metrics: [
-      { value: '40–90k ₽', label: 'доход участника за проект', accent: 'pink' },
-      { value: '7 дней', label: 'от заявки до старта команды', accent: 'cyan' },
-      { value: 'No-Equity', label: 'фикс-прайс без доли в бизнесе', accent: 'purple' }
+      { value: '350k+', label: 'IT-специалистов выпускает Россия ежегодно', accent: 'cyan' },
+      { value: '7 дней', label: 'Hermes собирает engineering-команду', accent: 'purple' },
+      { value: 'AI-Orchestrated', label: 'team assembly — 80% рутины автоматизировано', accent: 'pink' }
     ],
     audience: [
-      'Студентам → реальный опыт + доход',
-      'Компаниям → результат, фикс-прайс'
+      { label: '🛰 Запустить проект', path: '/company-path', goal: 'HERO_CTA_COMPANY', style: 'primary' },
+      { label: '🎓 Войти в экосистему', path: '/student-path', goal: 'HERO_CTA_STUDENT', style: 'outline' },
+      { label: '📡 Как это работает', path: '/how-it-works', goal: 'HERO_CTA_EXPLORE', style: 'ghost' }
     ],
-    forWhom: ['Акселераторы', 'Партнёры', 'Студенты']
+    ecosystemNodes: [
+      { id: 'students', label: 'Студенты', icon: '🎓', angle: 270, r: 92, accent: '#a78bfa' },
+      { id: 'startups', label: 'Стартапы', icon: '🚀', angle: 330, r: 92, accent: '#22d3ee' },
+      { id: 'companies', label: 'Компании', icon: '🏢', angle: 30, r: 92, accent: '#22d3ee' },
+      { id: 'mentors', label: 'Менторы', icon: '🧑‍🏫', angle: 90, r: 92, accent: '#6ee7b7' },
+      { id: 'research', label: 'Research', icon: '🔬', angle: 150, r: 92, accent: '#f9a8d4' },
+      { id: 'opensource', label: 'Open Source', icon: '⚡', angle: 210, r: 92, accent: '#fcd34d' },
+      { id: 'ai', label: 'AI Agents', icon: '🤖', angle: 300, r: 132, accent: '#c4b5fd' },
+      { id: 'sber', label: 'ШЦТ Сбера', icon: '🏦', angle: 60, r: 132, accent: '#4ade80' },
+      { id: 'ecosystem', label: 'Экосистема', icon: '🌐', angle: 180, r: 132, accent: '#67e8f9' }
+    ],
+    liveProjects: [
+      { type: '🛠️', label: 'AI-команда собирается', stack: 'Python · LLM · FastAPI' },
+      { type: '🚀', label: 'MVP в разработке', stack: 'Go · React · PostgreSQL' },
+      { type: '🔬', label: 'Research-проект', stack: 'Rust · DataSphere · ML' },
+      { type: '⚙️', label: 'DevOps-пайплайн', stack: 'K8s · GitVerse · CI/CD' },
+      { type: '💡', label: 'Fintech-прототип', stack: 'TypeScript · Node · Redis' }
+    ],
+    miniFlow: [
+      { icon: '📝', label: 'Задача' },
+      { icon: '🧠', label: 'Hermes AI' },
+      { icon: '👥', label: 'Команда' },
+      { icon: '🚀', label: 'Продукт' }
+    ],
+    storyStrip: [
+      { age: '19 лет', text: '→ первый коммерческий проект → оффер от Росатома' },
+      { age: 'Стартап за 3 нед.', text: '→ MVP → демо-день Сколково → seed-раунд' },
+      { age: 'Команда 4 инженера', text: '→ Python + ML → 140k ₽ за 3 недели' }
+    ],
+    ecosystemTags: ['AI', 'Engineering', 'Startups', 'Students', 'Infrastructure', 'Research', 'Open Ecosystem']
   },
   problem: {
     theme: 'cyan',
@@ -346,13 +378,13 @@ export const pages = {
       { title: '🏢 Компаниям', items: ['Готовые команды', 'Фикс-прайс, за результат', 'Команда за 1 неделю'] }
     ],
     contacts: [
-      { icon: '✉️', label: 'Email', value: 'tochka.sborki21@vk.com' },
+      { icon: '✉️', label: 'Email', value: 'tochka.sborki21@yandex.ru' },
       { icon: '💬', label: 'MAX Messenger — канал', value: '⚡ Точка Сборки · https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI' },
       { icon: '💬', label: 'MAX Messenger — чат для студентов', value: '💬 Чат для студентов · https://web.max.ru/-74708826221932' },
       { icon: '🌐', label: 'ВКонтакте', value: 'https://vk.com/tochkasborki21' },
       { icon: '✈️', label: 'Telegram', value: 'https://t.me/+6re5Frc7sM0yNWIx' }
     ],
-    stats: [  
+    stats: [
       { value: '120', label: 'студентов' },
       { value: '20', label: 'партнёров' },
       { value: '1 нед.', label: 'сборка команды' },
