@@ -88,7 +88,7 @@ export function HeroPage() {
           </div>
 
           <h1 className="eco-hero-title">
-            {page.title[0]}<<br />
+            {page.title[0]}<br />
             <span>{page.title[1]}</span><br />
             <em>{page.title[2]}</em>
           </h1>
