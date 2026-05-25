@@ -9,6 +9,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import { z } from 'zod';
+import { sendMail } from './mailer.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -398,6 +399,12 @@ export function createApp(prisma) {
         entityType: 'StudentProfile',
         meta: { experience: student.experience, stack: student.stack },
       }));
+
+      runNonCritical('student.email', () => sendMail({
+        subject: 'Новая регистрация студента — Точка Сборки',
+        text: `Зарегистрирован новый студент.\n\nИмя: ${student.name}\nEmail: ${student.email}\nТелефон: ${student.phone || 'не указан'}\nСтек: ${(student.stack || []).join(', ')}\nОпыт: ${student.experience}\nTelegram: ${student.telegram || 'не указан'}\nПортфолио: ${student.portfolio || 'не указано'}\nО себе: ${student.about || 'не указано'}`,
+        replyTo: student.email,
+      }));
     } catch (err) {
       if (err.code === 'P2002') {
         return res.status(400).json({ success: false, error: 'Студент с таким email уже зарегистрирован' });
@@ -543,6 +550,12 @@ export function createApp(prisma) {
         entityId: project.id,
         entityType: 'ProjectSubmission',
         meta: { companyName: project.companyName, budget: project.budget },
+      }));
+
+      runNonCritical('project.email', () => sendMail({
+        subject: 'Новая заявка на проект — Точка Сборки',
+        text: `Получена новая заявка на проект.\n\nКомпания: ${project.companyName}\nКонтактное лицо: ${project.contactName}\nEmail: ${project.email}\nТелефон: ${project.phone || 'не указан'}\nСтек: ${(project.stack || []).join(', ')}\nБюджет: ${project.budget}\nДедлайн: ${project.deadline}\nОписание:\n${project.description}\n\nФайл: ${project.fileUrl || 'не прикреплён'}`,
+        replyTo: project.email,
       }));
     } catch (err) {
       next(err);
@@ -733,6 +746,12 @@ export function createApp(prisma) {
         entityType: 'Contact',
         meta: { name: contact.name },
       }));
+
+      runNonCritical('contact.email', () => sendMail({
+        subject: 'Новое сообщение с контактной формы — Точка Сборки',
+        text: `Получено новое сообщение с сайта.\n\nИмя: ${contact.name}\nEmail: ${contact.email}\nСообщение:\n${contact.message}`,
+        replyTo: contact.email,
+      }));
     } catch (err) {
       next(err);
     }
@@ -774,6 +793,12 @@ export function createApp(prisma) {
         entityId: subscriber.id,
         entityType: 'Subscriber',
         meta: { email: subscriber.email },
+      }));
+
+      runNonCritical('subscribe.email', () => sendMail({
+        subject: 'Новая подписка на рассылку — Точка Сборки',
+        text: `Новый подписчик.\n\nEmail: ${subscriber.email}\nСогласие на обработку: ${subscriber.consent ? 'Да' : 'Нет'}`,
+        replyTo: subscriber.email,
       }));
     } catch (err) {
       if (err.code === 'P2002') {
