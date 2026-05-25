@@ -665,7 +665,7 @@ export function StudentPathPage() {
               { icon: '✉️', label: 'Email', val: 'tochka.sborki21@vk.com', href: 'mailto:tochka.sborki21@vk.com' },
               { icon: 'VK', label: 'ВКонтакте', val: 'vk.com/tochkasborki21', href: 'https://vk.com/tochkasborki21', channel: 'vk' },
               { icon: 'MAX', label: 'MAX Messenger', val: '⚡ Точка Сборки', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', channel: 'max' },
-              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki_21', href: 'https://t.me/tochka_sborki_21', channel: 'telegram' },
+              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki_21', href: 'https://t.me/+6re5Frc7sM0yNWIx', channel: 'telegram' },
             ].map((c) => c.channel ? (
               <TrackedExternalLink key={c.label} href={c.href} channel={c.channel} className="company-contact-card">
                 <span className="company-contact-icon">{c.icon}</span>
