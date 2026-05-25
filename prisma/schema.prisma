@@ -16,29 +16,29 @@ model Contact {
   email     String
   message   String
   consent   Boolean  @default(false)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("createdAt")
 }
 
 model Subscriber {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   consent   Boolean  @default(false)
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now()) @map("createdAt")
 }
 
 model ProjectSubmission {
   id          Int      @id @default(autoincrement())
-  companyName String
-  contactName String
+  companyName String   @map("companyName")
+  contactName String   @map("contactName")
   email       String
   phone       String?
   stack       String[]
   description String
   deadline    String
   budget      String
-  fileUrl     String?
+  fileUrl     String?  @map("fileUrl")
   consent     Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  createdAt   DateTime @default(now()) @map("createdAt")
 
   teamMatches TeamMatch[]
 }
@@ -48,7 +48,7 @@ model AnalyticsEvent {
   event     String
   path      String?
   metadata  String?
-  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt DateTime? @default(now()) @db.Timestamptz(6) @map("createdAt")
 
   @@index([event, createdAt])
   @@index([createdAt])
@@ -140,7 +140,7 @@ model TeamMatch {
   earnedAmount Float?
   offerMade    Boolean  @default(false)
   rating       Int?
-  notes        String?  // ← ADDED: stores Hermes AI reasoning
+  notes        String?
 
   @@unique([studentId, projectId])
   @@index([projectId, status])

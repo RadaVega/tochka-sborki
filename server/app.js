@@ -201,31 +201,31 @@ SkillScore: ${s.skillScore || 'N/A'}
 
     const match = await prisma.teamMatch.upsert({
       where: {
-        projectSubmissionId_studentId: {
-          projectSubmissionId: projectId,
+        studentId_projectId: {   // ← fixed: matches @@unique([studentId, projectId])
           studentId: r.studentId,
+          projectId: projectId,
         },
       },
       update: {
         matchScore: r.matchScore,
         status: 'PROPOSED',
-        metadata: {
-          ...(typeof match?.metadata === 'object' ? match.metadata : {}),
+        notes: JSON.stringify({
+          ...(typeof match?.notes === 'object' ? match.notes : {}),
           hermesReason: r.reason,
           hermesRole: r.recommendedRole,
           matchedAt: new Date().toISOString(),
-        },
+        }),
       },
       create: {
-        projectSubmissionId: projectId,
+        projectId: projectId,    // ← fixed: Prisma field is projectId
         studentId: r.studentId,
         matchScore: r.matchScore,
         status: 'PROPOSED',
-        metadata: {
+        notes: JSON.stringify({
           hermesReason: r.reason,
           hermesRole: r.recommendedRole,
           matchedAt: new Date().toISOString(),
-        },
+        }),
       },
     });
 
@@ -291,11 +291,14 @@ export function createApp(prisma) {
       await prisma.analyticsEvent.create({
         data: {
           event: `${eventType}:${eventName}`,
-          entityId: entityId ? String(entityId) : null,
-          entityType: entityType || null,
-          meta: meta || {},
-          ip: req?.ip,
-          userAgent: req?.headers?.['user-agent'],
+          path: req?.path || req?.url || null,
+          metadata: JSON.stringify({
+            entityId: entityId ? String(entityId) : null,
+            entityType: entityType || null,
+            ...(meta || {}),
+            ip: req?.ip,
+            userAgent: req?.headers?.['user-agent'],
+          }),
         },
       });
     } catch (e) {
@@ -350,13 +353,34 @@ export function createApp(prisma) {
   // ═══════════════════════════════════════════════════
 
   // POST /api/students — register student
-  router.post('/students', rateLimit(60 * 60 * 1000, 3), validate(studentCreateSchema), async (req, res, next) => {
+  router.post('/students', rateLimit(60 * 60 * 1000, 3), async (req, res, next) => {
     try {
+      const raw = req.body;
+
+      // Basic validation
+      if (!raw.name || !raw.email || !raw.stack || !raw.experience) {
+        return res.status(400).json({
+          success: false,
+          error: 'name, email, stack и experience обязательны',
+        });
+      }
+
+      // Build data mapped to Prisma schema fields
       const data = {
-        ...req.validated,
-        stack: parseStack(req.validated.stack),
-        consent: Boolean(req.validated.consent),
+        name: String(raw.name).trim(),
+        email: String(raw.email).toLowerCase().trim(),
+        phone: raw.phone ? String(raw.phone).trim() : null,
+        stack: parseStack(raw.stack),
+        experience: String(raw.experience).toUpperCase(),
+        about: String(raw.bio || '').trim(),        // ← mapped: bio → about (required)
+        consent: Boolean(raw.consent),
       };
+
+      // Optional fields — mapped to Prisma schema names
+      if (raw.telegram) data.telegram = String(raw.telegram).trim();
+      if (raw.portfolioUrl) data.portfolio = String(raw.portfolioUrl).trim();  // ← mapped: portfolioUrl → portfolio
+      if (raw.preferredStack) data.preferredStack = String(raw.preferredStack).trim();
+      // NOTE: githubUrl, availability, hourlyRate do NOT exist in Prisma schema — dropped
 
       const student = await prisma.studentProfile.create({ data });
 
@@ -377,6 +401,14 @@ export function createApp(prisma) {
     } catch (err) {
       if (err.code === 'P2002') {
         return res.status(400).json({ success: false, error: 'Студент с таким email уже зарегистрирован' });
+      }
+      if (err.name === 'PrismaClientValidationError' || err.message?.includes('Unknown argument')) {
+        console.error('[student] Schema mismatch:', err.message);
+        return res.status(400).json({
+          success: false,
+          error: 'Ошибка схемы базы данных. Проверьте поля формы или обновите Prisma schema.',
+          details: process.env.NODE_ENV === 'development' ? err.message : undefined,
+        });
       }
       next(err);
     }
@@ -460,7 +492,7 @@ export function createApp(prisma) {
   // PROJECT SUBMISSION ROUTES
   // ═══════════════════════════════════════════════════
 
-  // POST /api/submit-project — submit new project (FIXED: deadline as String)
+  // POST /api/submit-project — submit new project
   router.post('/submit-project', rateLimit(60 * 60 * 1000, 5), async (req, res, next) => {
     try {
       const {
@@ -473,27 +505,28 @@ export function createApp(prisma) {
         budget,
         deadline,
         fileUrl,
-        nda,
+        consent,
       } = req.body;
 
-      if (!companyName || !email || !description) {
+      if (!companyName || !contactName || !email || !description || !budget || !deadline) {
         return res.status(400).json({
           success: false,
-          error: 'companyName, email и description обязательны',
+          error: 'companyName, contactName, email, description, budget и deadline обязательны',
         });
       }
 
       const project = await prisma.projectSubmission.create({
         data: {
           companyName: String(companyName).trim(),
-          contactName: contactName ? String(contactName).trim() : '',
+          contactName: String(contactName).trim(),
           email: String(email).toLowerCase().trim(),
-          phone: phone ? String(phone).trim() : '',
+          phone: phone ? String(phone).trim() : null,
           stack: parseStack(stack || ''),
           description: String(description).trim(),
-          budget: budget ? String(budget).trim() : '',
-          deadline: deadline ? parseRussianDate(deadline) : '', // ← String, не Date
-          fileUrl: fileUrl ? String(fileUrl).trim() : '',
+          budget: String(budget).trim(),
+          deadline: parseRussianDate(deadline) || String(deadline).trim(),
+          fileUrl: fileUrl ? String(fileUrl).trim() : null,
+          consent: consent === true || consent === 'true',
         },
       });
 
@@ -592,10 +625,10 @@ export function createApp(prisma) {
   router.patch('/matches/:id', validate(matchDecisionSchema), async (req, res, next) => {
     try {
       const match = await prisma.teamMatch.update({
-        where: { id: req.params.id },
+        where: { id: parseInt(req.params.id, 10) },
         data: {
           status: req.validated.status,
-          note: req.validated.note || '',
+          notes: req.validated.note || null,  // ← Prisma field is "notes", not "note"
         },
       });
       res.json({ success: true, data: match });
@@ -657,6 +690,95 @@ export function createApp(prisma) {
         },
       });
     } catch (err) {
+      next(err);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════
+  // CONTACT ROUTES
+  // ═══════════════════════════════════════════════════
+
+  // POST /api/contact — submit contact form
+  router.post('/contact', rateLimit(60 * 60 * 1000, 5), async (req, res, next) => {
+    try {
+      const { name, email, message, consent } = req.body;
+
+      if (!name || !email || !message) {
+        return res.status(400).json({
+          success: false,
+          error: 'name, email и message обязательны',
+        });
+      }
+
+      const contact = await prisma.contact.create({
+        data: {
+          name: String(name).trim(),
+          email: String(email).toLowerCase().trim(),
+          message: String(message).trim(),
+          consent: consent === true || consent === 'true',
+        },
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Сообщение отправлено.',
+        id: contact.id,
+      });
+
+      runNonCritical('contact.analytics', () => logEvent(prisma, {
+        req,
+        eventType: 'form_success',
+        eventName: 'contact_submit',
+        entityId: contact.id,
+        entityType: 'Contact',
+        meta: { name: contact.name },
+      }));
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════
+  // SUBSCRIBE ROUTES
+  // ═══════════════════════════════════════════════════
+
+  // POST /api/subscribe — email subscription
+  router.post('/subscribe', rateLimit(60 * 60 * 1000, 10), async (req, res, next) => {
+    try {
+      const { email, consent } = req.body;
+
+      if (!email) {
+        return res.status(400).json({
+          success: false,
+          error: 'Email обязателен',
+        });
+      }
+
+      const subscriber = await prisma.subscriber.create({
+        data: {
+          email: String(email).toLowerCase().trim(),
+          consent: consent === true || consent === 'true',
+        },
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'Подписка оформлена.',
+        id: subscriber.id,
+      });
+
+      runNonCritical('subscribe.analytics', () => logEvent(prisma, {
+        req,
+        eventType: 'form_success',
+        eventName: 'subscribe',
+        entityId: subscriber.id,
+        entityType: 'Subscriber',
+        meta: { email: subscriber.email },
+      }));
+    } catch (err) {
+      if (err.code === 'P2002') {
+        return res.status(409).json({ success: false, error: 'Этот email уже подписан' });
+      }
       next(err);
     }
   });

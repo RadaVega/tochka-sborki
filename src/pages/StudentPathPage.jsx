@@ -279,17 +279,22 @@ function StudentApplicationForm() {
     }
 
     try {
-      const result = await api('/api/student-apply', {
-        ...values,
+      // Map frontend fields to backend schema
+      const result = await api('/api/students', {
+        name: values.name,
+        email: values.email,
+        phone: values.phone || null,
+        stack: values.stack || '',
+        experience: values.experience === 'beginner' ? 'JUNIOR' : 
+                    values.experience === 'intermediate' ? 'MIDDLE' : 'SENIOR',
+        bio: values.about || '',
+        portfolioUrl: values.portfolio || '',
         telegram: values.telegram || '',
-        phone:    values.phone    || '',
-        portfolio: values.portfolio || '',
-        experience: values.experience || '',
         preferredStack: values.preferredStack || '',
         consent,
       });
 
-      setSuccess(result.message || '✅ Заявка принята! AI-скоринг подберёт проект за 48 часов — ответим на email.');
+      setSuccess(result.message || '✅ Профиль создан! AI-скоринг подберёт проект за 48 часов — ответим на email.');
       goal('STUDENT_FORM_SUCCESS', { stack: values.stack, experience: values.experience });
       reset();
       setConsent(false);
@@ -665,7 +670,7 @@ export function StudentPathPage() {
               { icon: '✉️', label: 'Email', val: 'tochka.sborki21@vk.com', href: 'mailto:tochka.sborki21@vk.com' },
               { icon: 'VK', label: 'ВКонтакте', val: 'vk.com/tochkasborki21', href: 'https://vk.com/tochkasborki21', channel: 'vk' },
               { icon: 'MAX', label: 'MAX Messenger', val: '⚡ Точка Сборки', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', channel: 'max' },
-              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki_21', href: 'https://t.me/+6re5Frc7sM0yNWIx', channel: 'telegram' },
+              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki', href: 'https://t.me/tochka_sborki', channel: 'telegram' },
             ].map((c) => c.channel ? (
               <TrackedExternalLink key={c.label} href={c.href} channel={c.channel} className="company-contact-card">
                 <span className="company-contact-icon">{c.icon}</span>
