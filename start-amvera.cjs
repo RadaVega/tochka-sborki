@@ -14,6 +14,19 @@ async function main() {
   const adapter = new PrismaPg(pool);
   const prisma = new PrismaClient({ adapter });
 
+  // ── Run prisma db push before starting server ──
+  try {
+    const { execSync } = require('child_process');
+    execSync('npx prisma db push --accept-data-loss', {
+      stdio: 'inherit',
+      env: { ...process.env, DATABASE_URL: connectionString }
+    });
+    console.log('✅ Prisma schema synced with database');
+  } catch (e) {
+    console.error('⚠️ Prisma db push failed:', e.message);
+    console.error('Continuing anyway — may cause schema mismatch errors');
+  }
+
   prisma.$connect()
     .then(() => console.log('✅ Подключение к базе данных установлено'))
     .catch((error) => console.error('❌ Ошибка подключения к БД:', error.message));
