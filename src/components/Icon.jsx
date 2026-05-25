@@ -1,32 +1,36 @@
 import {
-  Rocket, Users, Building2, BrainCircuit, Wrench, Globe,
-  Microscope, GitBranch, GraduationCap, Target, Package,
-  Server, CreditCard, Zap, LogIn, PlayCircle, HeartHandshake,
-  Bot, Sparkles, TrendingUp, Briefcase, CheckCircle2,
-  HelpCircle, DoorOpen, FileText, ClipboardList, UserPlus,
-  Award, Lightbulb, Code2, Share2, Landmark, Factory,
-  Heart, Cpu, Layers, Compass, Shield, Lock, Mail, Phone,
-  MapPin, Calendar, Clock, Star, ArrowRight, ChevronRight,
-  Menu, X, Search, Beaker, Cog, Orbit
-} from 'lucide-react';
+  RocketLaunch, Student, Buildings, Handshake, Microscope,
+  GitBranch, Brain, Wrench, Globe, Target, Users, Package,
+  Server, CreditCard, Lightning, SignIn, PlayCircle, Sparkle,
+  TrendUp, Briefcase, CheckCircle, Question, DoorOpen, Article,
+  ClipboardText, UserPlus, Trophy, Lightbulb, Code, ShareNetwork,
+  Bank, Factory, Heart, Cpu, Stack, Compass, Shield, Lock,
+  Envelope, Phone, MapPin, Calendar, Clock, Star, ArrowRight,
+  CaretRight, List, X, MagnifyingGlass, Flask, Gear, Planet,
+  Orbit, Atom, Telescope, Robot, Circuitry, ChartLineUp,
+  CloudArrowUp, Database, ShieldCheck, Fingerprint, Infinity,
+  Pulse, Radioactive, Planet as PlanetIcon, Asterisk, WaveSine
+} from '@phosphor-icons/react';
 
 const iconMap = {
-  Rocket, Users, Building2, BrainCircuit, Wrench, Globe,
-  Microscope, GitBranch, GraduationCap, Target, Package,
-  Server, CreditCard, Zap, LogIn, PlayCircle, HeartHandshake,
-  Bot, Sparkles, TrendingUp, Briefcase, CheckCircle2,
-  HelpCircle, DoorOpen, FileText, ClipboardList, UserPlus,
-  Award, Lightbulb, Code2, Share2, Landmark, Factory,
-  Heart, Cpu, Layers, Compass, Shield, Lock, Mail, Phone,
-  MapPin, Calendar, Clock, Star, ArrowRight, ChevronRight,
-  Menu, X, Search, Beaker, Cog, Orbit
+  RocketLaunch, Student, Buildings, Handshake, Microscope,
+  GitBranch, Brain, Wrench, Globe, Target, Users, Package,
+  Server, CreditCard, Lightning, SignIn, PlayCircle, Sparkle,
+  TrendUp, Briefcase, CheckCircle, Question, DoorOpen, Article,
+  ClipboardText, UserPlus, Trophy, Lightbulb, Code, ShareNetwork,
+  Bank, Factory, Heart, Cpu, Stack, Compass, Shield, Lock,
+  Envelope, Phone, MapPin, Calendar, Clock, Star, ArrowRight,
+  CaretRight, List, X, MagnifyingGlass, Flask, Gear, Planet,
+  Orbit, Atom, Telescope, Robot, Circuitry, ChartLineUp,
+  CloudArrowUp, Database, ShieldCheck, Fingerprint, Infinity,
+  Pulse, Radioactive, PlanetIcon, Asterisk, WaveSine
 };
 
-export function Icon({ name, size = 20, className = '', ...props }) {
+export function Icon({ name, size = 20, weight = "duotone", className = '', ...props }) {
   const Component = iconMap[name];
   if (!Component) {
     console.warn(`Icon "${name}" not found`);
     return null;
   }
-  return <Component size={size} className={className} {...props} />;
+  return <Component size={size} weight={weight} className={className} {...props} />;
 }

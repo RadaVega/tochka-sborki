@@ -1483,7 +1483,219 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Ecosystem Map v4 — Fixed Constellation, HTML Overlay Nodes
+   Ecosystem Hero v5 — Orbital Mechanics, Phosphor Icons,
+   Massive HERMES, National Mission, AI Vision
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Live strip ────────────────────────────────────────────── */
+.live-strip {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 10px 40px;
+  background: rgba(124,58,237,.08);
+  border-bottom: 1px solid rgba(124,58,237,.18);
+  font-size: .85rem;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 10px #10b981;
+  animation: pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .3; transform: scale(.8); }
+}
+.live-label { color: var(--li); font-weight: 700; white-space: nowrap; }
+.live-item { display: flex; align-items: center; gap: 10px; }
+.live-item strong { color: var(--wr); font-weight: 700; }
+.live-icon-svg { color: var(--p); filter: drop-shadow(0 0 6px var(--p)); }
+.live-stack {
+  font-family: 'DejaVu Sans Mono','Liberation Mono',monospace;
+  font-size: .76rem;
+  color: #94a3b8;
+  background: rgba(255,255,255,.05);
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+/* ── Hero grid ─────────────────────────────────────────────── */
+.eco-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 48px;
+  align-items: start;
+  min-height: calc(100vh - 108px);
+  padding: 32px 0 40px;
+}
+
+/* ── Copy ──────────────────────────────────────────────────── */
+.eco-badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
+
+.eco-hero-title {
+  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.05em;
+  margin: 0 0 16px;
+  color: var(--wr);
+}
+.eco-hero-title span { color: var(--pl); }
+.eco-hero-title em   { color: var(--kl); font-style: normal; }
+
+.eco-hero-line {
+  width: 260px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--p), var(--c), transparent);
+  margin: 0 0 18px;
+}
+
+.eco-hero-sub {
+  font-size: 1.05rem;
+  color: var(--li);
+  max-width: 560px;
+  line-height: 1.65;
+  margin: 0 0 22px;
+}
+
+/* ── Metrics ───────────────────────────────────────────────── */
+.eco-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 22px;
+}
+.eco-metric {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(124,58,237,.22);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.eco-metric strong { font-size: 1.2rem; font-weight: 800; line-height: 1; }
+.eco-metric span   { font-size: .78rem; color: var(--li); line-height: 1.35; }
+.eco-metric-cyan   strong { color: var(--cm); }
+.eco-metric-purple strong { color: var(--pm); }
+.eco-metric-pink   strong { color: var(--km); }
+
+/* ── Mini flow ───────────────────────────────────────────── */
+.mini-flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  margin: 0 0 24px;
+}
+.mini-flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(124,58,237,.1), rgba(6,182,212,.06));
+  border: 1px solid rgba(124,58,237,.2);
+  border-radius: 12px;
+  min-width: 88px;
+  position: relative;
+  transition: all .2s ease;
+}
+.mini-flow-step:hover {
+  transform: translateY(-3px);
+  border-color: rgba(124,58,237,.4);
+  background: linear-gradient(135deg, rgba(124,58,237,.16), rgba(6,182,212,.1));
+  box-shadow: 0 8px 24px rgba(124,58,237,.12);
+}
+.mini-flow-step:not(:last-child) { margin-right: 18px; }
+.mini-flow-step:not(:last-child)::after {
+  content: '›';
+  position: absolute;
+  right: -16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--p);
+  font-size: 1.6rem;
+  font-weight: 300;
+  opacity: .7;
+}
+.mini-flow-num {
+  font-size: .65rem;
+  font-weight: 800;
+  color: var(--p);
+  font-family: 'DejaVu Sans Mono',monospace;
+  letter-spacing: .05em;
+  opacity: .8;
+}
+.mini-flow-icon-svg {
+  color: var(--p);
+  filter: drop-shadow(0 0 12px rgba(124,58,237,.4));
+  line-height: 1;
+}
+.mini-flow-label {
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--wr);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+/* ── CTA row ───────────────────────────────────────────────── */
+.eco-cta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 0 0 18px;
+}
+.eco-cta-row a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.eco-cta-primary { font-size: 1rem; padding: 14px 26px; }
+.ghost-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--li);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.1);
+  text-decoration: none;
+  transition: all .18s;
+}
+.ghost-button:hover {
+  color: var(--wr);
+  border-color: rgba(255,255,255,.25);
+  background: rgba(255,255,255,.05);
+}
+
+/* ── Tags ──────────────────────────────────────────────────── */
+.eco-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.eco-tag {
+  font-size: .74rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  color: #94a3b8;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  letter-spacing: .03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Ecosystem Map v5 — True Orbital Mechanics, Phosphor Duotone
 ═══════════════════════════════════════════════════════════════ */
 
 .eco-hero-right {
@@ -1499,14 +1711,12 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 .eco-map-container {
   position: relative;
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
 }
 
 .eco-map-svg {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   overflow: visible;
@@ -1526,13 +1736,13 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   transform-origin: 200px 200px;
 }
 .orbit-outer {
-  animation: orbitSpin 80s linear infinite;
+  animation: orbitSpin 90s linear infinite;
 }
 .orbit-mid {
-  animation: orbitSpinReverse 60s linear infinite;
+  animation: orbitSpinReverse 70s linear infinite;
 }
 .orbit-inner {
-  animation: orbitSpin 45s linear infinite;
+  animation: orbitSpin 50s linear infinite;
 }
 @keyframes orbitSpin {
   from { transform: rotate(0deg); }
@@ -1543,125 +1753,79 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   to   { transform: rotate(-360deg); }
 }
 
-/* Spokes data-flow animation */
+/* ── Orbiting node rings ─────────────────────────────────── */
+.ring-group {
+  transform-origin: 200px 200px;
+}
+.ring-outer {
+  animation: orbitSpin 60s linear infinite;
+}
+.ring-inner {
+  animation: orbitSpinReverse 40s linear infinite;
+}
+
+/* Counter-rotate nodes so icons stay upright */
+.node-counter {
+  transform-origin: center;
+}
+.node-outer-counter {
+  animation: counterRotate 60s linear infinite;
+}
+.node-inner-counter {
+  animation: counterRotateReverse 40s linear infinite;
+}
+@keyframes counterRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes counterRotateReverse {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Spoke dash animation */
 .spoke-line {
-  animation: dataFlow 3s linear infinite;
+  animation: dataFlow 4s linear infinite;
 }
 @keyframes dataFlow {
-  from { stroke-dashoffset: 28; }
+  from { stroke-dashoffset: 36; }
   to   { stroke-dashoffset: 0; }
 }
 
-/* HERMES CENTER */
+/* Node icon wrapper */
+.node-icon-wrap {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+}
+
+/* HERMES CORE — The Sun */
 .hermes-core {
   animation: hermesFloat 5s ease-in-out infinite;
   transform-origin: 200px 200px;
 }
 @keyframes hermesFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+  50% { transform: translateY(-5px); }
 }
 
 .hermes-pulse-ring {
-  animation: hermesPulse 2.5s ease-out infinite;
+  animation: hermesPulse 3s ease-out infinite;
   transform-origin: 200px 200px;
 }
 @keyframes hermesPulse {
   0%   { transform: scale(1); opacity: .5; }
-  100% { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
 }
 
-/* ── HTML Overlay Nodes ────────────────────────────────────── */
-.eco-node {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  cursor: default;
-  animation: nodeBreathe 4s ease-in-out infinite;
-}
-
-.node-delay-0 { animation-delay: 0s; }
-.node-delay-1 { animation-delay: 0.6s; }
-.node-delay-2 { animation-delay: 1.2s; }
-.node-delay-3 { animation-delay: 1.8s; }
-.node-delay-4 { animation-delay: 2.4s; }
-.node-delay-5 { animation-delay: 3.0s; }
-.node-delay-6 { animation-delay: 0.3s; }
-.node-delay-7 { animation-delay: 0.9s; }
-.node-delay-8 { animation-delay: 1.5s; }
-
-@keyframes nodeBreathe {
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
-  50% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
-}
-
-.eco-node-ring {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.65);
-  border: 2px solid var(--node-accent);
-  box-shadow: 0 0 20px var(--node-accent), inset 0 0 10px rgba(255,255,255,.05);
+.hermes-icon-wrap {
   display: grid;
   place-items: center;
-  backdrop-filter: blur(4px);
-  transition: all 0.3s ease;
-}
-
-.eco-node:hover .eco-node-ring {
-  transform: scale(1.15);
-  box-shadow: 0 0 40px var(--node-accent), inset 0 0 20px var(--node-accent);
-  background: rgba(15, 23, 42, 0.85);
-}
-
-.eco-node-svg {
+  width: 100%;
+  height: 100%;
   color: white;
-  filter: drop-shadow(0 0 6px var(--node-accent));
-}
-
-.eco-node-label {
-  font-size: 0.68rem;
-  font-weight: 800;
-  color: var(--node-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  background: rgba(15, 23, 42, 0.75);
-  padding: 3px 10px;
-  border-radius: 12px;
-  border: 1px solid var(--node-accent);
-  white-space: nowrap;
-  opacity: 0.95;
-  backdrop-filter: blur(4px);
-}
-
-/* Node pills below map */
-.eco-node-labels {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px;
-  max-width: 380px;
-}
-.eco-node-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: .74rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 18px;
-  color: var(--node-color, var(--pl));
-  background: color-mix(in srgb, var(--node-color, var(--p)) 14%, transparent);
-  border: 1px solid color-mix(in srgb, var(--node-color, var(--p)) 45%, transparent);
-  transition: all .2s;
-}
-.eco-node-pill:hover {
-  transform: translateY(-2px);
-  background: color-mix(in srgb, var(--node-color, var(--p)) 28%, transparent);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1703,7 +1867,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   gap: 18px;
 }
 
-/* Story card */
 .story-card {
   background: rgba(255,255,255,.04);
   border: 1px solid rgba(124,58,237,.2);
@@ -1797,7 +1960,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   National Mission — 350k+ to Sovereign Products
+   National Mission
 ═══════════════════════════════════════════════════════════════ */
 
 .national-mission {
@@ -1892,7 +2055,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   AI Vision — The Human Transition
+   AI Vision
 ═══════════════════════════════════════════════════════════════ */
 
 .ai-vision {
@@ -1983,7 +2146,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   .live-strip { padding: 10px 16px; }
   .eco-metrics { grid-template-columns: 1fr; }
   .eco-cta-row { flex-direction: column; align-items: flex-start; gap: 8px; }
-  .eco-node-labels { display: none; }
   .outline-button, .ghost-button { width: 100%; justify-content: center; }
   .story-card { padding: 16px; }
   .mini-flow-step:not(:last-child)::after { display: none; }

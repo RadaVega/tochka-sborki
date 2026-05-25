@@ -5,7 +5,6 @@ import { EcosystemMap } from '../components/EcosystemMap';
 import { Icon } from '../components/Icon';
 import { pages } from '../data/content';
 
-/* ─── Live ecosystem strip ───────────────────────────────────── */
 function LiveStrip({ projects }) {
   const [idx, setIdx] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -30,7 +29,7 @@ function LiveStrip({ projects }) {
         className="live-item"
         style={{ opacity: visible ? 1 : 0, transition: 'opacity .32s ease' }}
       >
-        <Icon name={p.icon} size={16} className="live-icon-svg" />
+        <Icon name={p.icon} size={16} weight="fill" className="live-icon-svg" />
         <strong>{p.label}</strong>
         <span className="live-stack">{p.stack}</span>
       </span>
@@ -38,14 +37,13 @@ function LiveStrip({ projects }) {
   );
 }
 
-/* ─── Mini flow — visual pipeline ──────────────────────────── */
 function MiniFlow({ steps }) {
   return (
     <div className="mini-flow">
       {steps.map((s, i) => (
         <div key={s.label} className="mini-flow-step">
           <span className="mini-flow-num">0{i + 1}</span>
-          <Icon name={s.icon} size={24} className="mini-flow-icon-svg" />
+          <Icon name={s.icon} size={26} weight="duotone" className="mini-flow-icon-svg" />
           <span className="mini-flow-label">{s.label}</span>
         </div>
       ))}
@@ -53,12 +51,11 @@ function MiniFlow({ steps }) {
   );
 }
 
-/* ─── Transformation Stories ─────────────────────────────────── */
 function StoryCard({ story }) {
   return (
     <div className="story-card">
       <div className="story-card-avatar">
-        <Icon name={story.icon} size={22} strokeWidth={2.5} />
+        <Icon name={story.icon} size={22} weight="duotone" />
       </div>
       <div className="story-card-body">
         <div className="story-card-meta">
@@ -75,12 +72,11 @@ function StoryCard({ story }) {
   );
 }
 
-/* ─── National Engineering Mission ───────────────────────────── */
 function NationalMission() {
   return (
     <div className="national-mission">
       <div className="mission-header">
-        <Icon name="Compass" size={32} className="mission-icon" />
+        <Icon name="Compass" size={32} weight="duotone" className="mission-icon" />
         <h3>Национальная инженерная миссия</h3>
       </div>
       <p className="mission-lead">
@@ -88,25 +84,25 @@ function NationalMission() {
       </p>
       <div className="mission-flow">
         <div className="mission-step">
-          <Icon name="GraduationCap" size={28} />
+          <Icon name="Student" size={28} weight="duotone" />
           <strong>350k+ выпускников</strong>
           <span>Ежегодный поток талантов</span>
         </div>
-        <Icon name="ArrowRight" size={20} className="mission-arrow" />
+        <Icon name="ArrowRight" size={20} weight="bold" className="mission-arrow" />
         <div className="mission-step">
-          <Icon name="BrainCircuit" size={28} />
+          <Icon name="Brain" size={28} weight="duotone" />
           <strong>Hermes AI Scoring</strong>
           <span>Оценка навыков и потенциала</span>
         </div>
-        <Icon name="ArrowRight" size={20} className="mission-arrow" />
+        <Icon name="ArrowRight" size={20} weight="bold" className="mission-arrow" />
         <div className="mission-step">
-          <Icon name="Users" size={28} />
+          <Icon name="Users" size={28} weight="duotone" />
           <strong>Product-команды</strong>
           <span>Собраны за 7 дней</span>
         </div>
-        <Icon name="ArrowRight" size={20} className="mission-arrow" />
+        <Icon name="ArrowRight" size={20} weight="bold" className="mission-arrow" />
         <div className="mission-step">
-          <Icon name="Rocket" size={28} />
+          <Icon name="RocketLaunch" size={28} weight="duotone" />
           <strong>Национальные продукты</strong>
           <span>Технологический суверенитет</span>
         </div>
@@ -115,29 +111,28 @@ function NationalMission() {
   );
 }
 
-/* ─── AI Vision — The Transition ───────────────────────────── */
 function AIVision() {
   return (
     <div className="ai-vision">
       <div className="vision-quote">
-        <Icon name="Sparkles" size={24} />
+        <Icon name="Sparkle" size={24} weight="fill" />
         <blockquote>
           Мы стоим на пороге перехода от эпохи ручного управления к эпохе AI-оркестрации. Hermes не заменяет инженера — он удаляет барьеры между талантом и результатом, освобождая человека для творчества и сложных задач.
         </blockquote>
       </div>
       <div className="vision-pillars">
         <div className="vision-pillar">
-          <Icon name="Zap" size={24} />
+          <Icon name="Lightning" size={24} weight="duotone" />
           <strong>80% рутины автоматизировано</strong>
           <span>Подбор, контракты, менторство, отчётность</span>
         </div>
         <div className="vision-pillar">
-          <Icon name="HeartHandshake" size={24} />
+          <Icon name="Handshake" size={24} weight="duotone" />
           <strong>Человек фокусируется на творчестве</strong>
           <span>Архитектура, инновации, решение нетривиальных проблем</span>
         </div>
         <div className="vision-pillar">
-          <Icon name="Globe" size={24} />
+          <Icon name="Globe" size={24} weight="duotone" />
           <strong>Масштаб страны</strong>
           <span>Единая инженерная сеть от Калининграда до Владивостока</span>
         </div>
@@ -146,7 +141,6 @@ function AIVision() {
   );
 }
 
-/* ─── Hero Page ──────────────────────────────────────────────── */
 export function HeroPage() {
   const page = pages.hero;
 
@@ -155,7 +149,6 @@ export function HeroPage() {
       <LiveStrip projects={page.liveProjects} />
 
       <div className="eco-hero-grid">
-        {/* LEFT: copy */}
         <Reveal className="eco-hero-copy">
           <div className="eco-badge-row">
             <Badge accent="purple">{page.tag}</Badge>
@@ -172,7 +165,6 @@ export function HeroPage() {
 
           <p className="eco-hero-sub">{page.subtitle}</p>
 
-          {/* Metrics */}
           <div className="eco-metrics">
             {page.metrics.map((m) => (
               <div key={m.value} className={`eco-metric eco-metric-${m.accent}`}>
@@ -182,10 +174,8 @@ export function HeroPage() {
             ))}
           </div>
 
-          {/* Mini flow */}
           <MiniFlow steps={page.miniFlow} />
 
-          {/* 3-door CTA */}
           <div className="eco-cta-row">
             {page.audience.map((cta) => {
               const className =
@@ -201,14 +191,13 @@ export function HeroPage() {
                   goal={cta.goal}
                   className={className}
                 >
-                  <Icon name={cta.icon} size={18} />
+                  <Icon name={cta.icon} size={18} weight="duotone" />
                   <span>{cta.label}</span>
                 </TrackedLink>
               );
             })}
           </div>
 
-          {/* Tags */}
           <div className="eco-tags">
             {page.ecosystemTags.map((tag) => (
               <span key={tag} className="eco-tag">{tag}</span>
@@ -216,28 +205,15 @@ export function HeroPage() {
           </div>
         </Reveal>
 
-        {/* RIGHT: ecosystem map */}
         <Reveal className="eco-hero-right">
           <EcosystemMap nodes={page.ecosystemNodes} />
-          <div className="eco-node-labels">
-            {page.ecosystemNodes.map((n) => (
-              <span
-                key={n.id}
-                className="eco-node-pill"
-                style={{ '--node-color': n.accent }}
-              >
-                <Icon name={n.icon} size={12} strokeWidth={2.5} /> {n.label}
-              </span>
-            ))}
-          </div>
         </Reveal>
       </div>
 
-      {/* BOTTOM: transformation stories */}
       <Reveal>
         <div className="eco-story-section">
           <div className="eco-story-header">
-            <Icon name="Rocket" size={32} className="eco-story-icon" />
+            <Icon name="RocketLaunch" size={32} weight="duotone" className="eco-story-icon" />
             <div>
               <h3 className="eco-story-title">Трансформация в экосистеме</h3>
               <p className="eco-story-subtitle">
@@ -253,12 +229,10 @@ export function HeroPage() {
         </div>
       </Reveal>
 
-      {/* NATIONAL MISSION */}
       <Reveal>
         <NationalMission />
       </Reveal>
 
-      {/* AI VISION */}
       <Reveal>
         <AIVision />
       </Reveal>
