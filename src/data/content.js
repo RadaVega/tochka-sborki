@@ -26,64 +26,64 @@ export const navItems = [
 ];
 
 export const pages = {
-    hero: {
+      hero: {
     theme: 'purple',
-    tag: '⚡ AI-native Engineering Ecosystem',
+    tag: 'AI-native Engineering Ecosystem',
     poweredBy: 'Powered by Hermes AI',
     title: ['Новая Инженерная', 'Инфраструктура', 'России'],
     subtitle:
       'Точка Сборки — AI-native экосистема, которая соединяет студентов, стартапы и компании в единый механизм создания продуктов. Hermes AI собирает engineering-команды за 7 дней. Фикс-прайс. Без онбординга. Без equity.',
     metrics: [
-      { value: '350k+', label: 'IT-специалистов выпускает Россия ежегодно', accent: 'cyan' },
-      { value: '7 дней', label: 'Hermes собирает engineering-команду', accent: 'purple' },
+      { value: '350k+', label: 'IT-специалистов выпускает Россия ежегодно — крупнейший инженерный резерв', accent: 'cyan' },
+      { value: '7 дней', label: 'Hermes собирает cross-functional команду', accent: 'purple' },
       { value: 'AI-Orchestrated', label: 'team assembly — 80% рутины автоматизировано', accent: 'pink' }
     ],
     audience: [
-      { label: '🛰 Запустить проект', path: '/company-path', goal: 'HERO_CTA_COMPANY', style: 'primary' },
-      { label: '🎓 Войти в экосистему', path: '/student-path', goal: 'HERO_CTA_STUDENT', style: 'outline' },
-      { label: '📡 Как это работает', path: '/how-it-works', goal: 'HERO_CTA_EXPLORE', style: 'ghost' }
+      { label: 'Запустить проект', icon: 'Rocket', path: '/company-path', goal: 'HERO_CTA_COMPANY', style: 'primary' },
+      { label: 'Войти в экосистему', icon: 'DoorOpen', path: '/student-path', goal: 'HERO_CTA_STUDENT', style: 'outline' },
+      { label: 'Как это работает', icon: 'PlayCircle', path: '/how-it-works', goal: 'HERO_CTA_EXPLORE', style: 'ghost' }
     ],
     ecosystemNodes: [
-      { id: 'students',   label: 'Студенты',   icon: '🧑‍🎓', angle: 270, r: 100, accent: '#a78bfa' },
-      { id: 'startups',  label: 'Стартапы',   icon: '🚀',   angle: 330, r: 100, accent: '#22d3ee' },
-      { id: 'companies', label: 'Компании',   icon: '🏭',   angle: 30,  r: 100, accent: '#22d3ee' },
-      { id: 'mentors',   label: 'Менторы',    icon: '🦉',   angle: 90,  r: 100, accent: '#6ee7b7' },
-      { id: 'research',  label: 'Research',   icon: '🧬',   angle: 150, r: 100, accent: '#f9a8d4' },
-      { id: 'opensource',label: 'Open Source',icon: '🌱',   angle: 210, r: 100, accent: '#fcd34d' },
-      { id: 'ai',        label: 'AI Agents',  icon: '✨',   angle: 300, r: 150, accent: '#c4b5fd' },
-      { id: 'industry',  label: 'Инжиниринг', icon: '⚙️',   angle: 60,  r: 150, accent: '#f59e0b' },
-      { id: 'ecosystem', label: 'Экосистема', icon: '🕸️',   angle: 180, r: 150, accent: '#67e8f9' }
+      { id: 'students',  label: 'Студенты',   icon: 'GraduationCap', angle: 270, r: 100, accent: '#a78bfa' },
+      { id: 'startups',  label: 'Стартапы',   icon: 'Rocket',        angle: 330, r: 100, accent: '#22d3ee' },
+      { id: 'companies', label: 'Компании',   icon: 'Building2',     angle: 30,  r: 100, accent: '#22d3ee' },
+      { id: 'mentors',   label: 'Менторы',    icon: 'HeartHandshake',angle: 90,  r: 100, accent: '#6ee7b7' },
+      { id: 'research',  label: 'Research',   icon: 'Microscope',    angle: 150, r: 100, accent: '#f9a8d4' },
+      { id: 'opensource',label: 'Open Source',icon: 'GitBranch',     angle: 210, r: 100, accent: '#fcd34d' },
+      { id: 'ai',        label: 'AI Agents',  icon: 'BrainCircuit',  angle: 300, r: 150, accent: '#c4b5fd' },
+      { id: 'industry',  label: 'Инжиниринг', icon: 'Wrench',        angle: 60,  r: 150, accent: '#f59e0b' },
+      { id: 'ecosystem', label: 'Экосистема', icon: 'Globe',         angle: 180, r: 150, accent: '#67e8f9' }
     ],
     liveProjects: [
-      { type: '🧠', label: 'AI-команда собирается', stack: 'Python · LLM · FastAPI' },
-      { type: '🚀', label: 'MVP в разработке',       stack: 'Go · React · PostgreSQL' },
-      { type: '🔭', label: 'Research-проект',         stack: 'Rust · DataSphere · ML' },
-      { type: '⚡', label: 'DevOps-пайплайн',        stack: 'K8s · GitVerse · CI/CD' },
-      { type: '💰', label: 'Fintech-прототип',        stack: 'TypeScript · Node · Redis' }
+      { icon: 'Bot',       label: 'AI-команда собирается', stack: 'Python · LLM · FastAPI' },
+      { icon: 'Rocket',    label: 'MVP в разработке',       stack: 'Go · React · PostgreSQL' },
+      { icon: 'Microscope',label: 'Research-проект',         stack: 'Rust · DataSphere · ML' },
+      { icon: 'Server',    label: 'DevOps-пайплайн',        stack: 'K8s · GitVerse · CI/CD' },
+      { icon: 'CreditCard',label: 'Fintech-прототип',        stack: 'TypeScript · Node · Redis' }
     ],
     miniFlow: [
-      { icon: '🎯', label: 'Задача' },
-      { icon: '✨', label: 'Hermes AI' },
-      { icon: '🤝', label: 'Команда' },
-      { icon: '🏆', label: 'Продукт' }
+      { icon: 'Target',      label: 'Задача' },
+      { icon: 'BrainCircuit',label: 'Hermes AI' },
+      { icon: 'Users',       label: 'Команда' },
+      { icon: 'Package',     label: 'Продукт' }
     ],
     storyStrip: [
       {
-        avatar: '🧑‍🎓',
+        icon: 'GraduationCap',
         age: '19 лет',
         tag: 'Студент',
         path: 'Пришёл без коммерческого опыта. Прошёл AI-скоринг. Вошёл в состав инженерной команды для крупного индустриального проекта.',
         result: 'Оффер от технологической компании через 3 недели'
       },
       {
-        avatar: '🚀',
+        icon: 'Rocket',
         age: 'Стартап за 3 нед.',
         tag: 'Команда 4 инженера',
         path: 'MVP под ключ: Python backend + React frontend. Hermes собрал состав за 2 дня.',
         result: 'Демо-день инвесторов → seed-раунд'
       },
       {
-        avatar: '⚡',
+        icon: 'Zap',
         age: 'Коммерческий проект',
         tag: 'AI + ML продукт',
         path: 'Python + PyTorch pipeline для real-time аналитики. Полный цикл: от брифа до production.',

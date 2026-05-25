@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { TrackedLink } from '../components/Tracked';
 import { Badge, PageShell, Reveal } from '../components/UI';
 import { EcosystemMap } from '../components/EcosystemMap';
+import { Icon } from '../components/Icon';
 import { pages } from '../data/content';
 
 /* ─── Live ecosystem strip ───────────────────────────────────── */
@@ -29,7 +30,8 @@ function LiveStrip({ projects }) {
         className="live-item"
         style={{ opacity: visible ? 1 : 0, transition: 'opacity .32s ease' }}
       >
-        <strong>{p.type} {p.label}</strong>
+        <Icon name={p.icon} size={16} className="live-icon-svg" />
+        <strong>{p.label}</strong>
         <span className="live-stack">{p.stack}</span>
       </span>
     </div>
@@ -43,7 +45,7 @@ function MiniFlow({ steps }) {
       {steps.map((s, i) => (
         <div key={s.label} className="mini-flow-step">
           <span className="mini-flow-num">0{i + 1}</span>
-          <span className="mini-flow-icon">{s.icon}</span>
+          <Icon name={s.icon} size={24} className="mini-flow-icon-svg" />
           <span className="mini-flow-label">{s.label}</span>
         </div>
       ))}
@@ -55,7 +57,9 @@ function MiniFlow({ steps }) {
 function StoryCard({ story }) {
   return (
     <div className="story-card">
-      <div className="story-card-avatar">{story.avatar}</div>
+      <div className="story-card-avatar">
+        <Icon name={story.icon} size={22} strokeWidth={2.5} />
+      </div>
       <div className="story-card-body">
         <div className="story-card-meta">
           <strong className="story-card-age">{story.age}</strong>
@@ -65,6 +69,77 @@ function StoryCard({ story }) {
         <div className="story-card-outcome">
           <span className="story-card-arrow">→</span>
           <span className="story-card-result">{story.result}</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── National Engineering Mission ───────────────────────────── */
+function NationalMission() {
+  return (
+    <div className="national-mission">
+      <div className="mission-header">
+        <Icon name="Compass" size={32} className="mission-icon" />
+        <h3>Национальная инженерная миссия</h3>
+      </div>
+      <p className="mission-lead">
+        Россия выпускает <strong>350 000+ IT-специалистов ежегодно</strong> — один из крупнейших инженерных резервов мира. Но потенциал реализуется лишь на часть. Точка Сборки создаёт инфраструктуру, где каждый выпускник становится продуктовым инженером, а каждая компания — инноватором.
+      </p>
+      <div className="mission-flow">
+        <div className="mission-step">
+          <Icon name="GraduationCap" size={28} />
+          <strong>350k+ выпускников</strong>
+          <span>Ежегодный поток талантов</span>
+        </div>
+        <Icon name="ArrowRight" size={20} className="mission-arrow" />
+        <div className="mission-step">
+          <Icon name="BrainCircuit" size={28} />
+          <strong>Hermes AI Scoring</strong>
+          <span>Оценка навыков и потенциала</span>
+        </div>
+        <Icon name="ArrowRight" size={20} className="mission-arrow" />
+        <div className="mission-step">
+          <Icon name="Users" size={28} />
+          <strong>Product-команды</strong>
+          <span>Собраны за 7 дней</span>
+        </div>
+        <Icon name="ArrowRight" size={20} className="mission-arrow" />
+        <div className="mission-step">
+          <Icon name="Rocket" size={28} />
+          <strong>Национальные продукты</strong>
+          <span>Технологический суверенитет</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── AI Vision — The Transition ───────────────────────────── */
+function AIVision() {
+  return (
+    <div className="ai-vision">
+      <div className="vision-quote">
+        <Icon name="Sparkles" size={24} />
+        <blockquote>
+          Мы стоим на пороге перехода от эпохи ручного управления к эпохе AI-оркестрации. Hermes не заменяет инженера — он удаляет барьеры между талантом и результатом, освобождая человека для творчества и сложных задач.
+        </blockquote>
+      </div>
+      <div className="vision-pillars">
+        <div className="vision-pillar">
+          <Icon name="Zap" size={24} />
+          <strong>80% рутины автоматизировано</strong>
+          <span>Подбор, контракты, менторство, отчётность</span>
+        </div>
+        <div className="vision-pillar">
+          <Icon name="HeartHandshake" size={24} />
+          <strong>Человек фокусируется на творчестве</strong>
+          <span>Архитектура, инновации, решение нетривиальных проблем</span>
+        </div>
+        <div className="vision-pillar">
+          <Icon name="Globe" size={24} />
+          <strong>Масштаб страны</strong>
+          <span>Единая инженерная сеть от Калининграда до Владивостока</span>
         </div>
       </div>
     </div>
@@ -126,7 +201,8 @@ export function HeroPage() {
                   goal={cta.goal}
                   className={className}
                 >
-                  {cta.label}
+                  <Icon name={cta.icon} size={18} />
+                  <span>{cta.label}</span>
                 </TrackedLink>
               );
             })}
@@ -150,7 +226,7 @@ export function HeroPage() {
                 className="eco-node-pill"
                 style={{ '--node-color': n.accent }}
               >
-                {n.icon} {n.label}
+                <Icon name={n.icon} size={12} strokeWidth={2.5} /> {n.label}
               </span>
             ))}
           </div>
@@ -161,7 +237,7 @@ export function HeroPage() {
       <Reveal>
         <div className="eco-story-section">
           <div className="eco-story-header">
-            <span className="eco-story-icon">🚀</span>
+            <Icon name="Rocket" size={32} className="eco-story-icon" />
             <div>
               <h3 className="eco-story-title">Трансформация в экосистеме</h3>
               <p className="eco-story-subtitle">
@@ -175,6 +251,16 @@ export function HeroPage() {
             ))}
           </div>
         </div>
+      </Reveal>
+
+      {/* NATIONAL MISSION */}
+      <Reveal>
+        <NationalMission />
+      </Reveal>
+
+      {/* AI VISION */}
+      <Reveal>
+        <AIVision />
       </Reveal>
     </PageShell>
   );
