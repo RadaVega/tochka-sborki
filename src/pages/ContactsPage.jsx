@@ -46,9 +46,9 @@ const CHANNELS = [
     icon: '✉️',
     accent: 'pink',
     label: 'Email',
-    handle: 'tochka.sborki21@vk.com',
+    handle: 'Tochka.Sborki21@yandex.ru',
     desc: 'Деловые запросы и партнёрства',
-    href: 'mailto:tochka.sborki21@vk.com',
+    href: 'mailto:Tochka.Sborki21@yandex.ru',
     cta: 'Написать',
     channel: 'email',
   },
@@ -445,12 +445,7 @@ export function ContactsPage() {
                   <TrackedExternalLink
                     href={ch.href}
                     channel={ch.channel}
-                    goalName={
-                      ch.channel === 'vk' ? 'OPEN_VK_GROUP' :
-                      ch.channel === 'telegram' ? 'OPEN_TELEGRAM' :
-                      ch.channel === 'max' ? 'OPEN_MAX_CHANNEL' :
-                      undefined
-                    }
+                    goalName={ch.channel === 'vk' ? 'OPEN_VK_GROUP' : ch.channel === 'telegram' ? 'OPEN_TELEGRAM' : undefined}
                     className={`ct-channel ct-channel-${ch.accent}`}
                   >
                     <div className={`ct-ch-icon ct-ch-icon-${ch.accent}`}>{ch.icon}</div>
