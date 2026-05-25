@@ -3,12 +3,12 @@ import { useMemo } from 'react';
 const CX = 200;
 const CY = 200;
 
-/* ─── Animated Ecosystem Map ───────────────────────────────────
-   Pure CSS animations — no JS animation libraries needed.
-   Nodes orbit via CSS rotate on parent <g> groups.
-   HERMES center pulses with CSS keyframes.
-   Spoke dasharray animates for "data flow" feel.
-─────────────────────────────────────────────────────────────── */
+/* ─── Animated Ecosystem Map v3 ────────────────────────────────
+   Nodes orbit in rigid rings (outer clockwise, inner counter).
+   Spokes pivot from the HERMES center like radar arms.
+   Each node counter-rotates so its icon stays upright.
+   Pure CSS — zero dependencies.
+────────────────────────────────────────────────────────────── */
 
 export function EcosystemMap({ nodes }) {
   const inner = useMemo(() => nodes.filter((n) => n.r <= 100), [nodes]);
@@ -29,14 +29,14 @@ export function EcosystemMap({ nodes }) {
             <stop offset="100%" stopColor="rgba(139,92,246,0)" />
           </radialGradient>
           <filter id="nodeGlow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="blur" />
+            <feGaussianBlur stdDeviation="5" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
           <filter id="hermesBloom" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feGaussianBlur stdDeviation="10" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="blur" />
@@ -46,99 +46,125 @@ export function EcosystemMap({ nodes }) {
         </defs>
 
         {/* Background glow */}
-        <circle cx={CX} cy={CY} r="185" fill="url(#ecoGlow)" className="eco-bg-glow" />
+        <circle cx={CX} cy={CY} r="190" fill="url(#ecoGlow)" className="eco-bg-glow" />
 
-        {/* Orbital rings — dashed, animated */}
+        {/* Decorative orbital rings (visual only) */}
         <g className="orbit-ring orbit-outer">
-          <circle cx={CX} cy={CY} r="168" fill="none" stroke="rgba(124,58,237,.12)" strokeWidth="1" />
+          <circle cx={CX} cy={CY} r="172" fill="none" stroke="rgba(124,58,237,.14)" strokeWidth="1" />
         </g>
         <g className="orbit-ring orbit-mid">
-          <circle cx={CX} cy={CY} r="118" fill="none" stroke="rgba(124,58,237,.18)" strokeWidth="1.5" strokeDasharray="6 10" />
+          <circle cx={CX} cy={CY} r="122" fill="none" stroke="rgba(124,58,237,.22)" strokeWidth="1.5" strokeDasharray="8 12" />
         </g>
         <g className="orbit-ring orbit-inner">
-          <circle cx={CX} cy={CY} r="68" fill="none" stroke="rgba(8,145,178,.22)" strokeWidth="1" strokeDasharray="3 6" />
+          <circle cx={CX} cy={CY} r="72" fill="none" stroke="rgba(6,182,212,.28)" strokeWidth="1" strokeDasharray="4 8" />
         </g>
 
-        {/* Animated spoke lines from center */}
-        {nodes.map((n) => {
-          const rad = (n.angle * Math.PI) / 180;
-          const x2 = CX + Math.cos(rad) * (n.r - 22);
-          const y2 = CY + Math.sin(rad) * (n.r - 22);
-          return (
-            <line
-              key={`spoke-${n.id}`}
-              x1={CX + Math.cos(rad) * 38}
-              y1={CY + Math.sin(rad) * 38}
-              x2={x2}
-              y2={y2}
-              stroke={n.accent}
-              strokeWidth="1.2"
-              strokeOpacity=".5"
-              strokeDasharray="4 6"
-              className="spoke-line"
-            />
-          );
-        })}
+        {/* OUTER RING — rotates clockwise, 50s */}
+        <g className="ring-group ring-outer">
+          {outer.map((n) => {
+            const rad = (n.angle * Math.PI) / 180;
+            const x = CX + Math.cos(rad) * n.r;
+            const y = CY + Math.sin(rad) * n.r;
+            return (
+              <g key={n.id}>
+                <line
+                  x1={CX}
+                  y1={CY}
+                  x2={x}
+                  y2={y}
+                  stroke={n.accent}
+                  strokeWidth="1.5"
+                  strokeOpacity=".5"
+                  strokeDasharray="6 8"
+                  className="spoke-line"
+                />
+                <g transform={`translate(${x}, ${y})`}>
+                  <g className="node-counter node-outer-counter">
+                    <circle r="26" fill={`${n.accent}15`} stroke={n.accent} strokeWidth="2" filter="url(#nodeGlow)" />
+                    <text
+                      y="7"
+                      textAnchor="middle"
+                      fontSize="22"
+                      fontWeight="800"
+                      fill={n.accent}
+                      style={{ filter: `drop-shadow(0 0 8px ${n.accent})` }}
+                    >
+                      {n.icon}
+                    </text>
+                  </g>
+                </g>
+              </g>
+            );
+          })}
+        </g>
 
-        {/* Outer ring nodes — animated orbital groups */}
-        {outer.map((n, i) => {
-          const rad = (n.angle * Math.PI) / 180;
-          const x = CX + Math.cos(rad) * n.r;
-          const y = CY + Math.sin(rad) * n.r;
-          return (
-            <g key={`outer-${n.id}`} className={`orbit-node orbit-outer-node node-delay-${i}`}>
-              <circle cx={x} cy={y} r="22" fill={`${n.accent}18`} stroke={n.accent} strokeWidth="1.5" filter="url(#nodeGlow)" />
-              <text x={x} y={y + 6} textAnchor="middle" fontSize="16" role="img" aria-label={n.label}>{n.icon}</text>
-            </g>
-          );
-        })}
+        {/* INNER RING — rotates counter-clockwise, 35s */}
+        <g className="ring-group ring-inner">
+          {inner.map((n) => {
+            const rad = (n.angle * Math.PI) / 180;
+            const x = CX + Math.cos(rad) * n.r;
+            const y = CY + Math.sin(rad) * n.r;
+            return (
+              <g key={n.id}>
+                <line
+                  x1={CX}
+                  y1={CY}
+                  x2={x}
+                  y2={y}
+                  stroke={n.accent}
+                  strokeWidth="1.4"
+                  strokeOpacity=".6"
+                  strokeDasharray="4 6"
+                  className="spoke-line"
+                />
+                <g transform={`translate(${x}, ${y})`}>
+                  <g className="node-counter node-inner-counter">
+                    <circle r="22" fill={`${n.accent}18`} stroke={n.accent} strokeWidth="1.8" filter="url(#nodeGlow)" />
+                    <text
+                      y="6"
+                      textAnchor="middle"
+                      fontSize="20"
+                      fontWeight="800"
+                      fill={n.accent}
+                      style={{ filter: `drop-shadow(0 0 6px ${n.accent})` }}
+                    >
+                      {n.icon}
+                    </text>
+                  </g>
+                </g>
+              </g>
+            );
+          })}
+        </g>
 
-        {/* Inner ring nodes */}
-        {inner.map((n, i) => {
-          const rad = (n.angle * Math.PI) / 180;
-          const x = CX + Math.cos(rad) * n.r;
-          const y = CY + Math.sin(rad) * n.r;
-          return (
-            <g key={`inner-${n.id}`} className={`orbit-node orbit-inner-node node-delay-${i}`}>
-              <circle cx={x} cy={y} r="20" fill={`${n.accent}20`} stroke={n.accent} strokeWidth="1.4" filter="url(#nodeGlow)" />
-              <text x={x} y={y + 5} textAnchor="middle" fontSize="14" role="img" aria-label={n.label}>{n.icon}</text>
-            </g>
-          );
-        })}
-
-        {/* HERMES CENTER — The Brain */}
+        {/* HERMES CENTER — drawn last to cover spoke origins */}
         <g className="hermes-core" filter="url(#hermesBloom)">
-          {/* Outer pulse rings */}
-          <circle cx={CX} cy={CY} r="42" fill="none" stroke="rgba(139,92,246,.3)" strokeWidth="1" className="hermes-pulse-ring" />
-          <circle cx={CX} cy={CY} r="36" fill="none" stroke="rgba(139,92,246,.5)" strokeWidth="1.5" className="hermes-pulse-ring" style={{ animationDelay: '.6s' }} />
-          
-          {/* Core body */}
-          <circle cx={CX} cy={CY} r="32" fill="url(#hermesGlow)" />
-          <circle cx={CX} cy={CY} r="26" fill="rgba(124,58,237,.35)" stroke="#8b5cf6" strokeWidth="2" />
-          <circle cx={CX} cy={CY} r="18" fill="#7c3aed" />
-          <circle cx={CX} cy={CY} r="10" fill="white" fillOpacity=".95" />
-          
-          {/* Label */}
+          <circle cx={CX} cy={CY} r="48" fill="none" stroke="rgba(139,92,246,.35)" strokeWidth="1.5" className="hermes-pulse-ring" />
+          <circle cx={CX} cy={CY} r="40" fill="none" stroke="rgba(139,92,246,.55)" strokeWidth="2" className="hermes-pulse-ring" style={{ animationDelay: '.7s' }} />
+          <circle cx={CX} cy={CY} r="36" fill="url(#hermesGlow)" />
+          <circle cx={CX} cy={CY} r="28" fill="rgba(124,58,237,.4)" stroke="#a78bfa" strokeWidth="2.5" />
+          <circle cx={CX} cy={CY} r="20" fill="#7c3aed" />
+          <circle cx={CX} cy={CY} r="12" fill="white" fillOpacity=".95" />
           <text
             x={CX}
-            y={CY + 52}
+            y={CY + 58}
             textAnchor="middle"
-            fontSize="9"
+            fontSize="10"
             fill="#c4b5fd"
             fontFamily="'DejaVu Sans Mono','Liberation Mono',monospace"
-            letterSpacing="3"
-            fontWeight="700"
+            letterSpacing="4"
+            fontWeight="800"
           >
             HERMES AI
           </text>
           <text
             x={CX}
-            y={CY + 64}
+            y={CY + 72}
             textAnchor="middle"
-            fontSize="7"
+            fontSize="8"
             fill="#64748b"
             fontFamily="'DejaVu Sans Mono','Liberation Mono',monospace"
-            letterSpacing="2"
+            letterSpacing="2.5"
           >
             ORCHESTRATOR
           </text>

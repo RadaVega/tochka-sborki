@@ -36,18 +36,16 @@ function LiveStrip({ projects }) {
   );
 }
 
-/* ─── Mini flow ──────────────────────────────────────────────── */
+/* ─── Mini flow — visual pipeline ──────────────────────────── */
 function MiniFlow({ steps }) {
   return (
     <div className="mini-flow">
       {steps.map((s, i) => (
-        <span key={s.label} className="mini-flow-step">
+        <div key={s.label} className="mini-flow-step">
+          <span className="mini-flow-num">0{i + 1}</span>
           <span className="mini-flow-icon">{s.icon}</span>
           <span className="mini-flow-label">{s.label}</span>
-          {i < steps.length - 1 && (
-            <span className="mini-flow-arrow" aria-hidden="true">→</span>
-          )}
-        </span>
+        </div>
       ))}
     </div>
   );
@@ -90,7 +88,7 @@ export function HeroPage() {
           </div>
 
           <h1 className="eco-hero-title">
-            {page.title[0]}<br />
+            {page.title[0]}<<br />
             <span>{page.title[1]}</span><br />
             <em>{page.title[2]}</em>
           </h1>
