@@ -67,32 +67,32 @@ model StudentProfile {
   phone     String?
 
   stack          String[]
-  preferredStack String?  @map("preferredstack")
+  preferredStack String?
   experience     String
 
-  skillScore     Float?   @map("skillscore")
-  codeQuality    Float?   @map("codequality")
-  docScore       Float?   @map("docscore")
-  speedScore     Float?   @map("speedscore")
+  skillScore     Float?
+  codeQuality    Float?
+  docScore       Float?
+  speedScore     Float?
 
   portfolio      String?
-  linkedIn       String?  @map("linkedin")
-  resumeUrl      String?  @map("resumeurl")
+  linkedIn       String?
+  resumeUrl      String?
   about          String
 
-  availableFrom   DateTime? @map("availablefrom")
-  maxHoursPerWeek Int       @default(20) @map("maxhoursperweek")
-  completedProjects Int     @default(0) @map("completedprojects")
-  totalEarned    Float      @default(0) @map("totalearned")
+  availableFrom   DateTime?
+  maxHoursPerWeek Int       @default(20)
+  completedProjects Int     @default(0)
+  totalEarned    Float      @default(0)
 
   status    StudentStatus @default(PENDING)
 
   consent        Boolean  @default(false)
-  selfEmployed   Boolean  @default(false) @map("selfemployed")
-  ndaSigned      Boolean  @default(false) @map("ndasigned")
+  selfEmployed   Boolean  @default(false)
+  ndaSigned      Boolean  @default(false)
 
-  createdAt DateTime @default(now()) @map("createdat")
-  updatedAt DateTime @updatedAt @map("updatedat")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   teamMatches TeamMatch[]
 
