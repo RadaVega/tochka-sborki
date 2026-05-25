@@ -3,8 +3,7 @@ export const brand = {
   fullName: 'ТОЧКА СБОРКИ',
   english: 'Assembly Point',
   slogan: 'Build Crew. Ship Feats.',
-  school: 'Школа 21 · Школа цифровых технологий · 2026',
-  email: 'Tochka.Sborki21@yandex.ru'
+  email: 'tochka.sborki21@yandex.ru'
 };
 
 export const navItems = [
@@ -45,22 +44,22 @@ export const pages = {
       { label: '📡 Как это работает', path: '/how-it-works', goal: 'HERO_CTA_EXPLORE', style: 'ghost' }
     ],
     ecosystemNodes: [
-      { id: 'students', label: 'Студенты', icon: '🎓', angle: 270, r: 92, accent: '#a78bfa' },
-      { id: 'startups', label: 'Стартапы', icon: '🚀', angle: 330, r: 92, accent: '#22d3ee' },
-      { id: 'companies', label: 'Компании', icon: '🏢', angle: 30, r: 92, accent: '#22d3ee' },
-      { id: 'mentors', label: 'Менторы', icon: '🧑‍🏫', angle: 90, r: 92, accent: '#6ee7b7' },
-      { id: 'research', label: 'Research', icon: '🔬', angle: 150, r: 92, accent: '#f9a8d4' },
-      { id: 'opensource', label: 'Open Source', icon: '⚡', angle: 210, r: 92, accent: '#fcd34d' },
-      { id: 'ai', label: 'AI Agents', icon: '🤖', angle: 300, r: 132, accent: '#c4b5fd' },
-      { id: 'sber', label: 'ШЦТ Сбера', icon: '🏦', angle: 60, r: 132, accent: '#4ade80' },
-      { id: 'ecosystem', label: 'Экосистема', icon: '🌐', angle: 180, r: 132, accent: '#67e8f9' }
+      { id: 'students',   label: 'Студенты',   icon: '🎓', angle: 270, r: 100, accent: '#a78bfa' },
+      { id: 'startups',  label: 'Стартапы',   icon: '🚀', angle: 330, r: 100, accent: '#22d3ee' },
+      { id: 'companies', label: 'Компании',   icon: '🏢', angle: 30,  r: 100, accent: '#22d3ee' },
+      { id: 'mentors',   label: 'Менторы',    icon: '🧑‍🏫', angle: 90,  r: 100, accent: '#6ee7b7' },
+      { id: 'research',  label: 'Research',   icon: '🔬', angle: 150, r: 100, accent: '#f9a8d4' },
+      { id: 'opensource',label: 'Open Source',icon: '⚡', angle: 210, r: 100, accent: '#fcd34d' },
+      { id: 'ai',        label: 'AI Agents',  icon: '🤖', angle: 300, r: 150, accent: '#c4b5fd' },
+      { id: 'industry',  label: 'Инжиниринг', icon: '⚙️', angle: 60,  r: 150, accent: '#f59e0b' },
+      { id: 'ecosystem', label: 'Экосистема', icon: '🌐', angle: 180, r: 150, accent: '#67e8f9' }
     ],
     liveProjects: [
       { type: '🛠️', label: 'AI-команда собирается', stack: 'Python · LLM · FastAPI' },
-      { type: '🚀', label: 'MVP в разработке', stack: 'Go · React · PostgreSQL' },
-      { type: '🔬', label: 'Research-проект', stack: 'Rust · DataSphere · ML' },
-      { type: '⚙️', label: 'DevOps-пайплайн', stack: 'K8s · GitVerse · CI/CD' },
-      { type: '💡', label: 'Fintech-прототип', stack: 'TypeScript · Node · Redis' }
+      { type: '🚀', label: 'MVP в разработке',       stack: 'Go · React · PostgreSQL' },
+      { type: '🔬', label: 'Research-проект',         stack: 'Rust · DataSphere · ML' },
+      { type: '⚙️', label: 'DevOps-пайплайн',        stack: 'K8s · GitVerse · CI/CD' },
+      { type: '💡', label: 'Fintech-прототип',        stack: 'TypeScript · Node · Redis' }
     ],
     miniFlow: [
       { icon: '📝', label: 'Задача' },
@@ -69,9 +68,27 @@ export const pages = {
       { icon: '🚀', label: 'Продукт' }
     ],
     storyStrip: [
-      { age: '19 лет', text: '→ первый коммерческий проект → оффер от Росатома' },
-      { age: 'Стартап за 3 нед.', text: '→ MVP → демо-день Сколково → seed-раунд' },
-      { age: 'Команда 4 инженера', text: '→ Python + ML → 140k ₽ за 3 недели' }
+      {
+        avatar: '👨‍💻',
+        age: '19 лет',
+        tag: 'Студент Школы 21',
+        path: 'Пришёл без коммерческого опыта. Прошёл AI-скоринг. Вошёл в состав команды для Росатома.',
+        result: 'Оффер от Росатома через 3 недели'
+      },
+      {
+        avatar: '🚀',
+        age: 'Стартап за 3 нед.',
+        tag: 'Команда 4 инженера',
+        path: 'MVP под ключ: Python backend + React frontend. Hermes собрал состав за 2 дня.',
+        result: 'Демо-день Сколково → seed-раунд'
+      },
+      {
+        avatar: '⚡',
+        age: 'Команда 4 инженера',
+        tag: 'AI + ML проект',
+        path: 'Python + PyTorch pipeline для real-time аналитики. Полный цикл: от брифа до production.',
+        result: '140k ₽ за проект + кейс в портфолио'
+      }
     ],
     ecosystemTags: ['AI', 'Engineering', 'Startups', 'Students', 'Infrastructure', 'Research', 'Open Ecosystem']
   },
@@ -378,7 +395,7 @@ export const pages = {
       { title: '🏢 Компаниям', items: ['Готовые команды', 'Фикс-прайс, за результат', 'Команда за 1 неделю'] }
     ],
     contacts: [
-      { icon: '✉️', label: 'Email', value: 'tochka.sborki21@yandex.ru' },
+      { icon: '✉️', label: 'Email', value: 'tochka.sborki21@vk.com' },
       { icon: '💬', label: 'MAX Messenger — канал', value: '⚡ Точка Сборки · https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI' },
       { icon: '💬', label: 'MAX Messenger — чат для студентов', value: '💬 Чат для студентов · https://web.max.ru/-74708826221932' },
       { icon: '🌐', label: 'ВКонтакте', value: 'https://vk.com/tochkasborki21' },

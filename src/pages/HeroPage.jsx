@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { TrackedLink } from '../components/Tracked';
-import { Logo } from '../components/Logo';
 import { Badge, PageShell, Reveal } from '../components/UI';
 import { EcosystemMap } from '../components/EcosystemMap';
 import { pages } from '../data/content';
@@ -16,8 +15,8 @@ function LiveStrip({ projects }) {
       setTimeout(() => {
         setIdx((i) => (i + 1) % projects.length);
         setVisible(true);
-      }, 300);
-    }, 3200);
+      }, 350);
+    }, 3000);
     return () => clearInterval(id);
   }, [projects.length]);
 
@@ -28,11 +27,9 @@ function LiveStrip({ projects }) {
       <span className="live-label">Hermes сейчас:</span>
       <span
         className="live-item"
-        style={{ opacity: visible ? 1 : 0, transition: 'opacity .28s' }}
+        style={{ opacity: visible ? 1 : 0, transition: 'opacity .32s ease' }}
       >
-        <strong>
-          {p.type} {p.label}
-        </strong>
+        <strong>{p.type} {p.label}</strong>
         <span className="live-stack">{p.stack}</span>
       </span>
     </div>
@@ -48,12 +45,30 @@ function MiniFlow({ steps }) {
           <span className="mini-flow-icon">{s.icon}</span>
           <span className="mini-flow-label">{s.label}</span>
           {i < steps.length - 1 && (
-            <span className="mini-flow-arrow" aria-hidden="true">
-              →
-            </span>
+            <span className="mini-flow-arrow" aria-hidden="true">→</span>
           )}
         </span>
       ))}
+    </div>
+  );
+}
+
+/* ─── Transformation Stories ─────────────────────────────────── */
+function StoryCard({ story }) {
+  return (
+    <div className="story-card">
+      <div className="story-card-avatar">{story.avatar}</div>
+      <div className="story-card-body">
+        <div className="story-card-meta">
+          <strong className="story-card-age">{story.age}</strong>
+          <span className="story-card-tag">{story.tag}</span>
+        </div>
+        <p className="story-card-path">{story.path}</p>
+        <div className="story-card-outcome">
+          <span className="story-card-arrow">→</span>
+          <span className="story-card-result">{story.result}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -69,18 +84,14 @@ export function HeroPage() {
       <div className="eco-hero-grid">
         {/* LEFT: copy */}
         <Reveal className="eco-hero-copy">
-          <Logo />
-
           <div className="eco-badge-row">
             <Badge accent="purple">{page.tag}</Badge>
             <Badge accent="cyan">{page.poweredBy}</Badge>
           </div>
 
           <h1 className="eco-hero-title">
-            {page.title[0]}
-            <br />
-            <span>{page.title[1]}</span>
-            <br />
+            {page.title[0]}<br />
+            <span>{page.title[1]}</span><br />
             <em>{page.title[2]}</em>
           </h1>
 
@@ -126,9 +137,7 @@ export function HeroPage() {
           {/* Tags */}
           <div className="eco-tags">
             {page.ecosystemTags.map((tag) => (
-              <span key={tag} className="eco-tag">
-                {tag}
-              </span>
+              <span key={tag} className="eco-tag">{tag}</span>
             ))}
           </div>
         </Reveal>
@@ -150,20 +159,23 @@ export function HeroPage() {
         </Reveal>
       </div>
 
-      {/* BOTTOM: story strip */}
+      {/* BOTTOM: transformation stories */}
       <Reveal>
-        <div className="eco-story-strip">
-          {page.storyStrip.map((story, i) => (
-            <div key={i} style={{ display: 'contents' }}>
-              <div className="eco-story-item">
-                <span className="eco-story-age">{story.age}</span>
-                <span className="eco-story-text">{story.text}</span>
-              </div>
-              {i < page.storyStrip.length - 1 && (
-                <div className="eco-story-divider" aria-hidden="true" />
-              )}
+        <div className="eco-story-section">
+          <div className="eco-story-header">
+            <span className="eco-story-icon">🚀</span>
+            <div>
+              <h3 className="eco-story-title">Трансформация в экосистеме</h3>
+              <p className="eco-story-subtitle">
+                Реальные пути студентов и команд через Точку Сборки
+              </p>
             </div>
-          ))}
+          </div>
+          <div className="eco-story-grid">
+            {page.storyStrip.map((story) => (
+              <StoryCard key={story.age} story={story} />
+            ))}
+          </div>
         </div>
       </Reveal>
     </PageShell>
