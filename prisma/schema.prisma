@@ -76,7 +76,6 @@ model StudentProfile {
   speedScore     Float?
 
   portfolio      String?
-  resumeUrl      String?
   about          String
 
   availableFrom   DateTime?
