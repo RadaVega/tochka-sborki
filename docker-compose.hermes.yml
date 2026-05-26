@@ -1,0 +1,17 @@
+services:
+  hermes-service:
+    build: ./hermes-service
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+    ports:
+      - "8000:8000"
+
+  web:
+    image: node:20
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+    command: sh -c "npm ci && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"

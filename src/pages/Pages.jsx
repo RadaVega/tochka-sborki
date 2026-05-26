@@ -18,3 +18,4 @@ export { PrivacyPage } from './PrivacyPage';
 export { ContactsPage } from './ContactsPage';
 
 export { HermesDemo } from './HermesDemo';
+export { HermesPage } from './HermesPage';

@@ -5,20 +5,6 @@ import { Logo } from '../components/Logo';
 import { ConsentCheckbox } from '../components/ConsentCheckbox';
 import { TrackedButton, TrackedLink, TrackedExternalLink } from '../components/Tracked';
 import { useAnalytics } from '../hooks/useAnalytics';
-
-/* ─── Email link with goal tracking ─────────────── */
-function EmailLink({ href, className, children }) {
-  const { goal, GOALS } = useAnalytics();
-  return (
-    <a
-      href={href}
-      className={className}
-      onClick={() => goal(GOALS.CONTACT_CHANNEL_CLICK, { channel: 'email' })}
-    >
-      {children}
-    </a>
-  );
-}
 import {
   Badge,
   Card,
@@ -40,10 +26,24 @@ const api = async (url, payload) => {
   return data;
 };
 
+/* ─── Email link with goal tracking ─────────────── */
+function EmailLink({ href, className, children }) {
+  const { goal, GOALS } = useAnalytics();
+  return (
+    <a
+      href={href}
+      className={className}
+      onClick={() => goal(GOALS.CONTACT_CHANNEL_CLICK, { channel: 'email' })}
+    >
+      {children}
+    </a>
+  );
+}
+
 /* ─── Channel data with hrefs ─────────────────────── */
 const CHANNELS = [
   {
-    icon: '✉️',
+    icon: '✉',
     accent: 'pink',
     label: 'Email',
     handle: 'Tochka.Sborki21@yandex.ru',
@@ -218,7 +218,7 @@ function ContactForm() {
   return (
     <Card accent="purple" className="ct-form-card">
       <div className="ct-form-header">
-        <div className="ct-form-icon">✉️</div>
+        <div className="ct-form-icon">✉</div>
         <div>
           <h2>Написать напрямую</h2>
           <p>Ответим в течение рабочего дня</p>
@@ -463,7 +463,7 @@ export function ContactsPage() {
             {/* Trust badges */}
             <Reveal>
               <div className="ct-trust">
-                <span>🛡️ NDA через Контур.Диадок</span>
+                <span>🛡 NDA через Контур.Диадок</span>
                 <span>🔒 Данные защищены</span>
                 <span>⚡ Ответ за 1 час</span>
               </div>

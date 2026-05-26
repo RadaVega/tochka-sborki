@@ -2430,3 +2430,50 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   .national-mission { padding: 24px 20px; }
   .vision-quote { padding: 18px 20px; }
 }
+/* HERMES UPGRADE */
+.hermes-page { background: #0a0a0f; color: #fff; min-height: 100vh; }
+.hm-hero { position: relative; padding: 80px 20px; text-align: center; overflow: hidden; }
+.hm-glow { position: absolute; inset: -50%; background: radial-gradient(circle, rgba(124,58,237,.3), transparent 60%); animation: pulse 4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { transform: scale(1); opacity:.6 } 50% { transform: scale(1.1); opacity: 1 } }
+.hm-hero h1 { font-size: 64px; margin: 0; background: linear-gradient(90deg, #a78bfa, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hm-stats { display: flex; gap: 40px; justify-content: center; margin-top: 40px; }
+.hm-stats div { text-align: center; }
+.hm-stats strong { display: block; font-size: 32px; color: #a78bfa; }
+.hm-stats span { font-size: 12px; opacity:.7; }
+
+.hm-demo { padding: 40px 20px; max-width: 1400px; margin: 0 auto; }
+.hm-grid { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; }
+.hm-card { background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); }
+.hm-card h3 { margin: 0 0 20px; font-size: 12px; letter-spacing: 1px; opacity:.6; }
+.hm-samples { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.hm-samples button { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: #fff; padding: 10px; border-radius: 8px; cursor: pointer; text-align: left; }
+.hm-samples button.active { background: rgba(124,58,237,.3); border-color: #7c3aed; }
+.hm-card input { width: 100%; background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.1); color: #fff; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
+.hm-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.hm-run { width: 100%; background: #7c3aed; border: none; color: #fff; padding: 16px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+.hm-run:disabled { opacity:.5; }
+
+.hm-steps { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+.hm-step { display: flex; align-items: center; gap: 12px; padding: 8px; border-radius: 8px; opacity:.4; transition: all.3s; }
+.hm-step.active { opacity: 1; background: rgba(124,58,237,.2); }
+.hm-step.done { opacity:.7; }
+.hm-step span:first-child { width: 24px; text-align: center; }
+
+.hm-logs { height: 280px; overflow-y: auto; background: #000; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; }
+.hm-logs div { margin: 4px 0; }
+.log-sys { color: #a78bfa; }
+.log-proc { color: #22d3ee; }
+.log-ok { color: #10b981; }
+.log-err { color: #ef4444; }
+
+.hm-conf { position: relative; height: 32px; background: rgba(0,0,0,.5); border-radius: 16px; margin-bottom: 20px; overflow: hidden; }
+.hm-conf-bar { height: 100%; background: linear-gradient(90deg, #7c3aed, #22d3ee); transition: width.3s; }
+.hm-conf span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+.hm-member { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(255,255,255,.03); border-radius: 8px; margin-bottom: 8px; }
+.hm-avatar { width: 36px; height: 36px; border-radius: 50%; background: #7c3aed; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+.hm-member small { display: block; opacity:.6; font-size: 11px; }
+.hm-total { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,.1); text-align: center; font-size: 13px; }
+.hm-empty { text-align: center; padding: 60px 20px; opacity:.5; }
+
+@media (max-width: 1024px) {.hm-grid { grid-template-columns: 1fr; } }

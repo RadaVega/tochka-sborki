@@ -71,14 +71,14 @@ const JOURNEY_STEPS = [
 const EARNINGS = [
   { icon: '💰', title: '40–90k ₽ за проект', text: 'Полная выплата за 2–4 недели работы. Без задержек — через «Мой налог» в течение 24 часов после подписания акта.', accent: 'gold' },
   { icon: '📋', title: 'Кейс в портфолио', text: 'Реальный проект с живым заказчиком. Production-ready код, документация, Agile-процесс — всё, что нужно для убедительного портфолио.', accent: 'purple' },
-  { icon: '⚙️', title: 'Agile на практике', text: 'Полный цикл: Scrum, Git-flow, CI/CD, code review. Не теория — реальная разработка в команде по тем же стандартам, что в крупных компаниях.', accent: 'cyan' },
+  { icon: '⚙', title: 'Agile на практике', text: 'Полный цикл: Scrum, Git-flow, CI/CD, code review. Не теория — реальная разработка в команде по тем же стандартам, что в крупных компаниях.', accent: 'cyan' },
   { icon: '🎯', title: 'Прямой путь к офферу', text: 'Лучшие участники получают предложение о работе от компании-заказчика напрямую — без комиссий и дополнительных интервью.', accent: 'green' },
   { icon: '👥', title: 'Командный опыт', text: 'Работаете в сработанной группе 3–5 человек. Учитесь координации, code review и ответственности — опыт, который не даёт ни один учебный проект.', accent: 'purple' },
   { icon: '🤖', title: 'Менторство + AI', text: 'Ментор-техлид с опытом 2+ лет доступен в течение рабочего дня. AI-агент Quality ревьюит ваш код автоматически — растёте быстрее.', accent: 'cyan' },
 ];
 
 const STACK_ITEMS = [
-  { title: '⌨️ Разработка', tools: ['GitVerse 🇷🇺', 'Giga IDE 🇷🇺', 'Giga Code 🇷🇺', 'Docker / K8s'] },
+  { title: '⌨ Разработка', tools: ['GitVerse 🇷🇺', 'Giga IDE 🇷🇺', 'Giga Code 🇷🇺', 'Docker / K8s'] },
   { title: '📋 Задачи и процессы', tools: ['Kaiten 🇷🇺', 'Яндекс Трекер 🇷🇺', 'Яндекс 360 🇷🇺'] },
   { title: '💬 Коммуникации', tools: ['MAX Messenger 🇷🇺', 'VK Teams 🇷🇺', 'Яндекс Телемост 🇷🇺'] },
   { title: '💰 Выплаты', tools: ['Мой налог 🇷🇺', 'Контур.Диадок 🇷🇺', 'КриптоПро ЭЦП'] },
@@ -504,7 +504,7 @@ export function StudentPathPage() {
               ]} />
             </Card>
             <Card accent="cyan" className="hero-escrow-card">
-              <div className="section-label">🛡️ Гарантии участника</div>
+              <div className="section-label">🛡 Гарантии участника</div>
               <Checklist items={[
                 'Выплата через «Мой налог» — 24 часа',
                 'Самозанятость: налог 4–6%, не больше',
@@ -532,7 +532,7 @@ export function StudentPathPage() {
           {[
             { icon: '💼', title: 'Живое портфолио', text: 'Один коммерческий проект весит больше десяти учебных. Заказчик, договор, деньги — это то, что ценит рекрутер.' },
             { icon: '⚡', title: 'Старт за 48 часов', text: 'AI-матчинг Hermes подбирает проект под ваш стек и отправляет предложение. Не ждёте месяцами отклика на резюме.' },
-            { icon: '🧑‍🏫', title: 'Ментор-техлид', text: 'Опытный разработчик из Сбера, VK или Яндекса рядом на каждом шаге. Учитесь у реального инженера, а не из YouTube.' },
+            { icon: '🧑🏫', title: 'Ментор-техлид', text: 'Опытный разработчик из Сбера, VK или Яндекса рядом на каждом шаге. Учитесь у реального инженера, а не из YouTube.' },
           ].map((item) => (
             <Reveal key={item.title}>
               <Card className="why-card">
@@ -667,7 +667,7 @@ export function StudentPathPage() {
         <Reveal>
           <div className="company-contacts">
             {[
-              { icon: '✉️', label: 'Email', val: 'tochka.sborki21@vk.com', href: 'mailto:tochka.sborki21@vk.com' },
+              { icon: '✉', label: 'Email', val: 'tochka.sborki21@vk.com', href: 'mailto:tochka.sborki21@vk.com' },
               { icon: 'VK', label: 'ВКонтакте', val: 'vk.com/tochkasborki21', href: 'https://vk.com/tochkasborki21', channel: 'vk' },
               { icon: 'MAX', label: 'MAX Messenger', val: '⚡ Точка Сборки', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', channel: 'max' },
               { icon: 'TG', label: 'Telegram', val: '@tochka_sborki', href: 'https://t.me/tochka_sborki', channel: 'telegram' },
