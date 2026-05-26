@@ -251,7 +251,7 @@ export function createApp(prisma) {
         styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
         fontSrc: ["'self'", "https://fonts.gstatic.com"],
         imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https://llm.api.cloud.yandex.net", "https://mc.yandex.ru", "https://mc.yandex.com"],
+        connectSrc: ["'self'", "https://llm.api.cloud.yandex.net", "https://mc.yandex.ru", "https://mc.yandex.com", "wss://mc.yandex.ru", "wss://mc.yandex.com"],
       },
     },
   }));

@@ -247,6 +247,10 @@ function ProjectForm() {
       const result = await api('/api/submit-project', payload);
       setSuccess(result.message || '✅ Заявка отправлена! AI-агент ответит за 2–4 часа.');
       goal('COMPANY_FORM_SUCCESS', { budget: values.budget, stack: values.stack });
+      if (typeof window !== 'undefined' && typeof window.ym === 'function') {
+        // METRIKA GOAL
+        window.ym(109303611, 'reachGoal', 'project_submit_success');
+      }
       reset();
       setFormState({ consent: false });
     } catch (error) {
@@ -258,7 +262,7 @@ function ProjectForm() {
     <Card accent="cyan" className="company-form-card">
       <h2>Подать техническое задание</h2>
       <p className="form-sub">Все поля со звёздочкой обязательны. AI-агент проверит ТЗ и ответит за 2–4 часа.</p>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate data-ym-goal="project_submit">
         <div className="form-row-2">
           <label>
             <span>Компания <b className="req">*</b></span>

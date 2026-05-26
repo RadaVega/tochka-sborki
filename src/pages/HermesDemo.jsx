@@ -15,7 +15,7 @@ const STEPS = [
   { id: 'match', label: 'Matching engineers', icon: '🔗' },
   { id: 'avail', label: 'Checking availability', icon: '📅' },
   { id: 'team', label: 'Building team', icon: '👥' },
-  { id: 'roadmap', label: 'Generating roadmap', icon: '🗺️' },
+  { id: 'roadmap', label: 'Generating roadmap', icon: '🗺' },
   { id: 'score', label: 'Computing confidence', icon: '📊' },
   { id: 'launch', label: 'Launching', icon: '🚀' },
 ];
@@ -29,6 +29,13 @@ export default function HermesDemo() {
   const [confidence, setConfidence] = useState(0);
   const logRef = useRef(null);
 
+  // METRIKA: demo_view on mount
+  useEffect(() => {
+    if (typeof window!== 'undefined' && typeof window.ym === 'function') {
+      window.ym(109303611, 'reachGoal', 'demo_view');
+    }
+  }, []);
+
   useEffect(() => {
     if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
   }, [logs]);
@@ -39,6 +46,11 @@ export default function HermesDemo() {
   };
 
   const run = async () => {
+    // METRIKA: hermes_launch on click
+    if (typeof window!== 'undefined' && typeof window.ym === 'function') {
+      window.ym(109303611, 'reachGoal', 'hermes_launch');
+    }
+
     setRunning(true); setStep(-1); setLogs([]); setTeam(null); setConfidence(0);
 
     addLog('[HERMES] Initializing v2.4.1', 'sys');
@@ -92,88 +104,3 @@ export default function HermesDemo() {
         <h1>Hermes Live</h1>
         <p>Сборка инженерной команды в реальном времени</p>
         <div className="hm-stats">
-          <div><strong>48ч</strong><span>сборка</span></div>
-          <div><strong>80%</strong><span>автоматизация</span></div>
-          <div><strong>120+</strong><span>инженеров</span></div>
-          <div><strong>91%</strong><span>точность</span></div>
-        </div>
-      </section>
-
-      {/* DEMO */}
-      <section className="hm-demo">
-        <div className="hm-grid">
-          {/* Left */}
-          <div className="hm-card">
-            <h3>ПРОЕКТ</h3>
-            <div className="hm-samples">
-              {SAMPLES.map(s => (
-                <button key={s.id}
-                  className={project.id === s.id? 'active' : ''}
-                  onClick={() => setProject(s)}
-                  disabled={running}>
-                  {s.name}
-                </button>
-              ))}
-            </div>
-            <input value={project.name} onChange={e => setProject({...project, name: e.target.value})} />
-            <input value={project.stack} onChange={e => setProject({...project, stack: e.target.value})} />
-            <div className="hm-row">
-              <input type="number" value={project.budget} onChange={e => setProject({...project, budget: +e.target.value})} />
-              <input type="number" value={project.weeks} onChange={e => setProject({...project, weeks: +e.target.value})} />
-            </div>
-            <button className="hm-run" onClick={run} disabled={running}>
-              {running? '⟳ Orchestrating...' : '⚡ ЗАПУСТИТЬ HERMES'}
-            </button>
-          </div>
-
-          {/* Center */}
-          <div className="hm-card">
-            <h3>ORCHESTRATION</h3>
-            <div className="hm-steps">
-              {STEPS.map((s, i) => (
-                <div key={s.id} className={`hm-step ${i < step? 'done' : i === step? 'active' : ''}`}>
-                  <span>{i < step? '✓' : s.icon}</span>
-                  <span>{s.label}</span>
-                </div>
-              ))}
-            </div>
-            <div className="hm-logs" ref={logRef}>
-              {logs.map((l, i) => (
-                <div key={i} className={`log-${l.type}`}>
-                  <span>{l.ts}</span> {l.text}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right */}
-          <div className="hm-card">
-            <h3>TEAM</h3>
-            {!team? (
-              <div className="hm-empty">Запустите оркестрацию</div>
-            ) : (
-              <>
-                <div className="hm-conf">
-                  <div className="hm-conf-bar" style={{width: `${confidence}%`}} />
-                  <span>{confidence}%</span>
-                </div>
-                {team.members.map(m => (
-                  <div key={m.name} className="hm-member">
-                    <div className="hm-avatar">{m.name[0]}</div>
-                    <div>
-                      <strong>{m.name}</strong>
-                      <small>{m.role} · {m.match_score}%</small>
-                    </div>
-                  </div>
-                ))}
-                <div className="hm-total">
-                  Бюджет: {(team.total_cost / 1000).toFixed(0)}k ₽ · {team.eta_weeks} нед
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
