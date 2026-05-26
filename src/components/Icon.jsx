@@ -1,23 +1,30 @@
-// src/components/Icon.jsx
 import {
-  RocketLaunch, Student, Buildings, Handshake, Microscope,
-  GitBranch, Brain, Wrench, Globe, Target, Users, Package,
-  HardDrives, CreditCard, Lightning, SignIn, PlayCircle, Sparkle,
-  ArrowRight, Compass
-} from '@phosphor-icons/react';
+  Wrench,
+  Globe,
+  Target,
+  Users,
+  Package,
+  HardDrive,
+  Circle,
+} from 'lucide-react';
 
 const iconMap = {
-  RocketLaunch, Student, Buildings, Handshake, Microscope,
-  GitBranch, Brain, Wrench, Globe, Target, Users, Package,
-  HardDrives, CreditCard, Lightning, SignIn, PlayCircle, Sparkle,
-  ArrowRight, Compass
+  Wrench,
+  Globe,
+  Target,
+  Users,
+  Package,
+  HardDrives: HardDrive,
 };
 
-export function Icon({ name, size = 20, weight = "duotone", className = '', ...props }) {
-  const Component = iconMap[name];
-  if (!Component) {
-    console.warn(`Icon "${name}" not found`);
-    return null;
-  }
-  return <Component size={size} weight={weight} className={className} {...props} />;
+export function Icon({ name, size = 24, color = 'currentColor', className, strokeWidth = 2 }) {
+  const LucideIcon = iconMap[name] || Circle;
+  return (
+    <LucideIcon
+      size={size}
+      color={color}
+      strokeWidth={strokeWidth}
+      className={className}
+    />
+  );
 }

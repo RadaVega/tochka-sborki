@@ -156,9 +156,9 @@ export function HeroPage() {
           </div>
 
           <h1 className="eco-hero-title">
-            {page.title[0]}<br />
-            <span>{page.title[1]}</span><br />
-            <em>{page.title[2]}</em>
+            <span className="title-line">{page.title[0]}</span>
+            <span className="title-line accent">{page.title[1]}</span>
+            <span className="title-line highlight">{page.title[2]}</span>
           </h1>
 
           <div className="eco-hero-line" />

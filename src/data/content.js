@@ -54,11 +54,11 @@ export const pages = {
       { id: 'industry',  label: 'Инжиниринг', icon: 'Wrench',       angle: 60,  r: 150, accent: '#f59e0b' },
       { id: 'ecosystem', label: 'Экосистема', icon: 'Globe',        angle: 180, r: 150, accent: '#67e8f9' }
     ],
-    liveProjects: [
-      { icon: 'Robot',        label: 'AI-команда собирается', stack: 'Python · LLM · FastAPI' },
+       liveProjects: [
+      { icon: 'Brain',        label: 'AI-команда собирается', stack: 'Python · LLM · FastAPI' },
       { icon: 'RocketLaunch', label: 'MVP в разработке',       stack: 'Go · React · PostgreSQL' },
       { icon: 'Microscope',   label: 'Research-проект',         stack: 'Rust · DataSphere · ML' },
-      { icon: 'Server',       label: 'DevOps-пайплайн',        stack: 'K8s · GitVerse · CI/CD' },
+      { icon: 'HardDrives',   label: 'DevOps-пайплайн',        stack: 'K8s · GitVerse · CI/CD' },
       { icon: 'CreditCard',   label: 'Fintech-прототип',        stack: 'TypeScript · Node · Redis' }
     ],
     miniFlow: [

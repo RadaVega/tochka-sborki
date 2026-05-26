@@ -1690,37 +1690,39 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
    Ecosystem Map v5 — True Orbital Mechanics, Phosphor Duotone
 ═══════════════════════════════════════════════════════════════ */
 
+/* Replace the eco-map section in index.css with this: */
+
 .eco-hero-right {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 12px;
   padding-left: 20px;
   border-left: 1px solid rgba(124,58,237,.1);
-  padding-top: 10px;
+  padding-top: 0;
+  min-height: 0;
 }
 
-.eco-map-container {
-  position: relative;
+.eco-map-wrap {
   width: 100%;
-  max-width: 480px;
-  aspect-ratio: 1 / 1;
+  max-width: 380px;
   margin: 0 auto;
 }
 
 .eco-map-svg {
   width: 100%;
-  height: 100%;
+  height: auto;
+  display: block;
   overflow: visible;
 }
 
 /* Background glow pulse */
 .eco-bg-glow {
-  animation: glowBreathe 5s ease-in-out infinite;
+  animation: glowBreathe 4s ease-in-out infinite;
 }
 @keyframes glowBreathe {
-  0%, 100% { opacity: .5; }
-  50% { opacity: .85; }
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
 }
 
 /* Decorative rings rotation */
@@ -1728,24 +1730,24 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   transform-origin: 200px 200px;
 }
 .orbit-outer {
-  animation: orbitSpin 90s linear infinite;
+  animation: orbitSpin 80s linear infinite;
 }
 .orbit-mid {
-  animation: orbitSpinReverse 70s linear infinite;
+  animation: orbitSpinReverse 60s linear infinite;
 }
 .orbit-inner {
-  animation: orbitSpin 50s linear infinite;
+  animation: orbitSpin 40s linear infinite;
 }
 @keyframes orbitSpin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 @keyframes orbitSpinReverse {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(-360deg); }
+  from { transform: rotate(360deg); }
+  to   { transform: rotate(0deg); }
 }
 
-/* ── Orbiting node rings ─────────────────────────────────── */
+/* Orbiting node rings */
 .ring-group {
   transform-origin: 200px 200px;
 }
@@ -1758,6 +1760,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 
 /* Counter-rotate nodes so icons stay upright */
 .node-counter {
+  animation: nodeBreathe 3s ease-in-out infinite;
   transform-origin: center;
 }
 .node-outer-counter {
@@ -1775,49 +1778,38 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   to   { transform: rotate(360deg); }
 }
 
-/* Spoke dash animation */
+@keyframes nodeBreathe {
+  0%, 100% { opacity: .9; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+/* Spoke lines data-flow animation */
 .spoke-line {
-  animation: dataFlow 4s linear infinite;
+  stroke-dasharray: 6 8;
+  animation: dataFlow 3s linear infinite;
 }
 @keyframes dataFlow {
-  from { stroke-dashoffset: 36; }
+  from { stroke-dashoffset: 28; }
   to   { stroke-dashoffset: 0; }
 }
 
-/* Node icon wrapper */
-.node-icon-wrap {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  color: white;
-}
-
-/* HERMES CORE — The Sun */
+/* HERMES CENTER */
 .hermes-core {
-  animation: hermesFloat 5s ease-in-out infinite;
+  animation: hermesFloat 4s ease-in-out infinite;
   transform-origin: 200px 200px;
 }
 @keyframes hermesFloat {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  50% { transform: translateY(-3px); }
 }
 
 .hermes-pulse-ring {
-  animation: hermesPulse 3s ease-out infinite;
+  animation: hermesPulse 2.5s ease-out infinite;
   transform-origin: 200px 200px;
 }
 @keyframes hermesPulse {
   0%   { transform: scale(1); opacity: .5; }
-  100% { transform: scale(1.7); opacity: 0; }
-}
-
-.hermes-icon-wrap {
-  display: grid;
-  place-items: center;
-  width: 100%;
-  height: 100%;
-  color: white;
+  100% { transform: scale(1.5); opacity: 0; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
