@@ -89,14 +89,14 @@ export default function HermesDemo() {
   useEffect(() => {
     if (!supabase) return;
     const channel = supabase.channel('hermes-demo')
-   .on('postgres_changes', {
+  .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'execution_logs'
       }, (payload) => {
         setLogs(prev => [...prev.slice(-40), payload.new]);
       })
-   .subscribe();
+  .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
 
@@ -107,7 +107,8 @@ export default function HermesDemo() {
     setTeam(null);
 
     try {
-      const API = import.meta.env.VITE_HERMES_API || '';
+      // 🔧 FIX: используем /api для serverless
+      const API_BASE = import.meta.env.VITE_HERMES_API || '/api';
       const apiPayload = {
         name: project.name,
         stack: project.stack,
@@ -115,7 +116,7 @@ export default function HermesDemo() {
         timeline_weeks: parseInt(project.timeline) || 14
       };
 
-      const response = await fetch(`${API}/orchestrate`, {
+      const response = await fetch(`${API_BASE}/orchestrate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(apiPayload)
