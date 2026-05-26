@@ -20,7 +20,7 @@ const YANDEX_GPT_API_KEY = process.env.YANDEX_GPT_API_KEY;
 const YANDEX_FOLDER_ID = process.env.YANDEX_FOLDER_ID;
 
 async function yandexGPTComplete(systemPrompt, userPrompt, temperature = 0.2) {
-  if (!YANDEX_GPT_API_KEY || !YANDEX_FOLDER_ID) {
+  if (!YANDEX_GPT_API_KEY ||!YANDEX_FOLDER_ID) {
     throw new Error('YandexGPT credentials not configured');
   }
 
@@ -66,7 +66,7 @@ const studentCreateSchema = z.object({
     z.array(z.string().trim().min(1)),
     requiredString('Стек'),
   ]).transform((value) => Array.isArray(value)
-    ? value
+   ? value
     : value.split(/[,;\n]/).map((item) => item.trim()).filter(Boolean)
   ).refine((value) => value.length > 0, 'Укажите хотя бы один навык'),
   experience: z.enum(['JUNIOR', 'MIDDLE', 'SENIOR', 'LEAD']),
@@ -134,7 +134,7 @@ async function hermesMatchProject(prisma, projectId, topN = 5) {
   const students = await prisma.studentProfile.findMany({
     where: {
       status: 'ACTIVE',
-      id: { notIn: excludedIds.length ? excludedIds : undefined },
+      id: { notIn: excludedIds.length? excludedIds : undefined },
     },
     orderBy: { skillScore: 'desc' },
     take: 50,
@@ -146,7 +146,7 @@ async function hermesMatchProject(prisma, projectId, topN = 5) {
 Ответь СТРОГО в формате JSON-массива без markdown:
 [
   {"studentId":"...","matchScore":85,"reason":"Краткая причина на русском","recommendedRole":"Frontend / Backend / DevOps / QA / PM / Fullstack"},
-  ...
+ ...
 ]
 Оценивай по: стеку (вес 40%), опыту (вес 30%), доступности (вес 20%), портфолио (вес 10%).
 matchScore — целое число 0–100. Верни ТОЛЬКО ${topN} лучших.`;
@@ -180,7 +180,7 @@ SkillScore: ${s.skillScore || 'N/A'}
   } catch {
     // Fallback to heuristic if AI fails
     rankings = students
-      .map((s) => {
+     .map((s) => {
         const overlap = stackOverlap(project.stack, s.stack);
         const expBonus = { JUNIOR: 10, MIDDLE: 25, SENIOR: 40, LEAD: 50 }[s.experience] || 0;
         const score = Math.min(100, Math.round(overlap.score * 40 + expBonus + (s.skillScore || 0) * 0.3));
@@ -191,8 +191,8 @@ SkillScore: ${s.skillScore || 'N/A'}
           recommendedRole: 'Fullstack',
         };
       })
-      .sort((a, b) => b.matchScore - a.matchScore)
-      .slice(0, topN);
+     .sort((a, b) => b.matchScore - a.matchScore)
+     .slice(0, topN);
   }
 
   const results = [];
@@ -202,7 +202,7 @@ SkillScore: ${s.skillScore || 'N/A'}
 
     const match = await prisma.teamMatch.upsert({
       where: {
-        studentId_projectId: {   // ← fixed: matches @@unique([studentId, projectId])
+        studentId_projectId: { // ← fixed: matches @@unique([studentId, projectId])
           studentId: r.studentId,
           projectId: projectId,
         },
@@ -211,14 +211,14 @@ SkillScore: ${s.skillScore || 'N/A'}
         matchScore: r.matchScore,
         status: 'PROPOSED',
         notes: JSON.stringify({
-          ...(typeof match?.notes === 'object' ? match.notes : {}),
+         ...(typeof match?.notes === 'object'? match.notes : {}),
           hermesReason: r.reason,
           hermesRole: r.recommendedRole,
           matchedAt: new Date().toISOString(),
         }),
       },
       create: {
-        projectId: projectId,    // ← fixed: Prisma field is projectId
+        projectId: projectId, // ← fixed: Prisma field is projectId
         studentId: r.studentId,
         matchScore: r.matchScore,
         status: 'PROPOSED',
@@ -230,7 +230,7 @@ SkillScore: ${s.skillScore || 'N/A'}
       },
     });
 
-    results.push({ ...match, student: { name: student.name, email: student.email } });
+    results.push({...match, student: { name: student.name, email: student.email } });
   }
 
   return results;
@@ -294,9 +294,9 @@ export function createApp(prisma) {
           event: `${eventType}:${eventName}`,
           path: req?.path || req?.url || null,
           metadata: JSON.stringify({
-            entityId: entityId ? String(entityId) : null,
+            entityId: entityId? String(entityId) : null,
             entityType: entityType || null,
-            ...(meta || {}),
+           ...(meta || {}),
             ip: req?.ip,
             userAgent: req?.headers?.['user-agent'],
           }),
@@ -359,7 +359,7 @@ export function createApp(prisma) {
       const raw = req.body;
 
       // Basic validation
-      if (!raw.name || !raw.email || !raw.stack || !raw.experience) {
+      if (!raw.name ||!raw.email ||!raw.stack ||!raw.experience) {
         return res.status(400).json({
           success: false,
           error: 'name, email, stack и experience обязательны',
@@ -370,16 +370,16 @@ export function createApp(prisma) {
       const data = {
         name: String(raw.name).trim(),
         email: String(raw.email).toLowerCase().trim(),
-        phone: raw.phone ? String(raw.phone).trim() : null,
+        phone: raw.phone? String(raw.phone).trim() : null,
         stack: parseStack(raw.stack),
         experience: String(raw.experience).toUpperCase(),
-        about: String(raw.bio || '').trim(),        // ← mapped: bio → about (required)
+        about: String(raw.bio || '').trim(), // ← mapped: bio → about (required)
         consent: Boolean(raw.consent),
       };
 
       // Optional fields — mapped to Prisma schema names
       if (raw.telegram) data.telegram = String(raw.telegram).trim();
-      if (raw.portfolioUrl) data.portfolio = String(raw.portfolioUrl).trim();  // ← mapped: portfolioUrl → portfolio
+      if (raw.portfolioUrl) data.portfolio = String(raw.portfolioUrl).trim(); // ← mapped: portfolioUrl → portfolio
       if (raw.preferredStack) data.preferredStack = String(raw.preferredStack).trim();
       // NOTE: githubUrl, availability, hourlyRate do NOT exist in Prisma schema — dropped
 
@@ -414,7 +414,7 @@ export function createApp(prisma) {
         return res.status(400).json({
           success: false,
           error: 'Ошибка схемы базы данных. Проверьте поля формы или обновите Prisma schema.',
-          details: process.env.NODE_ENV === 'development' ? err.message : undefined,
+          details: process.env.NODE_ENV === 'development'? err.message : undefined,
         });
       }
       next(err);
@@ -478,7 +478,7 @@ export function createApp(prisma) {
   // PATCH /api/students/:id — update student
   router.patch('/students/:id', validate(studentUpdateSchema), async (req, res, next) => {
     try {
-      const data = { ...req.validated };
+      const data = {...req.validated };
       if (data.stack) data.stack = parseStack(data.stack);
 
       const student = await prisma.studentProfile.update({
@@ -515,7 +515,7 @@ export function createApp(prisma) {
         consent,
       } = req.body;
 
-      if (!companyName || !contactName || !email || !description || !budget || !deadline) {
+      if (!companyName ||!contactName ||!email ||!description ||!budget ||!deadline) {
         return res.status(400).json({
           success: false,
           error: 'companyName, contactName, email, description, budget и deadline обязательны',
@@ -527,12 +527,12 @@ export function createApp(prisma) {
           companyName: String(companyName).trim(),
           contactName: String(contactName).trim(),
           email: String(email).toLowerCase().trim(),
-          phone: phone ? String(phone).trim() : null,
+          phone: phone? String(phone).trim() : null,
           stack: parseStack(stack || ''),
           description: String(description).trim(),
           budget: String(budget).trim(),
           deadline: parseRussianDate(deadline) || String(deadline).trim(),
-          fileUrl: fileUrl ? String(fileUrl).trim() : null,
+          fileUrl: fileUrl? String(fileUrl).trim() : null,
           consent: consent === true || consent === 'true',
         },
       });
@@ -641,7 +641,7 @@ export function createApp(prisma) {
         where: { id: parseInt(req.params.id, 10) },
         data: {
           status: req.validated.status,
-          notes: req.validated.note || null,  // ← Prisma field is "notes", not "note"
+          notes: req.validated.note || null, // ← Prisma field is "notes", not "note"
         },
       });
       res.json({ success: true, data: match });
@@ -665,8 +665,8 @@ export function createApp(prisma) {
         req,
         eventType: String(eventType).slice(0, 64),
         eventName: String(eventName).slice(0, 128),
-        entityId: entityId ? String(entityId).slice(0, 64) : null,
-        entityType: entityType ? String(entityType).slice(0, 64) : null,
+        entityId: entityId? String(entityId).slice(0, 64) : null,
+        entityType: entityType? String(entityType).slice(0, 64) : null,
         meta: meta || {},
       });
       res.json({ success: true });
@@ -716,7 +716,7 @@ export function createApp(prisma) {
     try {
       const { name, email, message, consent } = req.body;
 
-      if (!name || !email || !message) {
+      if (!name ||!email ||!message) {
         return res.status(400).json({
           success: false,
           error: 'name, email и message обязательны',
@@ -797,13 +797,83 @@ export function createApp(prisma) {
 
       runNonCritical('subscribe.email', () => sendMail({
         subject: 'Новая подписка на рассылку — Точка Сборки',
-        text: `Новый подписчик.\n\nEmail: ${subscriber.email}\nСогласие на обработку: ${subscriber.consent ? 'Да' : 'Нет'}`,
+        text: `Новый подписчик.\n\nEmail: ${subscriber.email}\nСогласие на обработку: ${subscriber.consent? 'Да' : 'Нет'}`,
         replyTo: subscriber.email,
       }));
     } catch (err) {
       if (err.code === 'P2002') {
         return res.status(409).json({ success: false, error: 'Этот email уже подписан' });
       }
+      next(err);
+    }
+  });
+
+  // ═══════════════════════════════════════════════════
+  // HERMES LIVE DEMO
+  // ═══════════════════════════════════════════════════
+
+  // POST /api/orchestrate — Hermes Live demo endpoint
+  router.post('/orchestrate', async (req, res, next) => {
+    try {
+      const { name = 'AI SaaS', stack = 'Python', budget = 500000, timeline_weeks = 14 } = req.body || {};
+
+      const db = [
+        {name:"Алексей К.",role:"Lead Engineer",skills:["Python","Architecture"],rating:4.9,projects:23,rate:150000},
+        {name:"Мария С.",role:"Backend",skills:["Python","FastAPI","PostgreSQL"],rating:4.8,projects:18,rate:120000},
+        {name:"Дмитрий В.",role:"Frontend",skills:["React","TypeScript"],rating:4.7,projects:15,rate:100000},
+        {name:"Елена П.",role:"ML Engineer",skills:["LLM","PyTorch","RAG"],rating:4.9,projects:12,rate:140000},
+        {name:"Игорь М.",role:"DevOps",skills:["Docker","K8s"],rating:4.6,projects:20,rate:110000},
+      ];
+
+      const match = (eng) => {
+        let s = 70;
+        eng.skills.forEach(sk => { if (stack.toLowerCase().includes(sk.toLowerCase())) s += 8; });
+        return Math.min(98, s + Math.floor((eng.rating-4.5)*10));
+      };
+
+      const needs = {
+        ml: /llm|ai|ml|pytorch/i.test(stack),
+        front: /react|vue|front/i.test(stack),
+        back: /python|node|back|api/i.test(stack),
+        devops: budget > 400000
+      };
+
+      let team = db.map(e => ({...e, match_score: match(e)}))
+       .sort((a,b) => b.match_score - a.match_score)
+       .filter(e =>
+          e.role === 'Lead Engineer' ||
+          (needs.ml && e.role === 'ML Engineer') ||
+          (needs.front && e.role === 'Frontend') ||
+          (needs.back && e.role === 'Backend') ||
+          (needs.devops && e.role === 'DevOps')
+        ).slice(0, 5);
+
+      if (team.length < 3) team = db.slice(0,3).map(e => ({...e, match_score: match(e)}));
+
+      const now = new Date().toISOString();
+      const logs = [
+        {message:"🧠 Hermes AI v2.0", timestamp: now},
+        {message:`📋 ${name}`, timestamp: now},
+        {message:`📊 ${stack} • ${budget.toLocaleString('ru-RU')}₽`, timestamp: now},
+        {message:`🔍 Поиск в базе (${db.length} инженеров)`, timestamp: now},
+        {message:"🎯 Векторный матчинг", timestamp: now},
+       ...team.map(t => ({message:`✓ ${t.name} — ${t.match_score}%`, timestamp: now})),
+        {message:"✅ Команда готова", timestamp: now},
+      ];
+
+      await new Promise(r => setTimeout(r, 600));
+
+      res.json({
+        project_id: `hms-${Date.now()}`,
+        logs,
+        team: {
+          members: team,
+          confidence_score: Math.round(team.reduce((s,t) => s+t.match_score,0)/team.length),
+          eta_weeks: timeline_weeks,
+          total_cost: team.reduce((s,t) => s + t.rate * timeline_weeks, 0)
+        }
+      });
+    } catch (err) {
       next(err);
     }
   });
@@ -825,7 +895,7 @@ export function createApp(prisma) {
     if (res.headersSent) return next(err);
     res.status(500).json({
       success: false,
-      error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message,
+      error: process.env.NODE_ENV === 'production'? 'Internal server error' : err.message,
     });
   });
 
