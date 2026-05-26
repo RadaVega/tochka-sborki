@@ -198,11 +198,11 @@ export function HeroPage() {
             })}
           </div>
 
-          <div className="eco-tags">
+          {/* <div className="eco-tags">
             {page.ecosystemTags.map((tag) => (
               <span key={tag} className="eco-tag">{tag}</span>
             ))}
-          </div>
+          </div> */}
         </Reveal>
 
         <Reveal className="eco-hero-right">
