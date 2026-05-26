@@ -30,6 +30,7 @@ import {
   HermesPage,
 } from './pages/Pages';
 import { ContactsPage } from './pages/ContactsPage';
+import HermesDemo from './pages/HermesDemo'; // ← NEW
 
 function AppRoutes() {
   return (
@@ -52,8 +53,9 @@ function AppRoutes() {
       <Route path="/goals"           element={<ErrorBoundary><GoalsPage /></ErrorBoundary>} />
       <Route path="/contacts"        element={<ErrorBoundary><ContactsPage /></ErrorBoundary>} />
       <Route path="/privacy"         element={<ErrorBoundary><PrivacyPage /></ErrorBoundary>} />
-      <Route path="/hermes"         element={<ErrorBoundary><HermesPage /></ErrorBoundary>} />
-      <Route path="*"               element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
+      <Route path="/hermes"          element={<ErrorBoundary><HermesPage /></ErrorBoundary>} />
+      <Route path="/demo"            element={<ErrorBoundary><HermesDemo /></ErrorBoundary>} /> {/* ← NEW */}
+      <Route path="*"                element={<ErrorBoundary><HeroPage /></ErrorBoundary>} />
     </Routes>
   );
 }
