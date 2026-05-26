@@ -1107,162 +1107,8 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Ecosystem Hero v2 — Dynamic, Alive, Engineering Civilization
-═══════════════════════════════════════════════════════════════ */
-
-/* ── Live strip ────────────────────────────────────────────── */
-.live-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 10px 40px;
-  background: rgba(124,58,237,.07);
-  border-bottom: 1px solid rgba(124,58,237,.16);
-  font-size: .84rem;
-}
-.live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: pulse 1.8s ease-in-out infinite;
-  flex-shrink: 0;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .35; transform: scale(.85); }
-}
-.live-label { color: var(--li); font-weight: 700; white-space: nowrap; }
-.live-item { display: flex; align-items: center; gap: 10px; }
-.live-item strong { color: var(--wr); font-weight: 700; }
-.live-stack {
-  font-family: 'DejaVu Sans Mono','Liberation Mono',monospace;
-  font-size: .76rem;
-  color: #64748b;
-  background: rgba(255,255,255,.04);
-  padding: 2px 8px;
-  border-radius: 5px;
-}
-
-/* ── Hero grid ─────────────────────────────────────────────── */
-.eco-hero-grid {
-  display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 48px;
-  align-items: center;
-  min-height: calc(100vh - 108px);
-  padding: 40px 0;
-}
-
-/* ── Copy ──────────────────────────────────────────────────── */
-.eco-badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 14px; }
-
-.eco-hero-title {
-  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -.05em;
-  margin: 0 0 16px;
-  color: var(--wr);
-}
-.eco-hero-title .title-line {
-  display: block;
-}
-.eco-hero-title .title-line.accent {
-  color: var(--pl);
-}
-.eco-hero-title .title-line.highlight {
-  color: var(--kl);
-  font-style: normal;
-}
-
-/* ── Metrics ───────────────────────────────────────────────── */
-.eco-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0 0 24px;
-}
-.eco-metric {
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(124,58,237,.22);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.eco-metric strong { font-size: 1.25rem; font-weight: 800; line-height: 1; }
-.eco-metric span   { font-size: .79rem; color: var(--li); line-height: 1.35; }
-.eco-metric-cyan   strong { color: var(--cm); }
-.eco-metric-purple strong { color: var(--pm); }
-.eco-metric-pink   strong { color: var(--km); }
-
-/* ── Mini flow ───────────────────────────────────────────── */
-.mini-flow {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex-wrap: wrap;
-  padding: 10px 16px;
-  background: rgba(124,58,237,.07);
-  border: 1px solid rgba(124,58,237,.2);
-  border-radius: 10px;
-  margin: 0 0 24px;
-  font-size: .85rem;
-}
-.mini-flow-step { display: flex; align-items: center; gap: 5px; }
-.mini-flow-icon  { font-size: 1.1rem; }
-.mini-flow-label { font-weight: 700; color: var(--wr); }
-.mini-flow-arrow { color: var(--p); font-size: 1rem; margin: 0 8px; opacity: .5; }
-
-/* ── CTA row ───────────────────────────────────────────────── */
-.eco-cta-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 0 0 20px;
-}
-.eco-cta-primary { font-size: 1rem; padding: 14px 26px; }
-.ghost-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: .9rem;
-  color: var(--li);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.1);
-  text-decoration: none;
-  transition: all .18s;
-}
-.ghost-button:hover {
-  color: var(--wr);
-  border-color: rgba(255,255,255,.25);
-  background: rgba(255,255,255,.05);
-}
-
-/* ── Tags ──────────────────────────────────────────────────── */
-.eco-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.eco-tag {
-  font-size: .75rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #64748b;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  letter-spacing: .03em;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Ecosystem Hero v4 — Fixed Constellation, Lucide Icons,
-   National Mission, AI Vision
+   Ecosystem Hero — Clean, Unified Block
+   (Live Strip + Hero + MiniFlow + Map + Stories + Mission + Vision)
 ═══════════════════════════════════════════════════════════════ */
 
 /* ── Live strip ────────────────────────────────────────────── */
@@ -1306,435 +1152,22 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 /* ── Hero grid ─────────────────────────────────────────────── */
 .eco-hero-grid {
   display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 48px;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
   align-items: start;
-  min-height: calc(100vh - 108px);
-  padding: 32px 0 40px;
+  padding: 20px 0 28px;
 }
 
-/* ── Copy ──────────────────────────────────────────────────── */
-.eco-badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
-
-.eco-hero-title {
-  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -.05em;
-  margin: 0 0 16px;
-  color: var(--wr);
-}
-.eco-hero-title span { color: var(--pl); }
-.eco-hero-title em   { color: var(--kl); font-style: normal; }
-
-.eco-hero-line {
-  width: 260px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--p), var(--c), transparent);
-  margin: 0 0 18px;
-}
-
-.eco-hero-sub {
-  font-size: 1.05rem;
-  color: var(--li);
-  max-width: 560px;
-  line-height: 1.65;
-  margin: 0 0 22px;
-}
-
-/* ── Metrics ───────────────────────────────────────────────── */
-.eco-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0 0 22px;
-}
-.eco-metric {
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(124,58,237,.22);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.eco-metric strong { font-size: 1.2rem; font-weight: 800; line-height: 1; }
-.eco-metric span   { font-size: .78rem; color: var(--li); line-height: 1.35; }
-.eco-metric-cyan   strong { color: var(--cm); }
-.eco-metric-purple strong { color: var(--pm); }
-.eco-metric-pink   strong { color: var(--km); }
-
-/* ── Mini flow — visual pipeline cards ─────────────────────── */
-.mini-flow {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex-wrap: wrap;
-  margin: 0 0 24px;
-}
-.mini-flow-step {
+/* ── Right column ─────────────────────────────────────────── */
+.eco-hero-right {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(124,58,237,.1), rgba(6,182,212,.06));
-  border: 1px solid rgba(124,58,237,.2);
-  border-radius: 12px;
-  min-width: 88px;
-  position: relative;
-  transition: all .2s ease;
-}
-.mini-flow-step:hover {
-  transform: translateY(-3px);
-  border-color: rgba(124,58,237,.4);
-  background: linear-gradient(135deg, rgba(124,58,237,.16), rgba(6,182,212,.1));
-  box-shadow: 0 8px 24px rgba(124,58,237,.12);
-}
-.mini-flow-step:not(:last-child) {
-  margin-right: 18px;
-}
-.mini-flow-step:not(:last-child)::after {
-  content: '›';
-  position: absolute;
-  right: -16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--p);
-  font-size: 1.6rem;
-  font-weight: 300;
-  opacity: .7;
-}
-.mini-flow-num {
-  font-size: .65rem;
-  font-weight: 800;
-  color: var(--p);
-  font-family: 'DejaVu Sans Mono',monospace;
-  letter-spacing: .05em;
-  opacity: .8;
-}
-.mini-flow-icon-svg {
-  color: var(--p);
-  filter: drop-shadow(0 0 12px rgba(124,58,237,.4));
-  line-height: 1;
-}
-.mini-flow-label {
-  font-size: .78rem;
-  font-weight: 800;
-  color: var(--wr);
-  text-transform: uppercase;
-  letter-spacing: .04em;
-}
-
-/* ── CTA row ───────────────────────────────────────────────── */
-.eco-cta-row {
-  display: flex;
-  align-items: center;
+  justify-content: flex-start;
   gap: 10px;
-  flex-wrap: wrap;
-  margin: 0 0 18px;
-}
-.eco-cta-row a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.eco-cta-primary { font-size: 1rem; padding: 14px 26px; }
-.ghost-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: .9rem;
-  color: var(--li);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.1);
-  text-decoration: none;
-  transition: all .18s;
-}
-.ghost-button:hover {
-  color: var(--wr);
-  border-color: rgba(255,255,255,.25);
-  background: rgba(255,255,255,.05);
-}
-
-/* ── Tags ──────────────────────────────────────────────────── */
-.eco-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.eco-tag {
-  font-size: .74rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #94a3b8;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  letter-spacing: .03em;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Ecosystem Hero v5 — Orbital Mechanics, Phosphor Icons,
-   Massive HERMES, National Mission, AI Vision
-═══════════════════════════════════════════════════════════════ */
-
-/* ── Live strip ────────────────────────────────────────────── */
-.live-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 10px 40px;
-  background: rgba(124,58,237,.08);
-  border-bottom: 1px solid rgba(124,58,237,.18);
-  font-size: .85rem;
-}
-.live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 10px #10b981;
-  animation: pulse 1.8s ease-in-out infinite;
-  flex-shrink: 0;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .3; transform: scale(.8); }
-}
-.live-label { color: var(--li); font-weight: 700; white-space: nowrap; }
-.live-item { display: flex; align-items: center; gap: 10px; }
-.live-item strong { color: var(--wr); font-weight: 700; }
-.live-icon-svg { color: var(--p); filter: drop-shadow(0 0 6px var(--p)); }
-.live-stack {
-  font-family: 'DejaVu Sans Mono','Liberation Mono',monospace;
-  font-size: .76rem;
-  color: #94a3b8;
-  background: rgba(255,255,255,.05);
-  padding: 3px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,.06);
-}
-
-/* ── Hero grid ─────────────────────────────────────────────── */
-.eco-hero-grid {
-  display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 48px;
-  align-items: start;
-  min-height: calc(100vh - 108px);
-  padding: 32px 0 40px;
-}
-
-/* ── Copy ──────────────────────────────────────────────────── */
-.eco-badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 12px; }
-
-.eco-hero-title {
-  font-size: clamp(2.6rem, 5.2vw, 4.6rem);
-  font-weight: 800;
-  line-height: 1.05;
-  letter-spacing: -.05em;
-  margin: 0 0 16px;
-  color: var(--wr);
-}
-.eco-hero-title span { color: var(--pl); }
-.eco-hero-title em   { color: var(--kl); font-style: normal; }
-
-.eco-hero-line {
-  width: 260px;
-  height: 2px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, var(--p), var(--c), transparent);
-  margin: 0 0 18px;
-}
-
-.eco-hero-sub {
-  font-size: 1.05rem;
-  color: var(--li);
-  max-width: 560px;
-  line-height: 1.65;
-  margin: 0 0 22px;
-}
-
-/* ── Metrics ───────────────────────────────────────────────── */
-.eco-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  margin: 0 0 22px;
-}
-.eco-metric {
-  padding: 12px 14px;
-  border-radius: 10px;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(124,58,237,.22);
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.eco-metric strong { font-size: 1.2rem; font-weight: 800; line-height: 1; }
-.eco-metric span   { font-size: .78rem; color: var(--li); line-height: 1.35; }
-.eco-metric-cyan   strong { color: var(--cm); }
-.eco-metric-purple strong { color: var(--pm); }
-.eco-metric-pink   strong { color: var(--km); }
-
-/* ── Mini flow ───────────────────────────────────────────── */
-.mini-flow {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  flex-wrap: wrap;
-  margin: 0 0 24px;
-}
-.mini-flow-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, rgba(124,58,237,.1), rgba(6,182,212,.06));
-  border: 1px solid rgba(124,58,237,.2);
-  border-radius: 12px;
-  min-width: 88px;
-  position: relative;
-  transition: all .2s ease;
-}
-.mini-flow-step:hover {
-  transform: translateY(-3px);
-  border-color: rgba(124,58,237,.4);
-  background: linear-gradient(135deg, rgba(124,58,237,.16), rgba(6,182,212,.1));
-  box-shadow: 0 8px 24px rgba(124,58,237,.12);
-}
-.mini-flow-step:not(:last-child) { margin-right: 18px; }
-.mini-flow-step:not(:last-child)::after {
-  content: '›';
-  position: absolute;
-  right: -16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--p);
-  font-size: 1.6rem;
-  font-weight: 300;
-  opacity: .7;
-}
-.mini-flow-num {
-  font-size: .65rem;
-  font-weight: 800;
-  color: var(--p);
-  font-family: 'DejaVu Sans Mono',monospace;
-  letter-spacing: .05em;
-  opacity: .8;
-}
-.mini-flow-icon-svg {
-  color: var(--p);
-  filter: drop-shadow(0 0 12px rgba(124,58,237,.4));
-  line-height: 1;
-}
-.mini-flow-label {
-  font-size: .78rem;
-  font-weight: 800;
-  color: var(--wr);
-  text-transform: uppercase;
-  letter-spacing: .04em;
-}
-
-/* ── CTA row ───────────────────────────────────────────────── */
-.eco-cta-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin: 0 0 18px;
-}
-.eco-cta-row a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.eco-cta-primary { font-size: 1rem; padding: 14px 26px; }
-.ghost-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 20px;
-  border-radius: 8px;
-  font-weight: 700;
-  font-size: .9rem;
-  color: var(--li);
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.1);
-  text-decoration: none;
-  transition: all .18s;
-}
-.ghost-button:hover {
-  color: var(--wr);
-  border-color: rgba(255,255,255,.25);
-  background: rgba(255,255,255,.05);
-}
-
-/* ── Tags ──────────────────────────────────────────────────── */
-.eco-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.eco-tag {
-  font-size: .74rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #94a3b8;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  letter-spacing: .03em;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Ecosystem Hero — Clean, Contained, Static
-═══════════════════════════════════════════════════════════════ */
-
-/* ── Live strip ────────────────────────────────────────────── */
-.live-strip {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  padding: 10px 40px;
-  background: rgba(124,58,237,.08);
-  border-bottom: 1px solid rgba(124,58,237,.18);
-  font-size: .85rem;
-}
-.live-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 10px #10b981;
-  animation: pulse 1.8s ease-in-out infinite;
-  flex-shrink: 0;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: .3; transform: scale(.8); }
-}
-.live-label { color: var(--li); font-weight: 700; white-space: nowrap; }
-.live-item { display: flex; align-items: center; gap: 10px; }
-.live-item strong { color: var(--wr); font-weight: 700; }
-.live-icon-svg { color: var(--p); filter: drop-shadow(0 0 6px var(--p)); }
-.live-stack {
-  font-family: 'DejaVu Sans Mono','Liberation Mono',monospace;
-  font-size: .76rem;
-  color: #94a3b8;
-  background: rgba(255,255,255,.05);
-  padding: 3px 10px;
-  border-radius: 6px;
-  border: 1px solid rgba(255,255,255,.06);
-}
-
-/* ── Hero grid ─────────────────────────────────────────────── */
-.eco-hero-grid {
-  display: grid;
-  grid-template-columns: 1.05fr .95fr;
-  gap: 40px;
-  align-items: center;
-  padding: 32px 0 40px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(124,58,237,.12);
+  margin-top: -10px;
 }
 
 /* ── Copy ──────────────────────────────────────────────────── */
@@ -1849,6 +1282,13 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   letter-spacing: .04em;
 }
 
+/* When mini-flow is inside .eco-hero-right */
+.eco-hero-right .mini-flow {
+  margin: 8px 0 0;
+  padding: 10px 14px;
+  max-width: 380px;
+}
+
 /* ── CTA row ───────────────────────────────────────────────── */
 .eco-cta-row {
   display: flex;
@@ -1883,44 +1323,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   background: rgba(255,255,255,.05);
 }
 
-/* ── Tags ──────────────────────────────────────────────────── */
-.eco-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-.eco-tag {
-  font-size: .74rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 20px;
-  color: #94a3b8;
-  background: rgba(255,255,255,.04);
-  border: 1px solid rgba(255,255,255,.08);
-  letter-spacing: .03em;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Ecosystem Map — Massive HERMES Sun, Live Connectors, Balanced Grid
-═══════════════════════════════════════════════════════════════ */
-
-/* ── Hero grid: balanced, no excessive height ─────────────── */
-.eco-hero-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: start;
-  padding: 20px 0 28px;
-}
-
-/* ── Right column: map sits HIGH, aligned with title ──────── */
-.eco-hero-right {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  padding-left: 16px;
-  border-left: 1px solid rgba(124,58,237,.12);
-  margin-top: -10px;
-}
-
 /* ── Map wrapper ──────────────────────────────────────────── */
 .eco-map-wrap {
   display: flex;
@@ -1929,7 +1331,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   gap: 12px;
   width: 100%;
 }
-
 .eco-map-container {
   position: relative;
   width: 100%;
@@ -1937,7 +1338,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   aspect-ratio: 1 / 1;
   margin: 0 auto;
 }
-
 .eco-map-svg {
   width: 100%;
   height: 100%;
@@ -1946,8 +1346,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 
 /* ═══ ANIMATIONS ═══ */
-
-/* Sun pulse */
 .sun-pulse {
   animation: sunBreathe 4s ease-in-out infinite;
   transform-origin: 160px 160px;
@@ -1956,8 +1354,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   0%, 100% { transform: scale(1); opacity: .9; }
   50% { transform: scale(1.08); opacity: 1; }
 }
-
-/* Orbital rings — slow counter-rotation */
 .orbit-outer {
   animation: orbitSpin 60s linear infinite;
   transform-origin: 160px 160px;
@@ -1978,8 +1374,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   from { transform: rotate(360deg); }
   to   { transform: rotate(0deg); }
 }
-
-/* Live data-flow spokes */
 .spoke-line {
   animation: dataFlow 3s linear infinite;
 }
@@ -1987,8 +1381,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   from { stroke-dashoffset: 40; }
   to   { stroke-dashoffset: 0; }
 }
-
-/* HERMES corona pulse */
 .hermes-corona {
   animation: coronaPulse 3s ease-out infinite;
   transform-origin: 160px 160px;
@@ -1997,13 +1389,10 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   0%   { transform: scale(1); opacity: .6; }
   100% { transform: scale(1.3); opacity: 0; }
 }
-
 .hermes-pulse-ring {
   animation: coronaPulse 3s ease-out infinite 1.5s;
   transform-origin: 160px 160px;
 }
-
-/* HERMES core shimmer */
 .hermes-core {
   animation: coreShimmer 2s ease-in-out infinite;
   transform-origin: 160px 160px;
@@ -2049,58 +1438,6 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   border: 1px solid;
   letter-spacing: .02em;
   white-space: nowrap;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Mini Flow — moved to RIGHT side under map (in HeroPage JSX)
-═══════════════════════════════════════════════════════════════ */
-
-/* When mini-flow is inside .eco-hero-right */
-.eco-hero-right .mini-flow {
-  margin: 8px 0 0;
-  padding: 10px 14px;
-  max-width: 380px;
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Remove old bottom tags (.eco-tags) — handled in JSX
-═══════════════════════════════════════════════════════════════ */
-
-/* Responsive */
-@media (max-width: 960px) {
-  .eco-hero-grid { grid-template-columns: 1fr; gap: 24px; padding: 16px 0 24px; }
-  .eco-hero-right {
-    border-left: none;
-    border-top: 1px solid rgba(124,58,237,.12);
-    padding: 20px 0 0;
-    padding-left: 0;
-    margin-top: 0;
-  }
-  .eco-map-container { max-width: 340px; }
-  .eco-hero-right .mini-flow { max-width: 100%; }
-}
-
-@media (max-width: 560px) {
-  .eco-map-container { max-width: 280px; }
-  .eco-map-node { width: 38px; height: 38px; }
-  .eco-map-labels { gap: 4px; }
-  .eco-map-pill { font-size: .68rem; padding: 3px 8px; }
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   Remove the old bottom tag row (.eco-tags) — already gone from JSX
-═══════════════════════════════════════════════════════════════ */
-
-/* Responsive */
-@media (max-width: 960px) {
-  .eco-hero-grid { grid-template-columns: 1fr; gap: 28px; padding: 20px 0 28px; }
-  .eco-hero-right {
-    border-left: none;
-    border-top: 1px solid rgba(124,58,237,.12);
-    padding: 24px 0 0;
-    padding-left: 0;
-  }
-  .eco-map-container { max-width: 300px; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
