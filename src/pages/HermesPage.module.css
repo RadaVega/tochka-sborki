@@ -1,0 +1,19 @@
+.hermesPage{color:#e9f0ff;display:grid;gap:2.5rem;padding:2rem 0 4rem}
+.hero{position:relative;padding:4rem 2rem;border:1px solid #2a3347;border-radius:24px;overflow:hidden;background:#0a0f1f}
+.glow{position:absolute;inset:-20%;background:radial-gradient(circle,#36cfff55,transparent 50%);animation:pulse 7s infinite}
+.kicker{text-transform:uppercase;letter-spacing:.3em;color:#6ee7ff}
+.subtitle{max-width:760px;color:#b7c3dc}
+.flowGrid{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:1rem}
+.panel{background:#0a1022;border:1px solid #283347;border-radius:18px;padding:1rem}
+.pipeline{display:grid;gap:.5rem;margin:.8rem 0}
+.step{padding:.55rem .75rem;border-radius:10px;background:#131c34;color:#8ea0bf}
+.stepActive{background:#17396b;color:#d9ecff;box-shadow:0 0 20px #1f8cff55}
+.progress{height:8px;background:#192136;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,#2de0ff,#8f7bff)}
+.logs{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;max-height:130px;overflow:auto;font-size:.8rem;color:#8dc9ff}
+.meta{margin:.35rem 0;color:#a9bddb}
+.graphSection{padding:1rem 0}.graph{position:relative;min-height:380px;border:1px solid #26324a;border-radius:18px;display:grid;place-items:center;background:#080d1a}
+.center{z-index:2;padding:1rem 1.2rem;border-radius:999px;background:#1c2840;border:1px solid #5f7ac4}
+.node{position:absolute;transform:rotate(calc(var(--i) * 60deg)) translateY(-145px) rotate(calc(var(--i) * -60deg));padding:.45rem .8rem;border:1px solid #335179;border-radius:999px;background:#0f1b33;animation:orbit 9s linear infinite}
+@keyframes orbit{from{filter:brightness(1)}50%{filter:brightness(1.35)}to{filter:brightness(1)}}
+@keyframes pulse{50%{transform:scale(1.08);opacity:.85}}
+@media(max-width:980px){.flowGrid{grid-template-columns:1fr}}
