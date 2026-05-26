@@ -1897,13 +1897,15 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Ecosystem Map — Clean Static Constellation
+   Ecosystem Map — Clean Constellation (Lucide icons, no emojis)
 ═══════════════════════════════════════════════════════════════ */
 
 .eco-hero-right {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 16px;
   padding-left: 20px;
   border-left: 1px solid rgba(124,58,237,.1);
 }
@@ -1914,6 +1916,72 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   max-width: 340px;
   aspect-ratio: 1 / 1;
   margin: 0 auto;
+}
+
+.eco-map-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+/* Slow decorative ring — barely perceptible */
+.eco-map-svg circle[strokeDasharray] {
+  animation: hubRotate 90s linear infinite;
+  transform-origin: 160px 160px;
+}
+@keyframes hubRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Node overlays */
+.eco-map-node {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  background: rgba(6,8,15,0.92);
+  border: 1.5px solid;
+  border-radius: 50%;
+  transition: all .2s ease;
+  cursor: default;
+}
+.eco-map-node:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  background: rgba(6,8,15,1);
+}
+
+/* Pill labels */
+.eco-map-labels {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 14px;
+  max-width: 320px;
+}
+.eco-map-pill {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  letter-spacing: .02em;
+  white-space: nowrap;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .eco-hero-right {
+    border-left: none;
+    border-top: 1px solid rgba(124,58,237,.12);
+    padding: 28px 0 0;
+    padding-left: 0;
+  }
+  .eco-map-container { max-width: 300px; }
 }
 
 .eco-map-svg {
