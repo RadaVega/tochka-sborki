@@ -1896,18 +1896,37 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   letter-spacing: .03em;
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Ecosystem Map — Clean Constellation (Lucide icons, no emojis)
+//* ═══════════════════════════════════════════════════════════════
+   Ecosystem Hero — Clean Layout (labels under map, no bottom tags)
 ═══════════════════════════════════════════════════════════════ */
 
+/* ── Hero grid ─────────────────────────────────────────────── */
+.eco-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 40px;
+  align-items: start;
+  padding: 24px 0 32px;
+}
+
+/* ── Right column ──────────────────────────────────────────── */
 .eco-hero-right {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: 16px;
+  justify-content: flex-start;
+  gap: 12px;
   padding-left: 20px;
   border-left: 1px solid rgba(124,58,237,.1);
+}
+
+/* ── Map wrapper ──────────────────────────────────────────── */
+.eco-map-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
 }
 
 .eco-map-container {
@@ -1925,7 +1944,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   overflow: visible;
 }
 
-/* Slow decorative ring — barely perceptible */
+/* Slow decorative ring */
 .eco-map-svg circle[strokeDasharray] {
   animation: hubRotate 90s linear infinite;
   transform-origin: 160px 160px;
@@ -1960,8 +1979,7 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   flex-wrap: wrap;
   justify-content: center;
   gap: 6px;
-  margin-top: 14px;
-  max-width: 320px;
+  max-width: 340px;
 }
 .eco-map-pill {
   font-size: .72rem;
@@ -1973,77 +1991,20 @@ blockquote small { display: block; color: var(--kl); text-transform: uppercase; 
   white-space: nowrap;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   Remove the old bottom tag row (.eco-tags) — already gone from JSX
+═══════════════════════════════════════════════════════════════ */
+
 /* Responsive */
 @media (max-width: 960px) {
+  .eco-hero-grid { grid-template-columns: 1fr; gap: 28px; padding: 20px 0 28px; }
   .eco-hero-right {
     border-left: none;
     border-top: 1px solid rgba(124,58,237,.12);
-    padding: 28px 0 0;
+    padding: 24px 0 0;
     padding-left: 0;
   }
   .eco-map-container { max-width: 300px; }
-}
-
-.eco-map-svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-  overflow: visible;
-}
-
-/* Very slow decorative ring — barely perceptible */
-.hub-ring {
-  animation: hubRotate 60s linear infinite;
-  transform-origin: 200px 200px;
-}
-@keyframes hubRotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
-.eco-map-node {
-  position: absolute;
-  width: 44px;
-  height: 44px;
-  transform: translate(-50%, -50%);
-  display: grid;
-  place-items: center;
-  background: rgba(6,8,15,0.9);
-  border: 1.5px solid rgba(124,58,237,0.45);
-  border-radius: 50%;
-  color: #a78bfa;
-  box-shadow: 0 0 16px rgba(124,58,237,0.15);
-  transition: all .2s ease;
-}
-.eco-map-node:hover {
-  border-color: rgba(124,58,237,0.8);
-  box-shadow: 0 0 24px rgba(124,58,237,0.3);
-  transform: translate(-50%, -50%) scale(1.1);
-}
-
-.eco-map-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 64px;
-  height: 64px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  background: rgba(6,8,15,0.95);
-  border: 2px solid rgba(124,58,237,0.6);
-  border-radius: 50%;
-  color: #c4b5fd;
-  box-shadow: 0 0 30px rgba(124,58,237,0.2);
-}
-.eco-map-center span {
-  font-size: 0.55rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
 }
 
 /* ═══════════════════════════════════════════════════════════════
