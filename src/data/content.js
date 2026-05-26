@@ -13,6 +13,7 @@ export const navItems = [
   { to: '/how-it-works', label: 'Процесс' },
   { to: '/partners', label: 'Партнёры' },
   { to: '/ai-architecture', label: 'Hermes' },
+  { to: '/demo', label: 'Сборка / Live' },
   { to: '/tech-stack', label: 'Стек' },
   { to: '/communications', label: 'Коммуникации' },
   { to: '/student-path', label: 'Студент' },
