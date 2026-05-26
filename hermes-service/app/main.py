@@ -3,10 +3,19 @@ import random
 import asyncio
 from datetime import datetime
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from supabase import create_client, Client
 
 app = FastAPI(title='Hermes Orchestration Service')
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 SUPABASE_URL = os.getenv('SUPABASE_URL', '')
 SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY', '')
@@ -20,7 +29,6 @@ class ProjectIn(BaseModel):
     timeline_weeks: int = 14
     stack: str = 'Python + React + LLM'
 
-# База знаний для фейкового AI
 STACK_ANALYSIS = {
     'python': {'complexity': 'medium', 'roles': ['backend', 'ml'], 'weeks': 12},
     'react': {'complexity': 'low', 'roles': ['frontend'], 'weeks': 8},
@@ -45,7 +53,6 @@ async def orchestrate(project: ProjectIn):
     project_id = f"{project.name.lower().replace(' ', '-')}-{int(datetime.now().timestamp())}"
     logs = []
     
-    # Шаг 1: AI Анализ
     await log_step(project_id, "🧠 Инициализация Hermes AI v2.1...", logs)
     await asyncio.sleep(0.3)
     
@@ -57,7 +64,6 @@ async def orchestrate(project: ProjectIn):
     await log_step(project_id, f"   → Сложность: {analysis['complexity'].upper()} | Оценка: {analysis['weeks']} недель", logs)
     await asyncio.sleep(0.3)
     
-    # Шаг 2: Векторный поиск
     await log_step(project_id, f"🔍 Векторный поиск в базе ({len(ENGINEERS_DB)} инженеров)...", logs)
     await asyncio.sleep(0.5)
     
@@ -65,7 +71,6 @@ async def orchestrate(project: ProjectIn):
     await log_step(project_id, f"   → Требуется ролей: {len(required_roles)} ({', '.join(required_roles)})", logs)
     await asyncio.sleep(0.3)
     
-    # Шаг 3: Матчинг
     await log_step(project_id, "🎯 AI-матчинг по навыкам и доступности...", logs)
     await asyncio.sleep(0.6)
     
@@ -74,7 +79,6 @@ async def orchestrate(project: ProjectIn):
         await log_step(project_id, f"   ✓ {eng['name']} ({eng['role']}) — score: {eng['match_score']}%", logs)
         await asyncio.sleep(0.2)
     
-    # Шаг 4: Проверка
     await log_step(project_id, "✅ Валидация команды и бюджета...", logs)
     await asyncio.sleep(0.4)
     
@@ -86,7 +90,6 @@ async def orchestrate(project: ProjectIn):
     await asyncio.sleep(0.2)
     await log_step(project_id, f"   → Confidence score: {confidence}%", logs)
     
-    # Шаг 5: Финал
     await log_step(project_id, "🚀 Генерация роадмапа и запуск...", logs)
     await asyncio.sleep(0.3)
     await log_step(project_id, f"✨ Команда собрана за {len(logs) * 0.3:.1f}с", logs)
@@ -99,7 +102,6 @@ async def orchestrate(project: ProjectIn):
         'analysis': analysis,
     }
     
-    # Сохраняем в БД
     if supabase:
         try:
             supabase.table('projects').insert({
@@ -150,7 +152,6 @@ def analyze_stack(stack: str, budget: int):
         weeks = 10
         roles = ['backend', 'frontend']
     
-    # Бюджет влияет на срок
     if budget < 300000:
         weeks = int(weeks * 1.3)
     elif budget > 800000:

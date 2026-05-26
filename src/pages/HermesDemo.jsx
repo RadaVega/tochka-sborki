@@ -3,7 +3,7 @@ import styles from './HermesPage.module.css';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = import.meta.env.VITE_SUPABASE_URL
- ? createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
+? createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
   : null;
 
 export default function HermesDemo() {
@@ -94,14 +94,14 @@ export default function HermesDemo() {
   useEffect(() => {
     if (!supabase) return;
     const channel = supabase.channel('hermes-demo')
-     .on('postgres_changes', {
+   .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'execution_logs'
       }, (payload) => {
         setLogs(prev => [...prev.slice(-40), payload.new]);
       })
-     .subscribe();
+   .subscribe();
     return () => { supabase.removeChannel(channel); };
   }, []);
 
@@ -113,13 +113,51 @@ export default function HermesDemo() {
 
     try {
       const API = import.meta.env.VITE_HERMES_API || 'http://localhost:8000';
-      await fetch(`${API}/orchestrate`, {
+
+      // Конвертируем данные для API
+      const apiPayload = {
+        name: project.name,
+        stack: project.stack,
+        budget: parseInt(project.budget) || 500000,
+        timeline_weeks: parseInt(project.timeline) || 14
+      };
+
+      const response = await fetch(`${API}/orchestrate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(project)
+        body: JSON.stringify(apiPayload)
       });
-    } catch {
-      // Демо-режим с анимацией
+
+      if (!response.ok) throw new Error(`API error: ${response.status}`);
+
+      const data = await response.json();
+
+      // Анимируем логи из реального API
+      for (let i = 0; i < data.logs.length; i++) {
+        await new Promise(r => setTimeout(r, 280));
+        const log = data.logs[i];
+        setLogs(prev => [...prev, {
+          id: i,
+          message: log.message,
+          level: log.message.includes('✓') || log.message.includes('✨')? 'success' :
+                 log.message.includes('⚠')? 'warning' : 'info',
+          created_at: new Date().toISOString(),
+          timestamp: log.timestamp
+        }]);
+      }
+
+      // Устанавливаем команду из API
+      setTeam({
+        members: data.team.members,
+        confidence: data.team.confidence_score,
+        eta: `${data.team.eta_weeks} недель`,
+        totalCost: data.team.total_cost
+      });
+
+    } catch (error) {
+      console.error('Hermes API failed, using demo mode:', error);
+
+      // Fallback демо-режим
       const steps = [
         'Инициализация Hermes AI...',
         `Проект: ${project.name}`,
@@ -134,21 +172,30 @@ export default function HermesDemo() {
         'Запуск проекта...'
       ];
 
-      steps.forEach((msg, i) => {
-        setTimeout(() => {
-          setLogs(prev => [...prev, {
-            id: i,
-            message: msg,
-            level: i === steps.length-1? 'success' : i > 7? 'warning' : 'info',
-            created_at: new Date().toISOString()
-          }]);
-          if (i === steps.length-1) {
-            setTeam({ confidence: 94, eta: '14 дней' });
-            setIsRunning(false);
-          }
-        }, i * 550);
+      for (let i = 0; i < steps.length; i++) {
+        await new Promise(r => setTimeout(r, 450));
+        setLogs(prev => [...prev, {
+          id: i,
+          message: steps[i],
+          level: i === steps.length-1? 'success' : i > 7? 'warning' : 'info',
+          created_at: new Date().toISOString()
+        }]);
+      }
+
+      setTeam({
+        members: [
+          {name: 'Алексей К.', role: 'Lead Engineer', rating: 4.9, projects: 23, match_score: 97},
+          {name: 'Мария С.', role: 'Backend', rating: 4.8, projects: 18, match_score: 89},
+          {name: 'Дмитрий В.', role: 'Frontend', rating: 4.7, projects: 15, match_score: 97},
+          {name: 'Елена П.', role: 'ML Engineer', rating: 4.9, projects: 12, match_score: 95},
+          {name: 'Игорь М.', role: 'DevOps', rating: 4.6, projects: 31, match_score: 91},
+        ],
+        confidence: 94,
+        eta: '14 дней'
       });
     }
+
+    setIsRunning(false);
   };
 
   const steps = ['Анализ', 'Поиск', 'Матчинг', 'Сборка', 'Запуск'];
@@ -274,33 +321,27 @@ export default function HermesDemo() {
               </div>
             ) : (
               <div className={styles.team}>
-                {[
-                  {n: 'Алексей К.', r: 'Lead Engineer', s: '4.9', p: 23},
-                  {n: 'Мария С.', r: 'Backend', s: '4.8', p: 18},
-                  {n: 'Дмитрий В.', r: 'Frontend', s: '4.7', p: 15},
-                  {n: 'Елена П.', r: 'ML Engineer', s: '4.9', p: 12},
-                  {n: 'Игорь М.', r: 'DevOps', s: '4.6', p: 31},
-                ].map(m => (
-                  <div key={m.n} className={styles.member}>
-                    <div className={styles.avatar}>{m.n[0]}</div>
+                {team.members.map(m => (
+                  <div key={m.name} className={styles.member}>
+                    <div className={styles.avatar}>{m.name[0]}</div>
                     <div>
-                      <div>{m.n}</div>
-                      <span>{m.r}</span>
+                      <div>{m.name}</div>
+                      <span>{m.role}</span>
                     </div>
                     <div>
-                      <span>★ {m.s}</span>
-                      <span>{m.p} проектов</span>
+                      <span>★ {m.rating}</span>
+                      <span>{m.projects} проектов</span>
                     </div>
                   </div>
                 ))}
                 <div className={styles.meta}>
                   <div>
                     <span>Готовность</span>
-                    <strong>14 дней</strong>
+                    <strong>{team.eta}</strong>
                   </div>
                   <div>
                     <span>Точность</span>
-                    <strong>94%</strong>
+                    <strong>{team.confidence}%</strong>
                   </div>
                 </div>
               </div>
