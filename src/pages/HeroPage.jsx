@@ -174,7 +174,7 @@ export function HeroPage() {
             ))}
           </div>
 
-          <MiniFlow steps={page.miniFlow} />
+          
 
           <div className="eco-cta-row">
             {page.audience.map((cta) => {
@@ -207,6 +207,7 @@ export function HeroPage() {
 
         <Reveal className="eco-hero-right">
           <EcosystemMap nodes={page.ecosystemNodes} />
+          <MiniFlow steps={page.miniFlow} />
         </Reveal>
       </div>
 
