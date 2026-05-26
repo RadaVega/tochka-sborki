@@ -296,6 +296,10 @@ function StudentApplicationForm() {
 
       setSuccess(result.message || '✅ Профиль создан! AI-скоринг подберёт проект за 48 часов — ответим на email.');
       goal('STUDENT_FORM_SUCCESS', { stack: values.stack, experience: values.experience });
+      if (typeof window !== 'undefined' && typeof window.ym === 'function') {
+        // METRIKA GOAL
+        window.ym(109303611, 'reachGoal', 'student_register_success');
+      }
       reset();
       setConsent(false);
     } catch (error) {
@@ -311,7 +315,7 @@ function StudentApplicationForm() {
         и пришлёт предложение на email.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate data-ym-goal="student_register">
 
         <div className="form-row-2">
           <label>
