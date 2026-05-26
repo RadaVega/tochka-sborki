@@ -8,12 +8,12 @@ import { useAnalytics } from '../hooks/useAnalytics';
 
 /* ─── Email link with goal tracking ─────────────── */
 function EmailLink({ href, className, children }) {
-  const { goal } = useAnalytics();
+  const { goal, GOALS } = useAnalytics();
   return (
     <a
       href={href}
       className={className}
-      onClick={() => goal('CONTACT_CHANNEL_CLICK', { channel: 'email' })}
+      onClick={() => goal(GOALS.CONTACT_CHANNEL_CLICK, { channel: 'email' })}
     >
       {children}
     </a>
@@ -133,7 +133,7 @@ function SubscribeForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
-  const { goal } = useAnalytics();
+  const { goal, GOALS } = useAnalytics();
 
   const onSubmit = async ({ email }) => {
     setOk(''); setErr(''); setConsentError('');
@@ -146,7 +146,7 @@ function SubscribeForm() {
     try {
       const res = await api('/api/subscribe', { email, consent: formState.consent });
       setOk(res.message || '✅ Вы подписаны на новости Точки Сборки!');
-      goal('SUBSCRIBE_SUCCESS', { email });
+      goal(GOALS.SUBSCRIBE_SUCCESS, { email });
       reset();
       setFormState({ consent: false });
     } catch (e) {
@@ -155,7 +155,7 @@ function SubscribeForm() {
   };
 
   return (
-    <form className="subscribe-form" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form className="subscribe-form" onSubmit={handleSubmit(onSubmit)} noValidate data-ym-goal="subscribe">
       <div className="subscribe-row">
         <input
           type="email"
@@ -194,7 +194,7 @@ function ContactForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
-  const { goal } = useAnalytics();
+  const { goal, GOALS } = useAnalytics();
 
   const onSubmit = async (values) => {
     setOk(''); setErr(''); setConsentError('');
@@ -207,7 +207,7 @@ function ContactForm() {
     try {
       const res = await api('/api/contact', { ...values, consent: formState.consent });
       setOk(res.message || '✅ Сообщение отправлено! Ответим в течение рабочего дня.');
-      goal('CONTACT_FORM_SUCCESS', { role: values.role });
+      goal(GOALS.CONTACT_FORM_SUCCESS, { role: values.role });
       reset();
       setFormState({ consent: false });
     } catch (e) {
@@ -225,7 +225,7 @@ function ContactForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="ct-form">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="ct-form" data-ym-goal="contact_send">
         <label>
           <span>Имя <span className="req">*</span></span>
           <input

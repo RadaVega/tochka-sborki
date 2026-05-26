@@ -266,7 +266,7 @@ function StudentApplicationForm() {
   const [consent, setConsent] = useState(false);
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
-  const { goal } = useAnalytics();
+  const { goal, GOALS } = useAnalytics();
 
   const onSubmit = async (values) => {
     setServerError('');
@@ -295,7 +295,7 @@ function StudentApplicationForm() {
       });
 
       setSuccess(result.message || '✅ Профиль создан! AI-скоринг подберёт проект за 48 часов — ответим на email.');
-      goal('STUDENT_FORM_SUCCESS', { stack: values.stack, experience: values.experience });
+      goal(GOALS.STUDENT_FORM_SUCCESS, { stack: values.stack, experience: values.experience });
       reset();
       setConsent(false);
     } catch (error) {
@@ -311,7 +311,7 @@ function StudentApplicationForm() {
         и пришлёт предложение на email.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate data-ym-goal="student_register">
 
         <div className="form-row-2">
           <label>

@@ -16,3 +16,5 @@ export { GoalsPage } from './GoalsPage';
 export { CompanyPathPage } from './CompanyPathPage';
 export { PrivacyPage } from './PrivacyPage';
 export { ContactsPage } from './ContactsPage';
+
+export { HermesDemo } from './HermesDemo';

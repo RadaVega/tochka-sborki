@@ -37,60 +37,45 @@ function ym(action, ...args) {
 
 // ── Named Metrika goal constants ───────────────────
 export const GOALS = {
-  // Navigation / engagement
-  NAV_COMPANY: 'NAV_CLICK_COMPANY',
-  NAV_STUDENT: 'NAV_CLICK_STUDENT',
-  NAV_HOW_IT_WORKS: 'NAV_CLICK_HOW_IT_WORKS',
+  OPEN_TELEGRAM: 'Переход в Telegram',
+  OPEN_VK_GROUP: 'Переход во ВКонтакте',
+  OPEN_MAX_CHANNEL: 'Переход в Max',
+  COMPANY_FORM_SUCCESS: 'Заявка компании — успех',
+  STUDENT_FORM_SUCCESS: 'Заявка студента — успех',
+  HERO_CTA_COMPANY: 'Hero CTA — компании',
+  HERO_CTA_STUDENT: 'Hero CTA — студенты',
+  CONTACT_FORM_SUCCESS: 'Контакт форма — успех',
+  SUBSCRIBE_SUCCESS: 'Подписка на дайджест',
+  CONTACT_CHANNEL_CLICK: 'Клик по каналу связи',
 
-  // Hero CTA
-  HERO_CTA_COMPANY: 'HERO_CTA_COMPANY',
-  HERO_CTA_STUDENT: 'HERO_CTA_STUDENT',
-  HERO_SCROLL_PROCESS: 'HERO_SCROLL_PROCESS',
-
-  // Company path
-  COMPANY_FORM_START: 'COMPANY_FORM_START',
-  COMPANY_FORM_SUBMIT: 'COMPANY_FORM_SUBMIT',
-  COMPANY_FORM_SUCCESS: 'COMPANY_FORM_SUCCESS',
-  COMPANY_FORM_ERROR: 'COMPANY_FORM_ERROR',
-
-  // Student path
-  STUDENT_FORM_START: 'STUDENT_FORM_START',
-  STUDENT_FORM_SUBMIT: 'STUDENT_FORM_SUBMIT',
-  STUDENT_FORM_SUCCESS: 'STUDENT_FORM_SUCCESS',
-
-  // Contact page
-  CONTACT_FORM_SUBMIT: 'CONTACT_FORM_SUBMIT',
-  CONTACT_FORM_SUCCESS: 'CONTACT_FORM_SUCCESS',
-  CONTACT_CHANNEL_CLICK: 'CONTACT_CHANNEL_CLICK',
-
-  // Subscribe
-  SUBSCRIBE_SUBMIT: 'SUBSCRIBE_SUBMIT',
-  SUBSCRIBE_SUCCESS: 'SUBSCRIBE_SUCCESS',
-
-  // Messenger / external links
-  OPEN_MAX_CHANNEL: 'OPEN_MAX_CHANNEL',
-  OPEN_VK_GROUP: 'OPEN_VK_GROUP',
-  OPEN_TELEGRAM: 'OPEN_TELEGRAM',
-  EMAIL_CLICK: 'EMAIL_CLICK',
-
-  // FAQ / content engagement
-  FAQ_OPEN: 'FAQ_OPEN',
-  PROCESS_STEP_VIEW: 'PROCESS_STEP_VIEW',
-  PRICING_VIEW: 'PRICING_VIEW',
-
-  // Auto-capture events
+  // служебные (оставь английские)
+  NAV_COMPANY: 'nav_company',
+  NAV_STUDENT: 'nav_student',
+  NAV_HOW_IT_WORKS: 'nav_how_it_works',
+  HERO_SCROLL_PROCESS: 'hero_scroll_process',
+  COMPANY_FORM_START: 'company_form_start',
+  COMPANY_FORM_SUBMIT: 'company_form_submit',
+  COMPANY_FORM_ERROR: 'company_form_error',
+  STUDENT_FORM_START: 'student_form_start',
+  STUDENT_FORM_SUBMIT: 'student_form_submit',
+  CONTACT_FORM_SUBMIT: 'contact_form_submit',
+  SUBSCRIBE_SUBMIT: 'subscribe_submit',
+  EMAIL_CLICK: 'email_click',
+  FAQ_OPEN: 'faq_open',
+  PROCESS_STEP_VIEW: 'process_step_view',
+  PRICING_VIEW: 'pricing_view',
   CTA_CLICK: 'cta_click',
   EXTERNAL_LINK_CLICK: 'external_link_click',
   NAVIGATION_CLICK: 'navigation_click',
   FORM_FIELD_FOCUS: 'form_field_focus',
   SCROLL_DEPTH: 'scroll_depth',
   TIME_ON_PAGE: 'time_on_page',
-
-  // Web Vitals
   WEB_VITAL_FCP: 'web-vital-fcp',
   WEB_VITAL_LCP: 'web-vital-lcp',
   WEB_VITAL_CLS: 'web-vital-cls',
   WEB_VITAL_FID: 'web-vital-fid',
+  HERMES_LAUNCH: 'hermes_launch',
+  DEMO_VIEW: 'demo_view',
 };
 
 /**
@@ -101,9 +86,10 @@ export function useAnalytics() {
 
   const goal = useCallback((goalName, params = {}) => {
     if (!ANALYTICS_CONFIG.enabled) return;
-    ym('reachGoal', goalName, params);
+    const normalizedGoal = Object.prototype.hasOwnProperty.call(GOALS, goalName) ? GOALS[goalName] : goalName;
+    ym('reachGoal', normalizedGoal, params);
     if (ANALYTICS_CONFIG.isDev) {
-      console.log(`[Analytics] goal: ${goalName}`, params);
+      console.log(`[Analytics] goal: ${normalizedGoal}`, params);
     }
   }, []);
 
@@ -133,11 +119,13 @@ export function useAnalytics() {
 
   // ── UPDATED: trackExternalLink now fires OPEN_MAX_CHANNEL for Max ──
   const trackExternalLink = useCallback((channel, href) => {
-    if (channel === 'max') {
-      goal(GOALS.OPEN_MAX_CHANNEL, { channel });
-    } else {
-      goal(GOALS.CONTACT_CHANNEL_CLICK, { channel });
-    }
+    const map = {
+      telegram: GOALS.OPEN_TELEGRAM,
+      vk: GOALS.OPEN_VK_GROUP,
+      max: GOALS.OPEN_MAX_CHANNEL,
+    };
+    const goalName = map[channel] || GOALS.CONTACT_CHANNEL_CLICK;
+    goal(goalName, { channel, href });
     track('external_link_click', { channel, href });
   }, [goal, track]);
 
@@ -177,6 +165,10 @@ export function useAnalytics() {
       const text = (el.textContent || '').trim().slice(0, 80);
       if (analyticsType === 'cta') {
         track('cta_click', { text, path: location.pathname });
+      }
+      if (text.includes('Связаться') || text.includes('Инвестировать')) {
+        // METRIKA GOAL
+        goal(GOALS.HERO_CTA_COMPANY, { text });
       }
       if (el.tagName === 'A') {
         const href = el.getAttribute('href') || '';
