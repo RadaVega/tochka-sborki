@@ -14,12 +14,12 @@ export default function HermesDemo() {
     name: 'AI SaaS MVP',
     stack: 'Python + React + LLM',
     budget: '500000',
-    timeline: '14 дней'
+    timeline: '14'
   });
 
   const heroCanvasRef = useRef(null);
 
-  // Canvas частицы (фиолетовые, под твой --p)
+  // Canvas частицы
   useEffect(() => {
     const canvas = heroCanvasRef.current;
     if (!canvas) return;
@@ -44,8 +44,6 @@ export default function HermesDemo() {
 
     const animate = () => {
       ctx.clearRect(0, 0, canvas.offsetWidth, canvas.offsetHeight);
-
-      // Фиолетовое свечение
       const gradient = ctx.createRadialGradient(
         canvas.offsetWidth/2, canvas.offsetHeight/2, 0,
         canvas.offsetWidth/2, canvas.offsetHeight/2, canvas.offsetWidth/2
@@ -61,12 +59,10 @@ export default function HermesDemo() {
         p.y += p.vy;
         if (p.x < 0 || p.x > canvas.offsetWidth) p.vx *= -1;
         if (p.y < 0 || p.y > canvas.offsetHeight) p.vy *= -1;
-
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = 'rgba(167, 139, 250, 0.7)';
         ctx.fill();
-
         particles.slice(i + 1).forEach(p2 => {
           const dx = p.x - p2.x, dy = p.y - p2.y;
           const dist = Math.sqrt(dx*dx + dy*dy);
@@ -83,7 +79,6 @@ export default function HermesDemo() {
       animationId = requestAnimationFrame(animate);
     };
     animate();
-
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', resize);
@@ -112,9 +107,7 @@ export default function HermesDemo() {
     setTeam(null);
 
     try {
-      const API = import.meta.env.VITE_HERMES_API || 'http://localhost:8000';
-
-      // Конвертируем данные для API
+      const API = import.meta.env.VITE_HERMES_API || '';
       const apiPayload = {
         name: project.name,
         stack: project.stack,
@@ -129,10 +122,8 @@ export default function HermesDemo() {
       });
 
       if (!response.ok) throw new Error(`API error: ${response.status}`);
-
       const data = await response.json();
 
-      // Анимируем логи из реального API
       for (let i = 0; i < data.logs.length; i++) {
         await new Promise(r => setTimeout(r, 280));
         const log = data.logs[i];
@@ -146,7 +137,6 @@ export default function HermesDemo() {
         }]);
       }
 
-      // Устанавливаем команду из API
       setTeam({
         members: data.team.members,
         confidence: data.team.confidence_score,
@@ -156,8 +146,6 @@ export default function HermesDemo() {
 
     } catch (error) {
       console.error('Hermes API failed, using demo mode:', error);
-
-      // Fallback демо-режим
       const steps = [
         'Инициализация Hermes AI...',
         `Проект: ${project.name}`,
@@ -194,7 +182,6 @@ export default function HermesDemo() {
         eta: '14 дней'
       });
     }
-
     setIsRunning(false);
   };
 
@@ -205,7 +192,6 @@ export default function HermesDemo() {
     <div className={styles.page}>
       <div className={styles.grid} />
       <div className={styles.glow} />
-
       <section className={styles.hero}>
         <canvas ref={heroCanvasRef} className={styles.heroCanvas} />
         <div className={styles.heroContent}>
@@ -217,133 +203,53 @@ export default function HermesDemo() {
           <p>Сборка инженерной команды в реальном времени</p>
         </div>
       </section>
-
       <section className={styles.execution}>
         <div className={styles.threeCol}>
-          {/* Левая колонка */}
           <div className={styles.card}>
             <div className={styles.cardHead}>
               <span>ПРОЕКТ</span>
               <span>ВВОД</span>
             </div>
             <form onSubmit={handleStart} className={styles.form}>
-              <label>
-                Название
-                <input
-                  value={project.name}
-                  onChange={e => setProject({...project, name: e.target.value})}
-                />
-              </label>
-              <label>
-                Технологии
-                <input
-                  value={project.stack}
-                  onChange={e => setProject({...project, stack: e.target.value})}
-                />
-              </label>
+              <label>Название<input value={project.name} onChange={e => setProject({...project, name: e.target.value})} /></label>
+              <label>Технологии<input value={project.stack} onChange={e => setProject({...project, stack: e.target.value})} /></label>
               <div className={styles.row}>
-                <label>
-                  Бюджет
-                  <input
-                    value={project.budget}
-                    onChange={e => setProject({...project, budget: e.target.value})}
-                  />
-                </label>
-                <label>
-                  Срок
-                  <input
-                    value={project.timeline}
-                    onChange={e => setProject({...project, timeline: e.target.value})}
-                  />
-                </label>
+                <label>Бюджет<input value={project.budget} onChange={e => setProject({...project, budget: e.target.value})} /></label>
+                <label>Срок<input value={project.timeline} onChange={e => setProject({...project, timeline: e.target.value})} /></label>
               </div>
-              <button disabled={isRunning}>
-                {isRunning? 'СОБИРАЕМ КОМАНДУ...' : 'ЗАПУСТИТЬ HERMES'}
-              </button>
+              <button disabled={isRunning}>{isRunning? 'СОБИРАЕМ КОМАНДУ...' : 'ЗАПУСТИТЬ HERMES'}</button>
             </form>
           </div>
-
-          {/* Центральная колонка */}
           <div className={styles.card}>
             <div className={styles.cardHead}>
               <span>ОРКЕСТРАЦИЯ</span>
-              <span className={isRunning? styles.active : ''}>
-                {isRunning? 'В ПРОЦЕССЕ' : 'ГОТОВ'}
-              </span>
+              <span className={isRunning? styles.active : ''}>{isRunning? 'В ПРОЦЕССЕ' : 'ГОТОВ'}</span>
             </div>
-
             <div className={styles.pipeline}>
               <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '20px'}}>
                 {steps.map((s, i) => (
                   <div key={s} style={{textAlign: 'center', flex: 1}}>
-                    <div className={`${styles.node} ${i <= activeStep? styles.nodeActive : ''} ${i < activeStep? styles.nodeDone : ''}`}
-                         style={{margin: '0 auto 6px'}}>
-                      {i < activeStep? '✓' : i+1}
-                    </div>
-                    <div style={{fontSize: '10px', color: 'var(--li)', textTransform: 'uppercase', letterSpacing: '0.05em'}}>
-                      {s}
-                    </div>
+                    <div className={`${styles.node} ${i <= activeStep? styles.nodeActive : ''} ${i < activeStep? styles.nodeDone : ''}`} style={{margin: '0 auto 6px'}}>{i < activeStep? '✓' : i+1}</div>
+                    <div style={{fontSize: '10px', color: 'var(--li)', textTransform: 'uppercase', letterSpacing: '0.05em'}}>{s}</div>
                   </div>
                 ))}
               </div>
             </div>
-
             <div className={styles.terminal}>
-              <div className={styles.termHead}>
-                <span>hermes@orchestrator:~$</span>
-                <span>LIVE</span>
-              </div>
+              <div className={styles.termHead}><span>hermes@orchestrator:~$</span><span>LIVE</span></div>
               <div className={styles.logStream}>
-                {logs.length === 0? (
-                  <div className={styles.empty}>Нажмите "ЗАПУСТИТЬ HERMES" для демо</div>
-                ) : (
-                  logs.map(l => (
-                    <div key={l.id} className={styles.logLine}>
-                      <span>{new Date(l.created_at).toLocaleTimeString('ru-RU')}</span>
-                      <span className={styles[l.level || 'info']}>{l.message}</span>
-                    </div>
-                  ))
+                {logs.length === 0? (<div className={styles.empty}>Нажмите "ЗАПУСТИТЬ HERMES" для демо</div>) : (
+                  logs.map(l => (<div key={l.id} className={styles.logLine}><span>{new Date(l.created_at).toLocaleTimeString('ru-RU')}</span><span className={styles[l.level || 'info']}>{l.message}</span></div>))
                 )}
               </div>
             </div>
           </div>
-
-          {/* Правая колонка */}
           <div className={styles.card}>
-            <div className={styles.cardHead}>
-              <span>КОМАНДА</span>
-              <span>{team? `${team.confidence}%` : '--'}</span>
-            </div>
-            {!team? (
-              <div className={styles.teamEmpty}>
-                <div>◯</div>
-                <p>Ожидание запуска оркестрации</p>
-              </div>
-            ) : (
+            <div className={styles.cardHead}><span>КОМАНДА</span><span>{team? `${team.confidence}%` : '--'}</span></div>
+            {!team? (<div className={styles.teamEmpty}><div>◯</div><p>Ожидание запуска оркестрации</p></div>) : (
               <div className={styles.team}>
-                {team.members.map(m => (
-                  <div key={m.name} className={styles.member}>
-                    <div className={styles.avatar}>{m.name[0]}</div>
-                    <div>
-                      <div>{m.name}</div>
-                      <span>{m.role}</span>
-                    </div>
-                    <div>
-                      <span>★ {m.rating}</span>
-                      <span>{m.projects} проектов</span>
-                    </div>
-                  </div>
-                ))}
-                <div className={styles.meta}>
-                  <div>
-                    <span>Готовность</span>
-                    <strong>{team.eta}</strong>
-                  </div>
-                  <div>
-                    <span>Точность</span>
-                    <strong>{team.confidence}%</strong>
-                  </div>
-                </div>
+                {team.members.map(m => (<div key={m.name} className={styles.member}><div className={styles.avatar}>{m.name[0]}</div><div><div>{m.name}</div><span>{m.role}</span></div><div><span>★ {m.rating}</span><span>{m.projects} проектов</span></div></div>))}
+                <div className={styles.meta}><div><span>Готовность</span><strong>{team.eta}</strong></div><div><span>Точность</span><strong>{team.confidence}%</strong></div></div>
               </div>
             )}
           </div>

@@ -1,13 +1,11 @@
-import os
-import random
-import asyncio
-from datetime import datetime
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from supabase import create_client, Client
+from typing import List, Optional
+from datetime import datetime
+import random
 
-app = FastAPI(title='Hermes Orchestration Service')
+app = FastAPI(title="Hermes Orchestrator", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,186 +15,147 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-SUPABASE_URL = os.getenv('SUPABASE_URL', '')
-SUPABASE_SERVICE_ROLE_KEY = os.getenv('SUPABASE_SERVICE_ROLE_KEY', '')
-supabase: Client | None = None
-if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY:
-    supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
-
-class ProjectIn(BaseModel):
+class ProjectRequest(BaseModel):
     name: str
-    budget: int = 500000
+    stack: str
+    budget: int
     timeline_weeks: int = 14
-    stack: str = 'Python + React + LLM'
 
-STACK_ANALYSIS = {
-    'python': {'complexity': 'medium', 'roles': ['backend', 'ml'], 'weeks': 12},
-    'react': {'complexity': 'low', 'roles': ['frontend'], 'weeks': 8},
-    'llm': {'complexity': 'high', 'roles': ['ml', 'backend'], 'weeks': 16},
-    'node': {'complexity': 'medium', 'roles': ['backend'], 'weeks': 10},
-}
+class Engineer(BaseModel):
+    name: str
+    role: str
+    skills: List[str]
+    rating: float
+    projects: int
+    rate: int
+    match_score: Optional[int] = None
+
+class LogEntry(BaseModel):
+    message: str
+    timestamp: str
+
+class TeamResponse(BaseModel):
+    members: List[Engineer]
+    confidence_score: int
+    eta_weeks: int
+    total_cost: int
+
+class OrchestrateResponse(BaseModel):
+    project_id: str
+    logs: List[LogEntry]
+    team: TeamResponse
 
 ENGINEERS_DB = [
-    {'name': 'Алексей К.', 'role': 'Lead Engineer', 'skills': ['Python', 'System Design'], 'rating': 4.9, 'projects': 23},
-    {'name': 'Мария С.', 'role': 'Backend', 'skills': ['Python', 'FastAPI', 'PostgreSQL'], 'rating': 4.8, 'projects': 18},
-    {'name': 'Дмитрий В.', 'role': 'Frontend', 'skills': ['React', 'TypeScript'], 'rating': 4.7, 'projects': 15},
-    {'name': 'Елена П.', 'role': 'ML Engineer', 'skills': ['LLM', 'PyTorch', 'RAG'], 'rating': 4.9, 'projects': 12},
-    {'name': 'Игорь М.', 'role': 'DevOps', 'skills': ['Docker', 'K8s', 'CI/CD'], 'rating': 4.6, 'projects': 20},
+    Engineer(name="Алексей К.", role="Lead Engineer", skills=["Python", "System Design", "Architecture"], rating=4.9, projects=23, rate=150000),
+    Engineer(name="Мария С.", role="Backend", skills=["Python", "FastAPI", "PostgreSQL", "Redis"], rating=4.8, projects=18, rate=120000),
+    Engineer(name="Дмитрий В.", role="Frontend", skills=["React", "TypeScript", "Next.js"], rating=4.7, projects=15, rate=100000),
+    Engineer(name="Елена П.", role="ML Engineer", skills=["LLM", "PyTorch", "RAG", "LangChain"], rating=4.9, projects=12, rate=140000),
+    Engineer(name="Игорь М.", role="DevOps", skills=["Docker", "Kubernetes", "CI/CD", "AWS"], rating=4.6, projects=20, rate=110000),
+    Engineer(name="Анна К.", role="Backend", skills=["Python", "Django", "PostgreSQL"], rating=4.7, projects=16, rate=115000),
+    Engineer(name="Сергей Л.", role="Frontend", skills=["Vue", "TypeScript", "Nuxt"], rating=4.5, projects=14, rate=95000),
 ]
 
-@app.get('/health')
-def health():
-    return {'ok': True, 'service': 'hermes', 'mode': 'demo'}
+def calculate_match(engineer: Engineer, stack: str) -> int:
+    stack_lower = stack.lower()
+    score = 70
+    for skill in engineer.skills:
+        if skill.lower() in stack_lower:
+            score += 8
+    score += int((engineer.rating - 4.5) * 10)
+    score += min(engineer.projects, 5)
+    return min(98, max(75, score))
 
-@app.post('/orchestrate')
-async def orchestrate(project: ProjectIn):
-    project_id = f"{project.name.lower().replace(' ', '-')}-{int(datetime.now().timestamp())}"
+def generate_logs(project: ProjectRequest, team: List[Engineer]) -> List[LogEntry]:
+    now = datetime.utcnow()
     logs = []
-    
-    await log_step(project_id, "🧠 Инициализация Hermes AI v2.1...", logs)
-    await asyncio.sleep(0.3)
-    
-    stack_lower = project.stack.lower()
-    analysis = analyze_stack(stack_lower, project.budget)
-    
-    await log_step(project_id, f"📊 Анализ стека: {project.stack}", logs)
-    await asyncio.sleep(0.4)
-    await log_step(project_id, f"   → Сложность: {analysis['complexity'].upper()} | Оценка: {analysis['weeks']} недель", logs)
-    await asyncio.sleep(0.3)
-    
-    await log_step(project_id, f"🔍 Векторный поиск в базе ({len(ENGINEERS_DB)} инженеров)...", logs)
-    await asyncio.sleep(0.5)
-    
-    required_roles = analysis['roles']
-    await log_step(project_id, f"   → Требуется ролей: {len(required_roles)} ({', '.join(required_roles)})", logs)
-    await asyncio.sleep(0.3)
-    
-    await log_step(project_id, "🎯 AI-матчинг по навыкам и доступности...", logs)
-    await asyncio.sleep(0.6)
-    
-    matched = match_engineers(required_roles, project.budget)
-    for eng in matched:
-        await log_step(project_id, f"   ✓ {eng['name']} ({eng['role']}) — score: {eng['match_score']}%", logs)
-        await asyncio.sleep(0.2)
-    
-    await log_step(project_id, "✅ Валидация команды и бюджета...", logs)
-    await asyncio.sleep(0.4)
-    
-    total_cost = sum(e['rate'] for e in matched) * analysis['weeks']
-    budget_ok = total_cost <= project.budget
-    confidence = calculate_confidence(matched, budget_ok, analysis)
-    
-    await log_step(project_id, f"   → Бюджет: {total_cost:,}₽ / {project.budget:,}₽ ({'✓' if budget_ok else '⚠'})", logs)
-    await asyncio.sleep(0.2)
-    await log_step(project_id, f"   → Confidence score: {confidence}%", logs)
-    
-    await log_step(project_id, "🚀 Генерация роадмапа и запуск...", logs)
-    await asyncio.sleep(0.3)
-    await log_step(project_id, f"✨ Команда собрана за {len(logs) * 0.3:.1f}с", logs)
-    
-    team = {
-        'members': matched,
-        'eta_weeks': analysis['weeks'],
-        'confidence_score': confidence,
-        'total_cost': total_cost,
-        'analysis': analysis,
-    }
-    
-    if supabase:
-        try:
-            supabase.table('projects').insert({
-                'name': project.name,
-                'budget': project.budget,
-                'stack': project.stack
-            }).execute()
-        except:
-            pass
-    
-    return {
-        'project_id': project_id,
-        'project': project.model_dump(),
-        'logs': logs,
-        'team': team,
-        'analysis': analysis,
-    }
+    def add_log(message: str):
+        logs.append(LogEntry(message=message, timestamp=now.isoformat() + "Z"))
+    add_log(f"🧠 Инициализация Hermes AI v2.0")
+    add_log(f"📋 Проект: {project.name}")
+    add_log(f"📊 Стек: {project.stack} • Бюджет: {project.budget:,}₽".replace(",", " "))
+    add_log(f"⏱️ Срок: {project.timeline_weeks} недель")
+    add_log(f"")
+    add_log(f"🔍 Поиск в базе инженеров ({len(ENGINEERS_DB)} профилей)...")
+    add_log(f"🎯 Векторный матчинг по навыкам...")
+    for eng in team:
+        add_log(f"✓ {eng.name} ({eng.role}) — score: {eng.match_score}%")
+    add_log(f"")
+    add_log(f"📈 Расчет загрузки и доступности...")
+    add_log(f"💰 Оптимизация бюджета...")
+    add_log(f"✨ Генерация confidence score...")
+    add_log(f"")
+    add_log(f"✅ Команда собрана успешно")
+    add_log(f"🚀 Готов к запуску")
+    return logs
 
-async def log_step(project_id: str, message: str, logs: list):
-    timestamp = datetime.now().strftime('%H:%M:%S')
-    log_entry = {'timestamp': timestamp, 'message': message}
-    logs.append(log_entry)
-    
-    if supabase:
-        try:
-            supabase.table('execution_logs').insert({
-                'project_id': project_id,
-                'message': message,
-                'level': 'info'
-            }).execute()
-        except:
-            pass
+@app.get("/")
+async def root():
+    return {"service": "Hermes Orchestrator", "version": "2.0.0", "status": "operational", "engineers": len(ENGINEERS_DB)}
 
-def analyze_stack(stack: str, budget: int):
-    complexity = 'medium'
-    weeks = 12
-    roles = ['backend', 'frontend']
-    
-    if 'llm' in stack or 'ai' in stack:
-        complexity = 'high'
-        weeks = 16
-        roles = ['lead', 'backend', 'frontend', 'ml']
-    elif 'python' in stack and 'react' in stack:
-        complexity = 'medium'
-        weeks = 14
-        roles = ['lead', 'backend', 'frontend']
-    elif 'node' in stack:
-        weeks = 10
-        roles = ['backend', 'frontend']
-    
-    if budget < 300000:
-        weeks = int(weeks * 1.3)
-    elif budget > 800000:
-        weeks = int(weeks * 0.8)
-    
-    return {
-        'complexity': complexity,
-        'weeks': weeks,
-        'roles': roles,
-        'tech_breakdown': stack,
-    }
+@app.get("/health")
+async def health():
+    return {"status": "ok", "timestamp": datetime.utcnow().isoformat()}
 
-def match_engineers(required_roles, budget):
-    matched = []
-    role_map = {
-        'lead': 'Lead Engineer',
-        'backend': 'Backend',
-        'frontend': 'Frontend',
-        'ml': 'ML Engineer',
-        'devops': 'DevOps'
-    }
+@app.post("/orchestrate", response_model=OrchestrateResponse)
+async def orchestrate(project: ProjectRequest):
+    needs_ml = any(kw in project.stack.lower() for kw in ["llm", "ai", "ml", "pytorch", "langchain"])
+    needs_frontend = any(kw in project.stack.lower() for kw in ["react", "vue", "frontend", "next", "nuxt"])
+    needs_backend = any(kw in project.stack.lower() for kw in ["python", "fastapi", "django", "backend", "api"])
+    needs_devops = project.budget > 400000 or "kubernetes" in project.stack.lower() or "docker" in project.stack.lower()
     
-    for role_key in required_roles:
-        role_name = role_map.get(role_key, 'Backend')
-        candidates = [e for e in ENGINEERS_DB if role_name in e['role']]
-        
-        if candidates:
-            eng = random.choice(candidates)
-            match_score = random.randint(88, 97)
-            rate = random.randint(80000, 150000)
-            
-            matched.append({
-                **eng,
-                'match_score': match_score,
-                'rate': rate,
-            })
+    candidates = []
+    for eng in ENGINEERS_DB:
+        score = calculate_match(eng, project.stack)
+        eng_copy = eng.model_copy()
+        eng_copy.match_score = score
+        candidates.append(eng_copy)
     
-    return matched
+    candidates.sort(key=lambda x: x.match_score, reverse=True)
+    team = []
+    lead = next((e for e in candidates if e.role == "Lead Engineer"), None)
+    if lead: team.append(lead)
+    if needs_backend:
+        backend = next((e for e in candidates if e.role == "Backend" and e not in team), None)
+        if backend: team.append(backend)
+    if needs_frontend:
+        frontend = next((e for e in candidates if e.role == "Frontend" and e not in team), None)
+        if frontend: team.append(frontend)
+    if needs_ml:
+        ml = next((e for e in candidates if e.role == "ML Engineer" and e not in team), None)
+        if ml: team.append(ml)
+    if needs_devops:
+        devops = next((e for e in candidates if e.role == "DevOps" and e not in team), None)
+        if devops: team.append(devops)
+    
+    while len(team) < 3 and len(candidates) > len(team):
+        next_best = next((e for e in candidates if e not in team), None)
+        if next_best: team.append(next_best)
+    
+    max_team_cost = project.budget * 0.7
+    weekly_budget = max_team_cost / project.timeline_weeks
+    filtered_team = []
+    current_weekly = 0
+    for member in team:
+        if current_weekly + member.rate <= weekly_budget * 1.2:
+            filtered_team.append(member)
+            current_weekly += member.rate
+    team = filtered_team if filtered_team else team[:3]
+    
+    total_cost = sum(m.rate * project.timeline_weeks for m in team)
+    avg_score = sum(m.match_score for m in team) / len(team) if team else 0
+    confidence = int(min(97, avg_score + random.uniform(-2, 3)))
+    logs = generate_logs(project, team)
+    
+    return OrchestrateResponse(
+        project_id=f"hermes-{int(datetime.utcnow().timestamp())}",
+        logs=logs,
+        team=TeamResponse(members=team, confidence_score=confidence, eta_weeks=project.timeline_weeks, total_cost=total_cost)
+    )
 
-def calculate_confidence(team, budget_ok, analysis):
-    base = 85
-    if len(team) >= 3:
-        base += 5
-    if budget_ok:
-        base += 5
-    if analysis['complexity'] == 'low':
-        base += 3
-    return min(97, base + random.randint(0, 4))
+@app.get("/engineers")
+async def list_engineers():
+    return {"engineers": ENGINEERS_DB, "total": len(ENGINEERS_DB)}
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
