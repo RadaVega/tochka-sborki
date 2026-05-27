@@ -4,3 +4,4 @@ node_modules
 media-backup-*
 *.log
 hermes-service
+node_modules/
