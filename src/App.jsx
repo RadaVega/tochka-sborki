@@ -27,9 +27,9 @@ import {
   PartnersPage,
   GoalsPage,
   PrivacyPage,
-  HermesPage,
 } from './pages/Pages';
 import { ContactsPage } from './pages/ContactsPage';
+import { HermesPage } from './pages/HermesPage'; // ← FIXED: direct import
 import HermesDemo from './pages/HermesDemo'; // ← NEW
 
 function AppRoutes() {
