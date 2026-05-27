@@ -1,3 +1,4 @@
+// Amvera cache bust: v2
 /**
  * src/pages/StudentPathPage.jsx
  *
@@ -701,4 +702,4 @@ export function StudentPathPage() {
 
     </div>
   );
-}
+}// cache-bust-1779891238
