@@ -6,3 +6,8 @@ media-backup-*
 media
 docs
 hermes-service
+node_modules
+dist
+.git
+.env
+*.log
