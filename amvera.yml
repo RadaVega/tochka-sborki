@@ -5,18 +5,7 @@ meta:
     version: "20"
 
 build:
-  additionalCommands: >
-    rm -rf node_modules dist
-    && npm ci
-    && npm rebuild esbuild
-    && npx esbuild --version
-    && npx prisma generate
-    && npm run build
-    && echo "=== Build completed ==="
-    && ls -la dist/
-    && echo "=== dist/index.html ==="
-    && head -20 dist/index.html
+  additionalCommands: npm ci && npm run build
 
 run:
   scriptName: start-amvera.cjs
-  containerPort: 80
