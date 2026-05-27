@@ -178,10 +178,6 @@ export function useAnalytics() {
       if (analyticsType === 'cta') {
         track('cta_click', { text, path: location.pathname });
       }
-      if ((text.includes('Связаться') || text.includes('Инвестировать')) && typeof window !== 'undefined' && typeof window.ym === 'function') {
-        // METRIKA GOAL
-        window.ym(109303611, 'reachGoal', 'investor_cta_click');
-      }
       if (el.tagName === 'A') {
         const href = el.getAttribute('href') || '';
         if (href.startsWith('http')) {
