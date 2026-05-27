@@ -5,7 +5,15 @@ meta:
     version: "20"
 
 build:
-  additionalCommands: "rm -rf node_modules dist && npm ci && npx prisma generate && npm run build"
+  additionalCommands: >
+    rm -rf node_modules dist
+    && npm ci
+    && npx prisma generate
+    && npm run build
+    && echo "=== Build completed ==="
+    && ls -la dist/
+    && echo "=== dist/index.html ==="
+    && head -20 dist/index.html
 
 run:
   scriptName: start-amvera.cjs
