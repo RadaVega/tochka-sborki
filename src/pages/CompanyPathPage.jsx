@@ -189,7 +189,7 @@ function ProcessTimeline() {
 
 function FAQSection() {
   const [open, setOpen] = useState(0);
-  const { goal } = useAnalytics();
+  const { goal, GOALS } = useAnalytics();
 
   const handleToggle = (index) => {
     const isOpening = open !== index;
@@ -219,7 +219,7 @@ function ProjectForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
-  const { goal } = useAnalytics();
+  const { goal, GOALS } = useAnalytics();
 
   const minDate = (() => {
     const date = new Date();
@@ -246,7 +246,7 @@ function ProjectForm() {
       };
       const result = await api('/api/submit-project', payload);
       setSuccess(result.message || '✅ Заявка отправлена! AI-агент ответит за 2–4 часа.');
-      goal('COMPANY_FORM_SUCCESS', { budget: values.budget, stack: values.stack });
+      goal(GOALS.COMPANY_FORM_SUCCESS, { budget: values.budget, stack: values.stack });
       reset();
       setFormState({ consent: false });
     } catch (error) {
@@ -258,7 +258,7 @@ function ProjectForm() {
     <Card accent="cyan" className="company-form-card">
       <h2>Подать техническое задание</h2>
       <p className="form-sub">Все поля со звёздочкой обязательны. AI-агент проверит ТЗ и ответит за 2–4 часа.</p>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate data-ym-goal="project_submit">
         <div className="form-row-2">
           <label>
             <span>Компания <b className="req">*</b></span>
