@@ -147,10 +147,6 @@ function SubscribeForm() {
       const res = await api('/api/subscribe', { email, consent: formState.consent });
       setOk(res.message || '✅ Вы подписаны на новости Точки Сборки!');
       goal('SUBSCRIBE_SUCCESS', { email });
-      if (typeof window !== 'undefined' && typeof window.ym === 'function') {
-        // METRIKA GOAL
-        window.ym(109303611, 'reachGoal', 'subscribe_success');
-      }
       reset();
       setFormState({ consent: false });
     } catch (e) {
@@ -159,7 +155,7 @@ function SubscribeForm() {
   };
 
   return (
-    <form className="subscribe-form" onSubmit={handleSubmit(onSubmit)} noValidate data-ym-goal="subscribe">
+    <form className="subscribe-form" onSubmit={handleSubmit(onSubmit)} noValidate>
       <div className="subscribe-row">
         <input
           type="email"
@@ -212,10 +208,6 @@ function ContactForm() {
       const res = await api('/api/contact', { ...values, consent: formState.consent });
       setOk(res.message || '✅ Сообщение отправлено! Ответим в течение рабочего дня.');
       goal('CONTACT_FORM_SUCCESS', { role: values.role });
-      if (typeof window !== 'undefined' && typeof window.ym === 'function') {
-        // METRIKA GOAL
-        window.ym(109303611, 'reachGoal', 'contact_send_success');
-      }
       reset();
       setFormState({ consent: false });
     } catch (e) {
@@ -233,7 +225,7 @@ function ContactForm() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="ct-form" data-ym-goal="contact_send">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="ct-form">
         <label>
           <span>Имя <span className="req">*</span></span>
           <input
