@@ -19,3 +19,4 @@ export { ContactsPage } from './ContactsPage';
 
 export { default as HermesDemo } from './HermesDemo';
 export { HermesPage } from './HermesPage';
+
