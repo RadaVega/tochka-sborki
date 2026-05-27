@@ -10,3 +10,4 @@ npm-debug.log*
 /src/generated/prisma*.session.json
 .env
 .env.*
+*.bak
