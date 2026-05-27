@@ -114,3 +114,5 @@ vercel --prod
 ```
 
 Перед `vercel --prod` убедитесь, что в проекте Vercel заданы переменные из `docs/VERCEL_ENV.md`.
+
+
