@@ -116,3 +116,4 @@ vercel --prod
 Перед `vercel --prod` убедитесь, что в проекте Vercel заданы переменные из `docs/VERCEL_ENV.md`.
 
 
+// amvera deploy fix Thu May 28 22:59:11 MSK 2026
