@@ -5,7 +5,7 @@ import { Badge, Card, Checklist, PageShell, Reveal, TagRow } from '../components
 import { Logo } from '../components/Logo';
 import { ConsentCheckbox } from '../components/ConsentCheckbox';
 import { TrackedButton, TrackedExternalLink } from '../components/Tracked';
-import { useAnalytics } from '../hooks/useAnalytics';
+import { GOALS, useAnalytics } from '../hooks/useAnalytics';
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 
@@ -189,13 +189,9 @@ function ProcessTimeline() {
 
 function FAQSection() {
   const [open, setOpen] = useState(0);
-  const { goal, GOALS } = useAnalytics();
 
   const handleToggle = (index) => {
-    const isOpening = open !== index;
     setOpen(open === index ? null : index);
-    if (isOpening) {
-    }
   };
 
   return (
@@ -219,7 +215,7 @@ function ProjectForm() {
   const [formState, setFormState] = useState({ consent: false });
   const [consentError, setConsentError] = useState('');
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
-  const { goal, GOALS } = useAnalytics();
+  const { goal } = useAnalytics();
 
   const minDate = (() => {
     const date = new Date();
