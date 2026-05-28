@@ -8,6 +8,7 @@
     "dev:client": "vite",
     "dev:api": "node server/index.js",
     "build": "vite build",
+    "amvera:build": "npx prisma generate && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "start": "npx prisma db push && node server/index.js"

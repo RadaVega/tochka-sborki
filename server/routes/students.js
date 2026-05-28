@@ -520,5 +520,3 @@ export default function studentRoutes(prisma, rateLimit, logEvent) {
 
   return router;
 }
-
-export { hermesMatchProject };

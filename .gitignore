@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .vite/
+.git/
 .env
 .env.*
 !.env.example
@@ -12,3 +13,6 @@ npm-debug.log*
 .env.*
 *.bak
 node_modules/
+media-backup-*/
+media/node_modules/
+hermes-service/.venv/
