@@ -17,6 +17,5 @@ export { CompanyPathPage } from './CompanyPathPage';
 export { PrivacyPage } from './PrivacyPage';
 export { ContactsPage } from './ContactsPage';
 
-export { default as HermesDemo } from './HermesDemo';
+export { HermesDemo, default as HermesDemoDefault } from './HermesDemo';
 export { HermesPage } from './HermesPage';
-

@@ -27,10 +27,10 @@ import {
   PartnersPage,
   GoalsPage,
   PrivacyPage,
+  HermesDemo,
 } from './pages/Pages';
 import { ContactsPage } from './pages/ContactsPage';
 import { HermesPage } from './pages/HermesPage';
-import HermesDemo from './pages/HermesDemo';
 
 function AppRoutes() {
   return (

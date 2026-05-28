@@ -20,7 +20,7 @@ const STEPS = [
   { id: 'launch', label: 'Launching', icon: '🚀' },
 ];
 
-export default function HermesDemo() {
+export function HermesDemo() {
   const [project, setProject] = useState(SAMPLES[0]);
   const [running, setRunning] = useState(false);
   const [step, setStep] = useState(-1);
@@ -180,3 +180,5 @@ export default function HermesDemo() {
     </div>
   );
 }
+
+export default HermesDemo;
