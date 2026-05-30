@@ -16,3 +16,4 @@ node_modules/
 media-backup-*/
 media/node_modules/
 hermes-service/.venv/
+temp_dev/
