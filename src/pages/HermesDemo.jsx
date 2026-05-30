@@ -97,11 +97,6 @@ export function HermesDemo() {
 
   return (
     <div className="hermes-page">
-      {/* AMVERA TEST BANNER — RED */}
-      <div style={{background:'red', color:'white', padding:'20px', fontSize:'24px', textAlign:'center', fontWeight:'bold'}}>
-        AMVERA TEST CHANGE 1 — HERMES DEMO
-      </div>
-
       <section className="hm-hero">
         <div className="hm-glow" />
         <h1>Hermes Live</h1>
