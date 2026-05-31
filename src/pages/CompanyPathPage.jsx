@@ -246,7 +246,7 @@ function ProjectForm() {
       reset();
       setFormState({ consent: false });
     } catch (error) {
-      setServerError(error.message || 'Не удалось отправить. Напишите нам напрямую: tochka.sborki21@vk.com');
+      setServerError(error.message || 'Не удалось отправить. Напишите нам напрямую: tochka.sborki21@yandex.ru');
     }
   };
 
@@ -481,10 +481,10 @@ export function CompanyPathPage() {
         <Reveal>
           <div className="company-contacts">
             {[
-              { icon: '✉️', label: 'Email', val: 'tochka.sborki21@vk.com', href: 'mailto:tochka.sborki21@vk.com' },
+              { icon: '✉️', label: 'Email', val: 'tochka.sborki21@yandex.ru', href: 'mailto:tochka.sborki21@yandex.ru' },
               { icon: 'VK', label: 'ВКонтакте', val: 'vk.com/tochkasborki21', href: 'https://vk.com/tochkasborki21', channel: 'vk' },
               { icon: 'MAX', label: 'MAX Messenger', val: '⚡ Точка Сборки', href: 'https://max.ru/join/7jlWTUq574ffC3I-FwT3MuJk-Op4kaBJRw2D60o7uOI', channel: 'max' },
-              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki', href: 'https://t.me/tochka_sborki', channel: 'telegram' }
+              { icon: 'TG', label: 'Telegram', val: '@tochka_sborki_21', href: 'https://t.me/tochka_sborki_21', channel: 'telegram' }
             ].map((contact) => contact.channel ? (
               <TrackedExternalLink
                 key={contact.label}
